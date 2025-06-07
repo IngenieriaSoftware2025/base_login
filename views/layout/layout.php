@@ -23,8 +23,18 @@
             <div class="collapse navbar-collapse" id="navbarToggler">
                 
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="margin: 0;">
+                 
+                     <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/base_login/login"><i class="bi bi-door-open"></i></i>Login</a>
+                    </li>
+                     <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/base_login/registro"><i class="bi bi-person"></i></i>Registro</a>
+                    </li>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/ejemplo/"><i class="bi bi-house-fill me-2"></i>Inicio</a>
+                        <a class="nav-link" aria-current="page" href="/base_login/aplicacion"><i class="bi bi-person"></i></i>Aplicacion</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/base_login/permisos"><i class="bi bi-person"></i></i>Permisos</a>
                     </li>
   
                     <div class="nav-item dropdown " >

@@ -21,6 +21,13 @@ class ActiveRecord {
     public static function setAlerta($tipo, $mensaje) {
         static::$alertas[$tipo][] = $mensaje;
     }
+
+    //CONEXION A LA BASE DE DATOS
+    public static function getDB(): PDO
+    {
+    return self::$db;
+    }
+
     // Validación
     public static function getAlertas() {
         return static::$alertas;
