@@ -15,7 +15,13 @@ const GuardarUsuario = async (event) => {
     event.preventDefault();
     BtnGuardar.disabled = true;
 
-    if (!validarFormulario(FormUsuarios, ['id_usuario', 'token', 'fecha_creacion', 'fecha_contrasena', 'situacion', 'fotografia'])) {
+    if (!validarFormulario(FormUsuarios, 
+        ['id_usuario', 
+          'token', 
+          'fecha_creacion', 
+          'fecha_contrasena', 
+          'situacion', 
+          'fotografia'])) {
         Swal.fire({
             position: "center",
             icon: "info",
@@ -66,6 +72,10 @@ const GuardarUsuario = async (event) => {
     BtnGuardar.disabled = false;
 }
 
+
+
+
+
 const BuscarUsuarios = async () => {
     const url = `/base_login/registro/buscarAPI`;
     const config = {
@@ -95,6 +105,9 @@ const BuscarUsuarios = async () => {
     }
 }
 
+
+
+
 const MostrarTabla = () => {
     if (seccionTabla.style.display === 'none') {
         seccionTabla.style.display = 'block';
@@ -103,6 +116,9 @@ const MostrarTabla = () => {
         seccionTabla.style.display = 'none';
     }
 }
+
+
+
 
 const datatable = new DataTable('#TableUsuarios', {
     dom: `
@@ -148,14 +164,7 @@ const datatable = new DataTable('#TableUsuarios', {
                 }
             }
         },
-        {
-            title: 'Situación',
-            data: 'situacion',
-            width: '6%',
-            render: (data, type, row) => {
-                return data == 1 ? "ACTIVO" : "INACTIVO";
-            }
-        },
+        
         {
             title: 'Acciones',
             data: 'id_usuario',
@@ -214,6 +223,8 @@ const llenarFormulario = (event) => {
     });
 }
 
+
+
 const limpiarTodo = () => {
     FormUsuarios.reset();
     
@@ -227,11 +238,20 @@ const limpiarTodo = () => {
     BtnModificar.classList.add('d-none');
 }
 
+
 const ModificarUsuario = async (event) => {
     event.preventDefault();
     BtnModificar.disabled = true;
 
-    if (!validarFormulario(FormUsuarios, ['id_usuario', 'token', 'fecha_creacion', 'fecha_contrasena', 'situacion', 'fotografia', 'contrasena', 'contrasena2'])) {
+    if (!validarFormulario(FormUsuarios, [
+        'id_usuario', 
+        'token', 
+        'fecha_creacion', 
+        'fecha_contrasena', 
+        'situacion', 
+        'fotografia', 
+        'contrasena', 
+        'contrasena2'])) {
         Swal.fire({
             position: "center",
             icon: "info",
@@ -281,6 +301,10 @@ const ModificarUsuario = async (event) => {
     }
     BtnModificar.disabled = false;
 }
+
+
+
+
 
 const EliminarUsuarios = async (e) => {
     const idUsuario = e.currentTarget.dataset.id

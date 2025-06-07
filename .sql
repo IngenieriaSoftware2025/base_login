@@ -18,6 +18,8 @@ create table usuarios(
     situacion smallint default 1
 );
 
+
+
 create table aplicaciones(
     id_aplicacion serial primary key,
     nombre_app_lg varchar(100),

@@ -305,11 +305,11 @@ const EliminarPermisos = async (e) => {
     }
 }
 
-// Inicialización - igual que en préstamos
+
 CargarAplicaciones();
 BuscarPermisos();
 
-// Event Listeners
+
 datatable.on('click', '.eliminar', EliminarPermisos);
 datatable.on('click', '.modificar', llenarFormulario);
 FormPermisos.addEventListener('submit', GuardarPermiso);

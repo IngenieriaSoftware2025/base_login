@@ -33,7 +33,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-outline mb-4">
-                                                <input type="text" id="primer_nombre" name="primer_nombre" class="form-control form-control-lg" required />
+                                                <input type="text" id="primer_nombre" name="primer_nombre" class="form-control form-control-lg"  />
                                                 <label class="form-label" for="primer_nombre">Primer Nombre *</label>
                                             </div>
                                         </div>
@@ -48,7 +48,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-outline mb-4">
-                                                <input type="text" id="primer_apellido" name="primer_apellido" class="form-control form-control-lg" required />
+                                                <input type="text" id="primer_apellido" name="primer_apellido" class="form-control form-control-lg"  />
                                                 <label class="form-label" for="primer_apellido">Primer Apellido *</label>
                                             </div>
                                         </div>
@@ -69,7 +69,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-outline mb-4">
-                                                <input type="email" id="correo" name="correo" class="form-control form-control-lg" required />
+                                                <input type="email" id="correo" name="correo" class="form-control form-control-lg"  />
                                                 <label class="form-label" for="correo">Correo Electrónico *</label>
                                             </div>
                                         </div>
@@ -93,14 +93,14 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-outline mb-4">
-                                                <input type="password" id="contrasena" name="contrasena" class="form-control form-control-lg" required />
+                                                <input type="password" id="contrasena" name="contrasena" class="form-control form-control-lg"  />
                                                 <label class="form-label" for="contrasena">Contraseña *</label>
                                             </div>
                                         </div>
 
                                         <div class="col-md-6">
                                             <div class="form-outline mb-4">
-                                                <input type="password" id="contrasena2" name="contrasena2" class="form-control form-control-lg" required />
+                                                <input type="password" id="contrasena2" name="contrasena2" class="form-control form-control-lg"  />
                                                 <label class="form-label" for="contrasena2">Confirmar Contraseña</label>
                                             </div>
                                         </div>
@@ -135,7 +135,7 @@
                     </div>
                 </div>
 
-                <!-- Tabla de usuarios -->
+               
                 <div class="row mt-4" id="seccionTabla" style="display: none;">
                     <div class="col-12">
                         <div class="card" style="border-radius: 15px;">

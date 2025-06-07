@@ -270,10 +270,10 @@ const EliminarAplicaciones = async (e) => {
     }
 }
 
-// Inicializar búsqueda al cargar la página
+
 BuscarAplicaciones();
 
-// Event Listeners
+
 datatable.on('click', '.eliminar', EliminarAplicaciones);
 datatable.on('click', '.modificar', llenarFormulario);
 FormAplicaciones.addEventListener('submit', GuardarAplicacion);
