@@ -8,7 +8,8 @@ module.exports = {
      'js/registro/index' : './src/js/registro/index.js',
      'js/login/index' : './src/js/login/index.js',
      'js/aplicacion/index' : './src/js/aplicacion/index.js',
-     'js/permisos/index' : './src/js/permisos/index.js'
+     'js/permisos/index' : './src/js/permisos/index.js',
+      'js/clientes/index' : './src/js/clientes/index.js'
   },
   output: {
     filename: '[name].js',

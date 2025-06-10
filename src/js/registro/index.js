@@ -4,12 +4,19 @@ import { validarFormulario } from '../funciones';
 import DataTable from "datatables.net-bs5";
 import { lenguaje } from "../lenguaje";
 
+
+
+
 const FormUsuarios = document.getElementById('FormUsuarios');
 const BtnGuardar = document.getElementById('BtnGuardar');
 const BtnModificar = document.getElementById('BtnModificar');
 const BtnLimpiar = document.getElementById('BtnLimpiar');
 const BtnBuscarUsuarios = document.getElementById('BtnBuscarUsuarios');
 const seccionTabla = document.getElementById('seccionTabla');
+
+
+
+
 
 const GuardarUsuario = async (event) => {
     event.preventDefault();
@@ -32,6 +39,13 @@ const GuardarUsuario = async (event) => {
         BtnGuardar.disabled = false;
         return;
     }
+
+
+
+
+
+
+
 
     const body = new FormData(FormUsuarios);
     const url = '/base_login/registro/guardarAPI';
@@ -76,6 +90,12 @@ const GuardarUsuario = async (event) => {
 
 
 
+
+
+
+
+
+
 const BuscarUsuarios = async () => {
     const url = `/base_login/registro/buscarAPI`;
     const config = {
@@ -108,6 +128,10 @@ const BuscarUsuarios = async () => {
 
 
 
+
+
+
+
 const MostrarTabla = () => {
     if (seccionTabla.style.display === 'none') {
         seccionTabla.style.display = 'block';
@@ -116,6 +140,8 @@ const MostrarTabla = () => {
         seccionTabla.style.display = 'none';
     }
 }
+
+
 
 
 
@@ -136,6 +162,12 @@ const datatable = new DataTable('#TableUsuarios', {
     language: lenguaje,
     data: [],
     columns: [
+
+
+
+
+
+
         {
             title: 'No.',
             data: 'id_usuario',
@@ -150,6 +182,11 @@ const datatable = new DataTable('#TableUsuarios', {
         { title: 'Teléfono', data: 'telefono', width: '8%' },
         { title: 'DPI', data: 'dpi', width: '8%' },
         { title: 'Dirección', data: 'direccion', width: '10%' },
+       
+       
+       
+       
+       
         {
             title: 'Fotografía',
             data: 'fotografia',
@@ -165,6 +202,10 @@ const datatable = new DataTable('#TableUsuarios', {
             }
         },
         
+
+
+
+
         {
             title: 'Acciones',
             data: 'id_usuario',
@@ -196,6 +237,10 @@ const datatable = new DataTable('#TableUsuarios', {
     ]
 });
 
+
+
+
+
 const llenarFormulario = (event) => {
     const datos = event.currentTarget.dataset;
 
@@ -225,6 +270,10 @@ const llenarFormulario = (event) => {
 
 
 
+
+
+
+
 const limpiarTodo = () => {
     FormUsuarios.reset();
     
@@ -237,6 +286,13 @@ const limpiarTodo = () => {
     BtnGuardar.classList.remove('d-none');
     BtnModificar.classList.add('d-none');
 }
+
+
+
+
+
+
+
 
 
 const ModificarUsuario = async (event) => {
@@ -306,6 +362,12 @@ const ModificarUsuario = async (event) => {
 
 
 
+
+
+
+
+
+
 const EliminarUsuarios = async (e) => {
     const idUsuario = e.currentTarget.dataset.id
 
@@ -357,6 +419,10 @@ const EliminarUsuarios = async (e) => {
         }
     }
 }
+
+
+
+
 
 
 datatable.on('click', '.eliminar', EliminarUsuarios);
