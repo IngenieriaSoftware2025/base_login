@@ -1,4 +1,4 @@
-create database login;
+create database proyecto_celulares
 
 create table usuarios(
     id_usuario serial primary key,
@@ -73,3 +73,42 @@ create table historial_actividades(
     foreign key (id_usuario) references usuarios(id_usuario),
     foreign key (id_ruta) references rutas(id_ruta)
 );
+
+CREATE TABLE clientes (
+    cliente_id SERIAL PRIMARY KEY,
+    cliente_nombres VARCHAR(255),
+    cliente_apellidos VARCHAR(255),
+    cliente_nit INT,
+    cliente_telefono INT,
+    cliente_correo VARCHAR(100),
+    cliente_situacion SMALLINT DEFAULT 1
+)
+
+CREATE TABLE marcas (
+    id_marca SERIAL PRIMARY KEY,
+    marca_nombre VARCHAR(100) NOT NULL,
+    marca_descripcion VARCHAR(250),
+    marca_fecha_ingreso  DATE DEFAULT TODAY,
+    marca_modelo VARCHAR(250),
+    marca_situacion SMALLINT DEFAULT 1
+);
+
+
+CREATE TABLE inventario (
+    id_inventario SERIAL PRIMARY KEY,
+    id_marca INTEGER NOT NULL,
+    estado_dispositivo VARCHAR(20) DEFAULT 'NUEVO' CHECK (estado_dispositivo IN ('NUEVO', 'USADO', 'REPARADO')),
+    estado_inventario VARCHAR(20) DEFAULT 'DISPONIBLE' CHECK (estado_inventario IN ('DISPONIBLE', 'VENDIDO', 'EN_REPARACION')),
+    numero_serie VARCHAR(50),
+    precio_compra DECIMAL(10,2) NOT NULL,
+    precio_venta DECIMAL(10,2) NOT NULL,
+    stock_disponible INT NOT NULL,
+    fecha_ingreso DATE DEFAULT TODAY,
+    observaciones LVARCHAR(500),
+    situacion SMALLINT DEFAULT 1,
+    FOREIGN KEY (id_marca) REFERENCES marcas(id_marca)
+);
+
+
+select * from inventario
+

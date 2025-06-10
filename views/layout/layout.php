@@ -41,6 +41,12 @@
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/base_login/clientes"><i class="bi bi-people"></i> Clientes</a>
                     </li>
+                      <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/base_login/marcas"><i class="bi bi-people"></i> Marcas</a>
+                    </li>
+                     <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/base_login/inventario"><i class="bi bi-people"></i> Inventario</a>
+                    </li>
 
                     <div class="nav-item dropdown ">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
