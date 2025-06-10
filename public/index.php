@@ -66,5 +66,7 @@ $router->post('/inventario/guardarAPI', [InventarioController::class, 'guardarAP
 $router->get('/inventario/buscarAPI', [InventarioController::class, 'buscarAPI']);
 $router->post('/inventario/modificarAPI', [InventarioController::class, 'modificarAPI']);
 $router->post('/inventario/eliminarAPI', [InventarioController::class, 'eliminarAPI']);
+$router->get('/inventario/obtenerMarcasAPI', [InventarioController::class, 'obtenerMarcasAPI']);
+$router->get('/inventario/buscarConMarcas', [InventarioController::class, 'buscarConMarcas']);
 
 $router->comprobarRutas();

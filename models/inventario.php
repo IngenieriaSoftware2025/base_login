@@ -40,7 +40,7 @@ class Inventario extends ActiveRecord {
         $this->precio_compra = $args['precio_compra'] ?? 0;
         $this->precio_venta = $args['precio_venta'] ?? 0;
         $this->stock_disponible = $args['stock_disponible'] ?? 0;
-        $this->fecha_ingreso = $args['fecha_ingreso'] ?? '';
+        //$this->fecha_ingreso = $args['fecha_ingreso'] ?? '';
         $this->observaciones = $args['observaciones'] ?? '';
         $this->situacion = $args['situacion'] ?? 1;
     }
