@@ -191,10 +191,11 @@ class RegistroController extends ActiveRecord
             ]);
             exit;
         }
+        $fecha = date('Y-m-d H:i');
 
         $_POST['token'] = uniqid();
-        $_POST['fecha_creacion'] = '';
-        $_POST['fecha_contrasena'] = '';
+        $_POST['fecha_creacion'] = $fecha;
+        $_POST['fecha_contrasena'] = $fecha;
 
 
 
@@ -242,12 +243,6 @@ class RegistroController extends ActiveRecord
             // USAR EL DPI COMPLETO para nombrar el archivo
             $dpiCompleto = $_POST['dpi']; // Usar el DPI completo de 13 dígitos
             $ruta = "storage/fotosusuarios/$dpiCompleto.$fileExtension";
-
-            // Crear directorio si no existe
-            $directorioFotos = __DIR__ . "/../../storage/fotosusuarios/";
-            if (!file_exists($directorioFotos)) {
-                mkdir($directorioFotos, 0755, true);
-            }
 
             $subido = move_uploaded_file($file['tmp_name'], __DIR__ . "/../../" . $ruta);
 

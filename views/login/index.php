@@ -39,7 +39,7 @@
                         <div class="card" style="border-radius: 15px;">
                             <div class="card-body p-5">
                                 <h2 class="text-uppercase text-center mb-5">Iniciar Sesión</h2>
-                                <form>
+                                <form id="formlogin">
                                     <div class="form-outline mb-4">
                                         <input type="text" id="username" class="form-control form-control-lg" />
                                         <label class="form-label" for="username">Usuario</label>
@@ -51,7 +51,7 @@
                                     </div>
                                     
                                     <div class="d-flex justify-content-center">
-                                        <button type="button" class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Iniciar Sesión</button>
+                                        <button id="botoniniciar" type="submit" class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Iniciar Sesión</button>
                                     </div>
                                     
                                 </form>
@@ -66,3 +66,5 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+<script src="<?= asset('build/js/login/index.js') ?>"></script>

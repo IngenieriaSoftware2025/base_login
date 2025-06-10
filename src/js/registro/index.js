@@ -182,6 +182,7 @@ const datatable = new DataTable('#TableUsuarios', {
         { title: 'Teléfono', data: 'telefono', width: '8%' },
         { title: 'DPI', data: 'dpi', width: '8%' },
         { title: 'Dirección', data: 'direccion', width: '10%' },
+     
        
        
        
@@ -225,6 +226,8 @@ const datatable = new DataTable('#TableUsuarios', {
                          data-direccion="${row.direccion || ''}"  
                          data-dpi="${row.dpi || ''}"  
                          data-correo="${row.correo || ''}">
+                        
+                         
                          <i class='bi bi-pencil-square me-1'></i> Modificar
                      </button>
                      <button class='btn btn-danger eliminar mx-1 btn-sm' 

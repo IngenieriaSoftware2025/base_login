@@ -74,6 +74,19 @@ create table historial_actividades(
     foreign key (id_ruta) references rutas(id_ruta)
 );
 
+
+--TABLA ROLES, POR EJEMPLO PARA SUBIR NOTAS PAFE PUEDE ADMINISTRAR UNICAMENTE PAFES QUE CORRESPONDEN A UNA DEPENDENCIA, 
+--ADMINISTRAR DETERMINADOS RECURSOS
+CREATE ROL(
+    rol_id serial primary key,
+    rol_nombre varchar(100),
+    rol_nombre_ct varchar(100),
+    rol_app varchar(100),
+    rol_ varchar(100),
+)
+
+
+
 CREATE TABLE clientes (
     cliente_id SERIAL PRIMARY KEY,
     cliente_nombres VARCHAR(255),

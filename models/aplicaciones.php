@@ -9,7 +9,7 @@ class Aplicaciones extends ActiveRecord {
         'nombre_app_lg',
         'nombre_app_md',
         'nombre_app_ct',
-        'fecha_creacion',
+        //'fecha_creacion',
         'situacion'
     ];
 
@@ -26,7 +26,7 @@ class Aplicaciones extends ActiveRecord {
         $this->nombre_app_lg = $args['nombre_app_lg'] ?? '';
         $this->nombre_app_md = $args['nombre_app_md'] ?? '';
         $this->nombre_app_ct = $args['nombre_app_ct'] ?? '';
-        $this->fecha_creacion = $args['fecha_creacion'] ?? '';
+       // $this->fecha_creacion = $args['fecha_creacion'] ?? '';
         $this->situacion = $args['situacion'] ?? 1;
     }
 
