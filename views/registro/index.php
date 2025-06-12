@@ -90,6 +90,24 @@
                                         </div>
                                     </div>
 
+                                    <!-- NUEVA FILA: ROL Y FOTOGRAFÍA -->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-4">
+                                                <label class="form-label" for="id_rol">Rol del Usuario *</label>
+                                                <select id="id_rol" name="id_rol" class="form-select form-control-lg" required>
+                                                    <option value="">-- Seleccione un rol --</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-4">
+                                                <label class="form-label" for="fotografia">Fotografía</label>
+                                                <input type="file" id="fotografia" name="fotografia" class="form-control form-control-lg" accept="image/*" />
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-outline mb-4">
@@ -102,15 +120,6 @@
                                             <div class="form-outline mb-4">
                                                 <input type="password" id="contrasena2" name="contrasena2" class="form-control form-control-lg"  />
                                                 <label class="form-label" for="contrasena2">Confirmar Contraseña</label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-4">
-                                                <label class="form-label" for="fotografia">Fotografía</label>
-                                                <input type="file" id="fotografia" name="fotografia" class="form-control form-control-lg" accept="image/*" />
                                             </div>
                                         </div>
                                     </div>

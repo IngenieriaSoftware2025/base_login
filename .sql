@@ -94,3 +94,14 @@ CREATE TABLE reparaciones(
 );
 
 SELECT * FROM usuarios
+
+
+
+CREATE TABLE roles(
+    id_rol SERIAL PRIMARY KEY,
+    nombre_rol VARCHAR(100) NOT NULL,
+    nombre_corto VARCHAR(25) NOT NULL,
+    descripcion VARCHAR(250),
+    fecha_creacion DATE DEFAULT TODAY,
+    situacion SMALLINT DEFAULT 1
+);

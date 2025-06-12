@@ -56,6 +56,17 @@
                             <i class="bi bi-tools"></i> Reparaciones
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/base_login/roles"><i class="bi bi-shield-check"></i> Roles</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/base_login/permisos">
+                            <i class="bi bi-key"></i> Permisos
+                        </a>
+                    </li>
+
+
+
 
 
 

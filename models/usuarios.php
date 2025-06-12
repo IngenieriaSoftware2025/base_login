@@ -21,6 +21,7 @@ class Usuarios extends ActiveRecord {
         // 'fecha_creacion',
         // 'fecha_contrasena',
         'fotografia',
+        'id_rol',  // ← LÍNEA AGREGADA
         'situacion'
     ];
     
@@ -38,6 +39,7 @@ class Usuarios extends ActiveRecord {
     public $fecha_creacion;
     public $fecha_contrasena;
     public $fotografia;
+    public $id_rol;  // ← LÍNEA AGREGADA
     public $situacion;
     
     public function __construct($usuario = [])
@@ -53,14 +55,39 @@ class Usuarios extends ActiveRecord {
         $this->correo = $usuario['correo'] ?? '';
         $this->contrasena = $usuario['contrasena'] ?? '';
         $this->token = $usuario['token'] ?? '';
-       // $this->fecha_creacion = $usuario['fecha_creacion'] ?? '';
-       // $this->fecha_contrasena = $usuario['fecha_contrasena'] ?? '';
+        $this->fecha_creacion = $usuario['fecha_creacion'] ?? '';
+        $this->fecha_contrasena = $usuario['fecha_contrasena'] ?? '';
         $this->fotografia = $usuario['fotografia'] ?? '';
+        $this->id_rol = $usuario['id_rol'] ?? null;  // ← LÍNEA AGREGADA
         $this->situacion = $usuario['situacion'] ?? 1;
     }
     
-     public static function EliminarUsuarios($id){
+    public static function EliminarUsuarios($id){
         $sql = "DELETE FROM usuarios WHERE id_usuario = $id";
         return self::SQL($sql);
     }
+
+    // MÉTODO AGREGADO: Obtener usuarios con información de rol
+    public static function obtenerUsuariosConRol(){
+        $sql = "SELECT u.*, r.nombre_rol, r.nombre_corto as rol_corto 
+                FROM usuarios u 
+                LEFT JOIN roles r ON u.id_rol = r.id_rol 
+                WHERE u.situacion = 1 
+                ORDER BY u.fecha_creacion DESC";
+        return self::fetchArray($sql);
     }
+
+    // MÉTODO AGREGADO: Validar credenciales de login (para uso futuro)
+    public static function validarCredenciales($correo, $contrasena){
+        $sql = "SELECT u.*, r.nombre_rol, r.nombre_corto as rol_corto 
+                FROM usuarios u 
+                LEFT JOIN roles r ON u.id_rol = r.id_rol 
+                WHERE u.correo = '$correo' AND u.situacion = 1";
+        $usuario = self::fetchFirst($sql);
+        
+        if($usuario && password_verify($contrasena, $usuario['contrasena'])){
+            return $usuario;
+        }
+        return false;
+    }
+}

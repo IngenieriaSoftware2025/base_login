@@ -6,6 +6,7 @@ use Exception;
 use MVC\Router;
 use Model\ActiveRecord;
 use Model\Usuarios;
+use Model\Roles;  // ← AGREGADO
 
 class RegistroController extends ActiveRecord
 {
@@ -14,11 +15,19 @@ class RegistroController extends ActiveRecord
         $router->render('registro/index', []);
     }
 
-
-
     public static function guardarAPI()
     {
         getHeadersApi();
+
+        // VALIDACIÓN DEL ROL (NUEVO)
+        if (empty($_POST['id_rol'])) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'Debe seleccionar un rol para el usuario'
+            ]);
+            exit;
+        }
 
         // PRIMER NOMBRE OBLIGATORIO
         $_POST['primer_nombre'] = ucwords(strtolower(trim(htmlspecialchars($_POST['primer_nombre']))));
@@ -31,8 +40,6 @@ class RegistroController extends ActiveRecord
             ]);
             exit;
         }
-
-
 
         // SEGUNDO NOMBRE OPCIONAL
         if (!empty($_POST['segundo_nombre'])) {
@@ -49,10 +56,6 @@ class RegistroController extends ActiveRecord
         } else {
             $_POST['segundo_nombre'] = '';
         }
-
-
-
-
 
         // PRIMER APELLIDO OBLIGATORIO
         $_POST['primer_apellido'] = ucwords(strtolower(trim(htmlspecialchars($_POST['primer_apellido']))));
@@ -83,9 +86,6 @@ class RegistroController extends ActiveRecord
             $_POST['segundo_apellido'] = '';
         }
 
-
-
-
         // TELÉFONO OBLIGATORIO
         $_POST['telefono'] = filter_var($_POST['telefono'], FILTER_SANITIZE_NUMBER_INT);
         if (strlen($_POST['telefono']) != 8) {
@@ -96,10 +96,6 @@ class RegistroController extends ActiveRecord
             ]);
             exit;
         }
-
-
-
-
 
         // DIRECCIÓN OBLIGATORIA
         $_POST['direccion'] = ucwords(strtolower(trim(htmlspecialchars($_POST['direccion']))));
@@ -113,10 +109,6 @@ class RegistroController extends ActiveRecord
             exit;
         }
 
-
-
-
-
         // DPI OBLIGATORIO
         $_POST['dpi'] = filter_var($_POST['dpi'], FILTER_VALIDATE_INT);
         if (strlen($_POST['dpi']) != 13) {
@@ -127,9 +119,6 @@ class RegistroController extends ActiveRecord
             ]);
             exit;
         }
-
-
-
 
         // CORREO OBLIGATORIO
         $_POST['correo'] = filter_var($_POST['correo'], FILTER_SANITIZE_EMAIL);
@@ -143,9 +132,7 @@ class RegistroController extends ActiveRecord
             exit;
         }
 
-
-
-        //  NO SE TIENE QUE DUPLICAR CORREIOS
+        //  NO SE TIENE QUE DUPLICAR CORREOS
         $usuarioExistente = Usuarios::where('correo', $_POST['correo']);
         if ($usuarioExistente) {
             http_response_code(400);
@@ -167,8 +154,6 @@ class RegistroController extends ActiveRecord
             exit;
         }
 
-
-
         // CONTRASEÑA OBLIGATORIA
         if (strlen($_POST['contrasena']) < 10) {
             http_response_code(400);
@@ -179,9 +164,6 @@ class RegistroController extends ActiveRecord
             exit;
         }
 
-
-
-
         // CONFIRMAR CONTRASEÑA OBLIGATORIO
         if ($_POST['contrasena'] !== $_POST['contrasena2']) {
             http_response_code(400);
@@ -191,14 +173,10 @@ class RegistroController extends ActiveRecord
             ]);
             exit;
         }
-        $fecha = date('Y-m-d H:i');
 
         $_POST['token'] = uniqid();
-        $_POST['fecha_creacion'] = $fecha;
-        $_POST['fecha_contrasena'] = $fecha;
-
-
-
+        $_POST['fecha_creacion'] = '';
+        $_POST['fecha_contrasena'] = '';
 
         // FOTOGRAFÍA OBLIGATORIA
         if (!isset($_FILES['fotografia']) || $_FILES['fotografia']['error'] === UPLOAD_ERR_NO_FILE) {
@@ -244,6 +222,12 @@ class RegistroController extends ActiveRecord
             $dpiCompleto = $_POST['dpi']; // Usar el DPI completo de 13 dígitos
             $ruta = "storage/fotosusuarios/$dpiCompleto.$fileExtension";
 
+            // Crear directorio si no existe
+            $directorioFotos = __DIR__ . "/../../storage/fotosusuarios/";
+            if (!file_exists($directorioFotos)) {
+                mkdir($directorioFotos, 0755, true);
+            }
+
             $subido = move_uploaded_file($file['tmp_name'], __DIR__ . "/../../" . $ruta);
 
             if ($subido) {
@@ -288,14 +272,11 @@ class RegistroController extends ActiveRecord
         }
     }
 
-
-
-
     public static function buscarAPI()
     {
         try {
-            $sql = "SELECT * FROM usuarios WHERE situacion = 1 ORDER BY fecha_creacion DESC";
-            $data = self::fetchArray($sql);
+            // CAMBIADO: Usar método que incluye información de rol
+            $data = Usuarios::obtenerUsuariosConRol();
 
             http_response_code(200);
             echo json_encode([
@@ -313,15 +294,23 @@ class RegistroController extends ActiveRecord
         }
     }
 
-
-
-
     public static function modificarAPI()
     {
         getHeadersApi();
 
         try {
             $id = $_POST['id_usuario'];
+
+            // VALIDACIÓN DEL ROL (NUEVO)
+            if (empty($_POST['id_rol'])) {
+                http_response_code(400);
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'Debe seleccionar un rol para el usuario'
+                ]);
+                exit;
+            }
+
             // PRIMER NOMBRE OBLIGATORIO
             $_POST['primer_nombre'] = ucwords(strtolower(trim(htmlspecialchars($_POST['primer_nombre']))));
             $cantidad_nombre = strlen($_POST['primer_nombre']);
@@ -333,9 +322,6 @@ class RegistroController extends ActiveRecord
                 ]);
                 exit;
             }
-
-
-
 
             // SEGUNDO NOMBRE OPCIONAL
             if (!empty($_POST['segundo_nombre'])) {
@@ -353,9 +339,6 @@ class RegistroController extends ActiveRecord
                 $_POST['segundo_nombre'] = '';
             }
 
-
-
-
             // PRIMER APELLIDO OBLIGATORIO
             $_POST['primer_apellido'] = ucwords(strtolower(trim(htmlspecialchars($_POST['primer_apellido']))));
             $cantidad_apellido = strlen($_POST['primer_apellido']);
@@ -367,9 +350,6 @@ class RegistroController extends ActiveRecord
                 ]);
                 exit;
             }
-
-
-
 
             // SEGUNDO APELLIDO OPCIONAL
             if (!empty($_POST['segundo_apellido'])) {
@@ -387,10 +367,6 @@ class RegistroController extends ActiveRecord
                 $_POST['segundo_apellido'] = '';
             }
 
-
-
-
-
             // TELÉFONO OBLIGATORIO
             $_POST['telefono'] = filter_var($_POST['telefono'], FILTER_SANITIZE_NUMBER_INT);
             if (strlen($_POST['telefono']) != 8) {
@@ -401,9 +377,6 @@ class RegistroController extends ActiveRecord
                 ]);
                 exit;
             }
-
-
-
 
             // DIRECCIÓN OBLIGATORIA
             $_POST['direccion'] = ucwords(strtolower(trim(htmlspecialchars($_POST['direccion']))));
@@ -417,8 +390,6 @@ class RegistroController extends ActiveRecord
                 exit;
             }
 
-
-
             // DPI OBLIGATORIO
             $_POST['dpi'] = trim(htmlspecialchars($_POST['dpi']));
             if (strlen($_POST['dpi']) != 13) {
@@ -429,8 +400,6 @@ class RegistroController extends ActiveRecord
                 ]);
                 exit;
             }
-
-
 
             // CORREO OBLIGATORIO
             $_POST['correo'] = filter_var($_POST['correo'], FILTER_SANITIZE_EMAIL);
@@ -444,8 +413,6 @@ class RegistroController extends ActiveRecord
                 exit;
             }
 
-
-            
             //ACTUALIZAR USUARIO
             $usuario = Usuarios::find($id);
             $usuario->sincronizar([
@@ -457,6 +424,7 @@ class RegistroController extends ActiveRecord
                 'direccion' => $_POST['direccion'],
                 'dpi' => $_POST['dpi'],
                 'correo' => $_POST['correo'],
+                'id_rol' => $_POST['id_rol'],  // ← AGREGADO
                 'situacion' => 1
             ]);
 
@@ -477,10 +445,6 @@ class RegistroController extends ActiveRecord
         }
     }
 
-
-
-
-
     public static function eliminarAPI()
     {
         try {
@@ -498,6 +462,29 @@ class RegistroController extends ActiveRecord
                 'codigo' => 0,
                 'mensaje' => 'Error al eliminar',
                 'detalle' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    // MÉTODO NUEVO: Para obtener roles en el dropdown
+    public static function obtenerRolesAPI()
+    {
+        getHeadersApi();
+        try {
+            $roles = Roles::obtenerRolesActivos();
+
+            http_response_code(200);
+            echo json_encode([
+                'codigo' => 1,
+                'mensaje' => 'Roles obtenidos correctamente',
+                'data' => $roles
+            ]);
+        } catch (Exception $e) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'Error al obtener roles',
+                'detalle' => $e->getMessage()
             ]);
         }
     }

@@ -16,132 +16,66 @@ class LoginController extends ActiveRecord
 
     public static function loginAPI()
     {
-        // CRÍTICO: Limpiar cualquier output buffer
-        while (ob_get_level()) {
-            ob_end_clean();
-        }
-        
-        // Establecer headers JSON
-        header("Content-Type: application/json; charset=utf-8");
-        header("Cache-Control: no-cache, must-revalidate");
-        
+        getHeadersApi();
+
         try {
-            // Verificar método POST
-            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                http_response_code(405);
-                echo json_encode([
-                    'codigo' => 0,
-                    'mensaje' => 'Solo se permite método POST'
-                ]);
-                exit;
-            }
+            $correo = filter_var($_POST['correo'], FILTER_SANITIZE_EMAIL);
+            $contrasena = htmlspecialchars($_POST['contrasena']);
 
-            // Obtener y validar datos
-            $dpi = isset($_POST['dpi']) ? trim($_POST['dpi']) : '';
-            $contrasena = isset($_POST['contrasena']) ? trim($_POST['contrasena']) : '';
+            $queryExisteUser = "SELECT u.*, r.nombre_rol, r.nombre_corto FROM usuarios u 
+                               LEFT JOIN roles r ON u.id_rol = r.id_rol 
+                               WHERE u.correo = '$correo' AND u.situacion = 1";
 
-            // Validaciones
-            if (empty($dpi) || empty($contrasena)) {
-                http_response_code(400);
-                echo json_encode([
-                    'codigo' => 0,
-                    'mensaje' => 'DPI y contraseña son obligatorios'
-                ]);
-                exit;
-            }
+            $ExisteUsuario = ActiveRecord::fetchFirst($queryExisteUser);
 
-            if (strlen($dpi) != 13 || !ctype_digit($dpi)) {
-                http_response_code(400);
-                echo json_encode([
-                    'codigo' => 0,
-                    'mensaje' => 'El DPI debe tener exactamente 13 dígitos'
-                ]);
-                exit;
-            }
+            if ($ExisteUsuario) {
 
-            // Buscar usuario usando consulta preparada
-            $db = ActiveRecord::getDB();
-            $sql = "SELECT primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, contrasena, correo 
-                    FROM usuarios 
-                    WHERE dpi = ? AND situacion = 1";
-            
-            $stmt = $db->prepare($sql);
-            $stmt->execute([$dpi]);
-            $usuario = $stmt->fetch();
+                $passDB = $ExisteUsuario['contrasena'];
 
-            if (!$usuario) {
-                http_response_code(404);
-                echo json_encode([
-                    'codigo' => 0,
-                    'mensaje' => 'Usuario no encontrado o inactivo'
-                ]);
-                exit;
-            }
+                if (password_verify($contrasena, $passDB)) {
 
-            // Verificar contraseña
-            if (password_verify($contrasena, $usuario['contrasena'])) {
-                // Iniciar sesión
-                session_start();
-                
-                // Crear nombre completo
-                $nombres = array_filter([
-                    $usuario['primer_nombre'],
-                    $usuario['segundo_nombre']
-                ]);
-                $apellidos = array_filter([
-                    $usuario['primer_apellido'],
-                    $usuario['segundo_apellido']
-                ]);
-                
-                $nombreCompleto = trim(implode(' ', $nombres) . ' ' . implode(' ', $apellidos));
+                    session_start();
 
-                // Establecer variables de sesión
-                $_SESSION['user'] = $nombreCompleto;
-                $_SESSION['dpi'] = $dpi;
-                $_SESSION['correo'] = $usuario['correo'];
-                $_SESSION['login'] = true;
+                    $nombreUser = $ExisteUsuario['primer_nombre'] . ' ' . $ExisteUsuario['primer_apellido'];
+                    $rolUser = $ExisteUsuario['nombre_corto'];
 
-                http_response_code(200);
-                echo json_encode([
-                    'codigo' => 1,
-                    'mensaje' => 'Login exitoso',
-                    'usuario' => $nombreCompleto
-                ]);
+                    $_SESSION['user'] = $nombreUser;
+                    $_SESSION['rol'] = $rolUser;
+                    $_SESSION['id_usuario'] = $ExisteUsuario['id_usuario'];
+                    $_SESSION['login'] = true;
+
+                    echo json_encode([
+                        'codigo' => 1,
+                        'mensaje' => 'Usuario logueado exitosamente',
+                    ]);
+                } else {
+                    echo json_encode([
+                        'codigo' => 0,
+                        'mensaje' => 'La contraseña que ingreso es Incorrecta',
+                    ]);
+                }
             } else {
-                http_response_code(401);
                 echo json_encode([
                     'codigo' => 0,
-                    'mensaje' => 'Contraseña incorrecta'
+                    'mensaje' => 'El usuario que intenta loguearse NO EXISTE',
                 ]);
             }
-
         } catch (Exception $e) {
-            http_response_code(500);
             echo json_encode([
                 'codigo' => 0,
-                'mensaje' => 'Error interno del servidor',
+                'mensaje' => 'Error al intentar loguearse',
                 'detalle' => $e->getMessage()
             ]);
         }
-        
-        exit;
     }
 
-    public static function logout()
+    public static function renderInicio(Router $router)
     {
-        while (ob_get_level()) {
-            ob_end_clean();
+        session_start();
+        if(!isset($_SESSION['login'])) {
+            header('Location: /base_login/login');
         }
         
-        header("Content-Type: application/json; charset=utf-8");
-        
-        session_start();
-        session_destroy();
-        
-        echo json_encode([
-            'codigo' => 1,
-            'mensaje' => 'Sesión cerrada exitosamente'
-        ]);
-        exit;
+        $router->render('pages/inicio', [], 'layout/layout');
     }
 }

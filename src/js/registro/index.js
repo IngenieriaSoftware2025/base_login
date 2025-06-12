@@ -4,19 +4,37 @@ import { validarFormulario } from '../funciones';
 import DataTable from "datatables.net-bs5";
 import { lenguaje } from "../lenguaje";
 
-
-
-
 const FormUsuarios = document.getElementById('FormUsuarios');
 const BtnGuardar = document.getElementById('BtnGuardar');
 const BtnModificar = document.getElementById('BtnModificar');
 const BtnLimpiar = document.getElementById('BtnLimpiar');
 const BtnBuscarUsuarios = document.getElementById('BtnBuscarUsuarios');
 const seccionTabla = document.getElementById('seccionTabla');
+const SelectRol = document.getElementById('id_rol'); // ← NUEVO
 
+// NUEVA FUNCIÓN: Cargar roles en el dropdown
+const CargarRoles = async () => {
+    const url = `/base_login/registro/obtenerRolesAPI`;
+    const config = {
+        method: 'GET'
+    }
 
+    try {
+        const respuesta = await fetch(url, config);
+        const datos = await respuesta.json();
+        const { codigo, data } = datos
 
+        if (codigo == 1) {
+            SelectRol.innerHTML = '<option value="">-- Seleccione un rol --</option>';
+            data.forEach(rol => {
+                SelectRol.innerHTML += `<option value="${rol.id_rol}">${rol.nombre_rol}</option>`;
+            });
+        }
 
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 const GuardarUsuario = async (event) => {
     event.preventDefault();
@@ -39,13 +57,6 @@ const GuardarUsuario = async (event) => {
         BtnGuardar.disabled = false;
         return;
     }
-
-
-
-
-
-
-
 
     const body = new FormData(FormUsuarios);
     const url = '/base_login/registro/guardarAPI';
@@ -86,16 +97,6 @@ const GuardarUsuario = async (event) => {
     BtnGuardar.disabled = false;
 }
 
-
-
-
-
-
-
-
-
-
-
 const BuscarUsuarios = async () => {
     const url = `/base_login/registro/buscarAPI`;
     const config = {
@@ -125,13 +126,6 @@ const BuscarUsuarios = async () => {
     }
 }
 
-
-
-
-
-
-
-
 const MostrarTabla = () => {
     if (seccionTabla.style.display === 'none') {
         seccionTabla.style.display = 'block';
@@ -140,11 +134,6 @@ const MostrarTabla = () => {
         seccionTabla.style.display = 'none';
     }
 }
-
-
-
-
-
 
 const datatable = new DataTable('#TableUsuarios', {
     dom: `
@@ -162,38 +151,27 @@ const datatable = new DataTable('#TableUsuarios', {
     language: lenguaje,
     data: [],
     columns: [
-
-
-
-
-
-
         {
             title: 'No.',
             data: 'id_usuario',
             width: '3%',
             render: (data, type, row, meta) => meta.row + 1
         },
-        { title: 'Primer Nombre', data: 'primer_nombre', width: '10%' },
-        { title: 'Segundo Nombre', data: 'segundo_nombre', width: '10%' },
-        { title: 'Primer Apellido', data: 'primer_apellido', width: '10%' },
-        { title: 'Segundo Apellido', data: 'segundo_apellido', width: '10%' },
+        { title: 'Primer Nombre', data: 'primer_nombre', width: '9%' },
+        { title: 'Segundo Nombre', data: 'segundo_nombre', width: '9%' },
+        { title: 'Primer Apellido', data: 'primer_apellido', width: '9%' },
+        { title: 'Segundo Apellido', data: 'segundo_apellido', width: '9%' },
         { title: 'Correo', data: 'correo', width: '12%' },
         { title: 'Teléfono', data: 'telefono', width: '8%' },
         { title: 'DPI', data: 'dpi', width: '8%' },
+        { title: 'Rol', data: 'nombre_rol', width: '8%' }, // ← NUEVA COLUMNA
         { title: 'Dirección', data: 'direccion', width: '10%' },
-     
-       
-       
-       
-       
-       
         {
             title: 'Fotografía',
             data: 'fotografia',
             searchable: false,
             orderable: false,
-            width: '8%',
+            width: '7%',
             render: (data, type, row) => {
                 if (data && data.trim() !== '') {
                     return `<img src="${data}" alt="Foto" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">`;
@@ -203,16 +181,12 @@ const datatable = new DataTable('#TableUsuarios', {
             }
         },
         
-
-
-
-
         {
             title: 'Acciones',
             data: 'id_usuario',
             searchable: false,
             orderable: false,
-            width: '10%',
+            width: '8%',
             render: (data, type, row, meta) => {
                 return `
                  <div class='d-flex justify-content-center'>
@@ -225,9 +199,8 @@ const datatable = new DataTable('#TableUsuarios', {
                          data-telefono="${row.telefono || ''}"  
                          data-direccion="${row.direccion || ''}"  
                          data-dpi="${row.dpi || ''}"  
-                         data-correo="${row.correo || ''}">
-                        
-                         
+                         data-correo="${row.correo || ''}"
+                         data-id_rol="${row.id_rol || ''}">
                          <i class='bi bi-pencil-square me-1'></i> Modificar
                      </button>
                      <button class='btn btn-danger eliminar mx-1 btn-sm' 
@@ -239,10 +212,6 @@ const datatable = new DataTable('#TableUsuarios', {
         }
     ]
 });
-
-
-
-
 
 const llenarFormulario = (event) => {
     const datos = event.currentTarget.dataset;
@@ -256,6 +225,7 @@ const llenarFormulario = (event) => {
     document.getElementById('direccion').value = datos.direccion;
     document.getElementById('dpi').value = datos.dpi;
     document.getElementById('correo').value = datos.correo;
+    document.getElementById('id_rol').value = datos.id_rol; // ← NUEVO
 
     // Ocultar campos de contraseña en modificación
     document.getElementById('contrasena').style.display = 'none';
@@ -271,12 +241,6 @@ const llenarFormulario = (event) => {
     });
 }
 
-
-
-
-
-
-
 const limpiarTodo = () => {
     FormUsuarios.reset();
     
@@ -289,14 +253,6 @@ const limpiarTodo = () => {
     BtnGuardar.classList.remove('d-none');
     BtnModificar.classList.add('d-none');
 }
-
-
-
-
-
-
-
-
 
 const ModificarUsuario = async (event) => {
     event.preventDefault();
@@ -361,16 +317,6 @@ const ModificarUsuario = async (event) => {
     BtnModificar.disabled = false;
 }
 
-
-
-
-
-
-
-
-
-
-
 const EliminarUsuarios = async (e) => {
     const idUsuario = e.currentTarget.dataset.id
 
@@ -423,10 +369,8 @@ const EliminarUsuarios = async (e) => {
     }
 }
 
-
-
-
-
+// INICIALIZAR: Cargar roles al inicio
+CargarRoles(); // ← NUEVA LÍNEA
 
 datatable.on('click', '.eliminar', EliminarUsuarios);
 datatable.on('click', '.modificar', llenarFormulario);

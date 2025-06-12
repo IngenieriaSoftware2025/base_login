@@ -1,54 +1,19 @@
-import { Dropdown } from "bootstrap";
-import Swal from "sweetalert2";
+import Swal from 'sweetalert2';
 import { validarFormulario } from '../funciones';
 
 const FormLogin = document.getElementById('FormLogin');
 const BtnIniciarSesion = document.getElementById('BtnIniciarSesion');
-const InputDpi = document.getElementById('dpi');
-
-// Validación en tiempo real del DPI
-const ValidarDPI = () => {
-    const dpi = InputDpi.value.trim();
-    
-    // Remover caracteres no numéricos
-    const dpiLimpio = dpi.replace(/\D/g, '');
-    InputDpi.value = dpiLimpio;
-    
-    if (dpiLimpio.length === 0) {
-        InputDpi.classList.remove('is-valid', 'is-invalid');
-    } else if (dpiLimpio.length !== 13) {
-        InputDpi.classList.remove('is-valid');
-        InputDpi.classList.add('is-invalid');
-    } else {
-        InputDpi.classList.remove('is-invalid');
-        InputDpi.classList.add('is-valid');
-    }
-}
 
 const login = async (e) => {
     e.preventDefault();
+
     BtnIniciarSesion.disabled = true;
 
-    // Validar formulario
     if (!validarFormulario(FormLogin, [''])) {
         Swal.fire({
             title: "Campos vacíos",
             text: "Debe llenar todos los campos",
-            icon: "info",
-            confirmButtonColor: '#3085d6'
-        });
-        BtnIniciarSesion.disabled = false;
-        return;
-    }
-
-    // Validar DPI específicamente
-    const dpi = document.getElementById('dpi').value.trim();
-    if (dpi.length !== 13 || !/^\d{13}$/.test(dpi)) {
-        Swal.fire({
-            title: "DPI inválido",
-            text: "El DPI debe tener exactamente 13 dígitos numéricos",
-            icon: "warning",
-            confirmButtonColor: '#f39c12'
+            icon: "info"
         });
         BtnIniciarSesion.disabled = false;
         return;
@@ -56,7 +21,8 @@ const login = async (e) => {
 
     try {
         const body = new FormData(FormLogin);
-        const url = '/base_login/login/loginAPI';
+        const url = '/base_login/API/login';
+
         const config = {
             method: 'POST',
             body
@@ -64,60 +30,43 @@ const login = async (e) => {
 
         const respuesta = await fetch(url, config);
         const data = await respuesta.json();
-        const { codigo, mensaje, usuario } = data;
+        const { codigo, mensaje } = data;
 
         if (codigo == 1) {
             await Swal.fire({
-                title: '¡Bienvenido!',
-                text: `${mensaje}. Hola ${usuario || ''}`,
+                title: 'Éxito',
+                text: mensaje,
                 icon: 'success',
                 showConfirmButton: true,
-                timer: 2000,
-                timerProgressBar: true,
-                background: '#f8f9fa',
-                confirmButtonColor: '#28a745'
+                timer: 1500,
+                timerProgressBar: false,
+                background: '#e0f7fa'
             });
 
             FormLogin.reset();
-            
-            // Redirigir a la página principal o dashboard
-            location.href = '/base_login/'; // Cambia esta ruta según tu aplicación
+            location.href = '/base_login/inicio'
         } else {
             Swal.fire({
-                title: '¡Error de autenticación!',
+                title: '¡Error!',
                 text: mensaje,
-                icon: 'error',
+                icon: 'warning',
                 showConfirmButton: true,
-                confirmButtonColor: '#dc3545',
-                background: '#f8f9fa'
+                timer: 1500,
+                timerProgressBar: false,
+                background: '#e0f7fa'
             });
         }
 
     } catch (error) {
-        console.error('Error en login:', error);
+        console.log(error);
         Swal.fire({
             title: 'Error de conexión',
-            text: 'No se pudo conectar con el servidor. Intente nuevamente.',
-            icon: 'error',
-            confirmButtonColor: '#dc3545'
+            text: 'No se pudo conectar con el servidor',
+            icon: 'error'
         });
     }
 
     BtnIniciarSesion.disabled = false;
-}
+};
 
-// Event listeners
 FormLogin.addEventListener('submit', login);
-InputDpi.addEventListener('input', ValidarDPI);
-
-// Prevenir caracteres no numéricos en el campo DPI
-InputDpi.addEventListener('keypress', (e) => {
-    // Permitir solo números, backspace, delete, tab, escape, enter
-    const allowedKeys = [8, 9, 27, 13, 46];
-    const isNumber = (e.which >= 48 && e.which <= 57);
-    const isAllowedKey = allowedKeys.includes(e.which);
-    
-    if (!isNumber && !isAllowedKey) {
-        e.preventDefault();
-    }
-});

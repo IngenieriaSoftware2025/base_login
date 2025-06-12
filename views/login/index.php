@@ -28,19 +28,6 @@
             backdrop-filter: blur(10px);
             background-color: rgba(255, 255, 255, 0.95);
         }
-
-        .form-control:focus {
-            border-color: #28a745;
-            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-        }
-
-        .is-invalid {
-            border-color: #dc3545 !important;
-        }
-
-        .is-valid {
-            border-color: #28a745 !important;
-        }
     </style>
 </head>
 <body>
@@ -56,19 +43,13 @@
                                 
                                 <form id="FormLogin">
                                     <div class="form-outline mb-4">
-                                        <label class="form-label" for="dpi">DPI (13 dígitos)</label>
-                                        <input type="text" 
-                                               id="dpi" 
-                                               name="dpi" 
+                                        <label class="form-label" for="correo">Correo Electrónico</label>
+                                        <input type="email" 
+                                               id="correo" 
+                                               name="correo" 
                                                class="form-control form-control-lg" 
-                                               placeholder="Ingrese su DPI (13 dígitos)" 
-                                               maxlength="13" 
-                                               pattern="[0-9]{13}" 
-                                               title="El DPI debe tener exactamente 13 dígitos numéricos"
+                                               placeholder="Ingrese su correo electrónico"
                                                required />
-                                        <div class="invalid-feedback">
-                                            El DPI debe tener exactamente 13 dígitos numéricos.
-                                        </div>
                                     </div>
                                     
                                     <div class="form-outline mb-4">
@@ -104,15 +85,6 @@
     </section>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Script inline para debug - remover después de solucionar
-        console.log('Elementos encontrados:', {
-            FormLogin: !!document.getElementById('FormLogin'),
-            BtnIniciarSesion: !!document.getElementById('BtnIniciarSesion'),
-            dpi: !!document.getElementById('dpi'),
-            contrasena: !!document.getElementById('contrasena')
-        });
-    </script>
     <script src="<?= asset('build/js/login/index.js') ?>"></script>
 </body>
 </html>

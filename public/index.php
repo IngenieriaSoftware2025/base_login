@@ -9,7 +9,9 @@ use Controllers\MarcasController;
 use Controllers\ModelosController;
 use Controllers\ClientesController;
 use Controllers\InventarioController;
-use Controllers\ReparacionesController; // <- AGREGAR ESTA LÍNEA
+use Controllers\ReparacionesController;
+use Controllers\RolesController;
+use Controllers\PermisosController;
 
 $router = new Router();
 $router->setBaseURL('/' . $_ENV['APP_NAME']);
@@ -18,15 +20,17 @@ $router->get('/', [AppController::class,'index']);
 
 //LOGIN
 $router->get('/login', [LoginController::class, 'renderizarPagina']);
-$router->post('/login/loginAPI', [LoginController::class, 'loginAPI']);
-$router->post('/login/logout', [LoginController::class, 'logout']);
+$router->post('/API/login', [LoginController::class, 'loginAPI']);
 
+//INICIO (después del login)
+$router->get('/inicio', [LoginController::class, 'renderInicio']);
 //REGISTRO
 $router->get('/registro', [RegistroController::class, 'renderizarPagina']);
 $router->post('/registro/guardarAPI', [RegistroController::class, 'guardarAPI']);
 $router->get('/registro/buscarAPI', [RegistroController::class, 'buscarAPI']);
 $router->post('/registro/modificarAPI', [RegistroController::class, 'modificarAPI']);
 $router->get('/registro/eliminarAPI', [RegistroController::class, 'eliminarAPI']);
+$router->get('/registro/obtenerRolesAPI', [RegistroController::class, 'obtenerRolesAPI']);
 
 //MARCAS
 $router->get('/marcas', [MarcasController::class, 'renderizarPagina']);
@@ -59,8 +63,6 @@ $router->get('/inventario/eliminarAPI', [InventarioController::class, 'eliminarA
 $router->get('/inventario/obtenerMarcasAPI', [InventarioController::class, 'obtenerMarcasAPI']);
 $router->get('/inventario/obtenerModelosAPI', [InventarioController::class, 'obtenerModelosAPI']);
 
-
-
 //REPARACIONES
 $router->get('/reparaciones', [ReparacionesController::class, 'renderizarPagina']);
 $router->post('/reparaciones/guardarAPI', [ReparacionesController::class, 'guardarAPI']);
@@ -69,4 +71,20 @@ $router->post('/reparaciones/modificarAPI', [ReparacionesController::class, 'mod
 $router->get('/reparaciones/eliminarAPI', [ReparacionesController::class, 'eliminarAPI']);
 $router->get('/reparaciones/obtenerClientesAPI', [ReparacionesController::class, 'obtenerClientesAPI']);
 $router->get('/reparaciones/obtenerUsuariosAPI', [ReparacionesController::class, 'obtenerUsuariosAPI']);
+
+//ROLES
+$router->get('/roles', [RolesController::class, 'renderizarPagina']);
+$router->post('/roles/guardarAPI', [RolesController::class, 'guardarAPI']);
+$router->get('/roles/buscarAPI', [RolesController::class, 'buscarAPI']);
+$router->post('/roles/modificarAPI', [RolesController::class, 'modificarAPI']);
+$router->get('/roles/eliminarAPI', [RolesController::class, 'eliminarAPI']);
+$router->get('/roles/estadisticasAPI', [RolesController::class, 'estadisticasAPI']);
+
+//PERMISOS
+$router->get('/permisos', [PermisosController::class, 'renderizarPagina']);
+$router->post('/permisos/guardarAPI', [PermisosController::class, 'guardarAPI']);
+$router->get('/permisos/buscarAPI', [PermisosController::class, 'buscarAPI']);
+$router->post('/permisos/modificarAPI', [PermisosController::class, 'modificarAPI']);
+$router->get('/permisos/eliminarAPI', [PermisosController::class, 'eliminarAPI']);
+
 $router->comprobarRutas();
