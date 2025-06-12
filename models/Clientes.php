@@ -1,41 +1,59 @@
 <?php
-// crea nombre de espacio Model
 namespace Model;
-// Importa la clase ActiveRecord del nombre de espacio Model
-use Model\ActiveRecord;
-// Crea la clase de instancia Clientes y hereda las funciones de ActiveRecord
+
 class Clientes extends ActiveRecord {
     
-    // Crea las propiedades de la clase
     public static $tabla = 'clientes';
-    public static $idTabla = 'cliente_id';
-    public static $columnasDB = 
-    [
-        'cliente_nombres',
-        'cliente_apellidos',
-        'cliente_nit',
-        'cliente_telefono',
-        'cliente_correo',
-        'cliente_situacion'
+    public static $idTabla = 'id_cliente';
+    public static $columnasDB = [
+        'primer_nombre',
+        'segundo_nombre',
+        'primer_apellido',
+        'segundo_apellido',
+        'telefono',
+        'dpi',
+        'correo',
+        'direccion',
+        'situacion'
     ];
     
-    // Crea las variables para almacenar los datos
-    public $cliente_id;
-    public $cliente_nombres;
-    public $cliente_apellidos;
-    public $cliente_nit;
-    public $cliente_telefono;
-    public $cliente_correo;
-    public $cliente_situacion;
+    public $id_cliente;
+    public $primer_nombre;
+    public $segundo_nombre;
+    public $primer_apellido;
+    public $segundo_apellido;
+    public $telefono;
+    public $dpi;
+    public $correo;
+    public $direccion;
+    public $fecha_registro;
+    public $situacion;
     
     public function __construct($cliente = [])
     {
-        $this->cliente_id = $cliente['cliente_id'] ?? null;
-        $this->cliente_nombres = $cliente['cliente_nombres'] ?? '';
-        $this->cliente_apellidos = $cliente['cliente_apellidos'] ?? '';
-        $this->cliente_nit = $cliente['cliente_nit'] ?? '';
-        $this->cliente_telefono = $cliente['cliente_telefono'] ?? '';
-        $this->cliente_correo = $cliente['cliente_correo'] ?? '';
-        $this->cliente_situacion = $cliente['cliente_situacion'] ?? 1;
+        $this->id_cliente = $cliente['id_cliente'] ?? null;
+        $this->primer_nombre = $cliente['primer_nombre'] ?? '';
+        $this->segundo_nombre = $cliente['segundo_nombre'] ?? '';
+        $this->primer_apellido = $cliente['primer_apellido'] ?? '';
+        $this->segundo_apellido = $cliente['segundo_apellido'] ?? '';
+        $this->telefono = $cliente['telefono'] ?? '';
+        $this->dpi = $cliente['dpi'] ?? '';
+        $this->correo = $cliente['correo'] ?? '';
+        $this->direccion = $cliente['direccion'] ?? '';
+        $this->fecha_registro = $cliente['fecha_registro'] ?? '';
+        $this->situacion = $cliente['situacion'] ?? 1;
+    }
+    
+    // Método para eliminar cliente (cambiar situacion = 0)
+    public static function EliminarCliente($id){
+        $sql = "UPDATE clientes SET situacion = 0 WHERE id_cliente = $id";
+        return self::SQL($sql);
+    }
+    
+    // Método para buscar clientes activos
+    public static function obtenerClientesActivos(){
+        $sql = "SELECT * FROM clientes WHERE situacion = 1 ORDER BY primer_apellido, primer_nombre";
+        return self::fetchArray($sql);
     }
 }
+?>

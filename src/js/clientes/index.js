@@ -1,79 +1,102 @@
 import { Dropdown } from "bootstrap";
 import Swal from "sweetalert2";
+import { validarFormulario } from '../funciones';
 import DataTable from "datatables.net-bs5";
-import { validarFormulario } from "../funciones";
 import { lenguaje } from "../lenguaje";
 
-const FormClientes = document.getElementById("FormClientes");
-const BtnGuardar = document.getElementById("BtnGuardar");
-const BtnModificar = document.getElementById("BtnModificar");
-const BtnLimpiar = document.getElementById("BtnLimpiar");
-const validarTelefono = document.getElementById("cliente_telefono");
-const validarNit = document.getElementById("cliente_nit");
+const FormClientes = document.getElementById('FormClientes');
+const BtnGuardar = document.getElementById('BtnGuardar');
+const BtnModificar = document.getElementById('BtnModificar');
+const BtnLimpiar = document.getElementById('BtnLimpiar');
+const BtnBuscar = document.getElementById('BtnBuscar');
 
-const validacionTelefono = () => {
-  const cantidadDigitos = validarTelefono.value;
-  if (cantidadDigitos.length < 8) {
-    validarTelefono.classList.remove("is_valid", "is-invalid");
-  } else {
-    if (cantidadDigitos.length != 8) {
-      Swal.fire({
-        position: "center",
-        icon: "warning",
-        title: "datos incorrectos",
-        text: "El número de teléfono debe tener 8 dígitos.",
-        timer: 2000,
-      });
+const GuardarCliente = async (event) => {
+    event.preventDefault();
+    BtnGuardar.disabled = true;
 
-      validarTelefono.classList.remove("is-invalid");
-      validarTelefono.classList.remove("is_valid");
-    } else {
-      validarTelefono.classList.remove("is_valid");
-      validarTelefono.classList.remove("is-invalid");
+    if (!validarFormulario(FormClientes, ['id_cliente', 'segundo_nombre', 'segundo_apellido', 'telefono', 'dpi', 'correo', 'direccion'])) {
+        Swal.fire({
+            position: "center",
+            icon: "info",
+            title: "FORMULARIO INCOMPLETO",
+            text: "Debe completar los campos obligatorios",
+            showConfirmButton: true,
+        });
+        BtnGuardar.disabled = false;
+        return;
     }
-  }
-};
 
-function validandoNIT() {
-  const nit = cliente_nit.value.trim();
-
-  let nd,
-    add = 0;
-
-  if ((nd = /^(\d+)-?([\dkK])$/.exec(nit))) {
-    nd[2] = nd[2].toLowerCase() === "k" ? 10 : parseInt(nd[2], 10);
-
-    for (let i = 0; i < nd[1].length; i++) {
-      add += ((i - nd[1].length) * -1 + 1) * parseInt(nd[1][i], 10);
+    const body = new FormData(FormClientes);
+    const url = '/base_login/clientes/guardarAPI';
+    const config = {
+        method: 'POST',
+        body
     }
-    return (11 - (add % 11)) % 11 === nd[2];
-  } else {
-    return false;
-  }
+
+    try {
+        const respuesta = await fetch(url, config);
+        const datos = await respuesta.json();
+        const { codigo, mensaje } = datos
+
+        if (codigo == 1) {
+            await Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Éxito",
+                text: mensaje,
+                showConfirmButton: true,
+            });
+
+            limpiarTodo();
+            BuscarClientes();
+        } else {
+            await Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Error",
+                text: mensaje,
+                showConfirmButton: true,
+            });
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+    BtnGuardar.disabled = false;
 }
 
-const validacionNIT = () => {
-  validandoNIT();
+const BuscarClientes = async () => {
+    const url = `/base_login/clientes/buscarAPI`;
+    const config = {
+        method: 'GET'
+    }
 
-  if (validandoNIT()) {
-    cliente_nit.classList.add("is-valid");
-    cliente_nit.classList.remove("is-invalid");
-  } else {
-    cliente_nit.classList.remove("is-valid");
-    cliente_nit.classList.add("is-invalid");
+    try {
+        const respuesta = await fetch(url, config);
+        const datos = await respuesta.json();
+        const { codigo, mensaje, data } = datos
 
-    Swal.fire({
-      position: "center",
-      icon: "error",
-      title: "NIT INVALIDO",
-      text: "El numero de nit ingresado es invalido",
-      showConfirmButton: true,
-    });
-  }
-};
+        if (codigo == 1) {
+            datatable.clear().draw();
+            datatable.rows.add(data).draw();
+        } else {
+            await Swal.fire({
+                position: "center",
+                icon: "info",
+                title: "Info",
+                text: mensaje,
+                showConfirmButton: true,
+            });
+        }
 
-const Datosdelatabla = new DataTable("#TableClientes", {
-  dom: `<"row mt-3 justify-content-between" 
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const datatable = new DataTable('#TableClientes', {
+    dom: `
+        <"row mt-3 justify-content-between" 
             <"col" l> 
             <"col" B> 
             <"col-3" f>
@@ -82,205 +105,166 @@ const Datosdelatabla = new DataTable("#TableClientes", {
         <"row mt-3 justify-content-between" 
             <"col-md-3 d-flex align-items-center" i> 
             <"col-md-8 d-flex justify-content-end" p>
-        >`,
-  language: lenguaje,
-  data: [],
-  columns: [
-    {
-      title: "No.",
-      data: "cliente_id",
-      width: "5%",
-      render: (data, type, row, meta) => meta.row + 1,
-    },
-    { title: "Nombre", data: "cliente_nombres", width: "25%" },
-    { title: "Apellido", data: "cliente_apellidos", width: "25%" },
-    { title: "NIT", data: "cliente_nit", width: "10%" },
-    { title: "Teléfono", data: "cliente_telefono", width: "10%" },
-    { title: "Correo", data: "cliente_correo", width: "15%" },
-    {
-      title: "Acciones",
-      data: "cliente_id",
-      searchable: false,
-      orderable: false,
-      width: "10%",
-      render: (data, type, row, meta) => {
-        return `
-                <div class='d-flex justify-content-center'>
-                    <button class='btn btn-warning modificar mx-1 btn-sm' 
-                        data-cliente_id="${data}" 
-                        data-cliente_nombres="${row.cliente_nombres}"  
-                        data-cliente_apellidos="${row.cliente_apellidos}"
-                        data-cliente_telefono="${row.cliente_telefono}"  
-                        data-cliente_nit="${row.cliente_nit}"   
-                        data-cliente_correo="${row.cliente_correo}">
-                        <i class='bi bi-pencil-square me-1'></i> Modificar
-                    </button>
-                    <button class='btn btn-danger eliminar mx-1 btn-sm' 
-                        data-id="${data}">
+        >
+    `,
+    language: lenguaje,
+    data: [],
+    columns: [
+        {
+            title: 'No.',
+            data: 'id_cliente',
+            width: '5%',
+            render: (data, type, row, meta) => meta.row + 1
+        },
+        { 
+            title: 'Primer Nombre', 
+            data: 'primer_nombre', 
+            width: '15%' 
+        },
+        { 
+            title: 'Segundo Nombre', 
+            data: 'segundo_nombre', 
+            width: '15%',
+            render: (data) => data || ''
+        },
+        { 
+            title: 'Primer Apellido', 
+            data: 'primer_apellido', 
+            width: '15%' 
+        },
+        { 
+            title: 'Segundo Apellido', 
+            data: 'segundo_apellido', 
+            width: '15%',
+            render: (data) => data || ''
+        },
+        { 
+            title: 'Teléfono', 
+            data: 'telefono', 
+            width: '10%',
+            render: (data) => data || 'Sin teléfono'
+        },
+        { 
+            title: 'Correo', 
+            data: 'correo', 
+            width: '15%',
+            render: (data) => data || 'Sin correo'
+        },
+        {
+            title: 'Acciones',
+            data: 'id_cliente',
+            searchable: false,
+            orderable: false,
+            width: '10%',
+            render: (data, type, row, meta) => {
+                return `
+                 <div class='d-flex justify-content-center'>
+                     <button class='btn btn-warning modificar mx-1 btn-sm' 
+                         data-id="${data}" 
+                         data-primer-nombre="${row.primer_nombre}"  
+                         data-segundo-nombre="${row.segundo_nombre || ''}"  
+                         data-primer-apellido="${row.primer_apellido}"  
+                         data-segundo-apellido="${row.segundo_apellido || ''}"  
+                         data-telefono="${row.telefono || ''}"  
+                         data-dpi="${row.dpi || ''}"  
+                         data-correo="${row.correo || ''}"  
+                         data-direccion="${row.direccion || ''}">
+                         <i class='bi bi-pencil-square me-1'></i> Editar
+                     </button>
+                     <button class='btn btn-danger eliminar mx-1 btn-sm' 
+                         data-id="${data}">
                         <i class="bi bi-trash3 me-1"></i>Eliminar
-                    </button>
-                </div>
-                `;
-      },
-    },
-  ],
+                     </button>
+                 </div>`;
+            }
+        }
+    ]
 });
 
-const guardarAPI = async (e) => {
-  e.preventDefault();
-  BtnGuardar.disabled = true;
+const llenarFormulario = (event) => {
+    const datos = event.currentTarget.dataset;
 
-  if (!validarFormulario(FormClientes, ["cliente_id"])) {
-    Swal.fire({
-      position: "center",
-      icon: "error",
-      title: "Campos obligatorios",
-      text: " Por favor, complete todos los campos obligatorios.",
-      showConfirmButton: true,
-    });
-    BtnGuardar.disabled = false;
-    return;
-  }
+    document.getElementById('id_cliente').value = datos.id;
+    document.getElementById('primer_nombre').value = datos.primerNombre;
+    document.getElementById('segundo_nombre').value = datos.segundoNombre;
+    document.getElementById('primer_apellido').value = datos.primerApellido;
+    document.getElementById('segundo_apellido').value = datos.segundoApellido;
+    document.getElementById('telefono').value = datos.telefono;
+    document.getElementById('dpi').value = datos.dpi;
+    document.getElementById('correo').value = datos.correo;
+    document.getElementById('direccion').value = datos.direccion;
 
-  const body = new FormData(FormClientes);
-  const url = "/base_login/clientes/guardarAPI";
-  const config = {
-    method: "POST",
-    body: body,
-  };
+    BtnGuardar.classList.add('d-none');
+    BtnModificar.classList.remove('d-none');
 
-  try {
-    const respuesta = await fetch(url, config);
-    const datos = await respuesta.json();
-    const { codigo, mensaje } = datos;
+    window.scrollTo({ top: 0 });
+}
 
-    if (codigo === 1) {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "Éxito",
-        text: "Cliente guardado correctamente",
-        timer: 2000,
-      });
+const limpiarTodo = () => {
+    FormClientes.reset();
+    BtnGuardar.classList.remove('d-none');
+    BtnModificar.classList.add('d-none');
+}
 
-      limpiarFormulario();
-      buscarAPI();
+const ModificarCliente = async (event) => {
+    event.preventDefault();
+    BtnModificar.disabled = true;
+
+    if (!validarFormulario(FormClientes, ['segundo_nombre', 'segundo_apellido', 'telefono', 'dpi', 'correo', 'direccion'])) {
+        Swal.fire({
+            position: "center",
+            icon: "info",
+            title: "FORMULARIO INCOMPLETO",
+            text: "Debe completar los campos obligatorios",
+            showConfirmButton: true,
+        });
+        BtnModificar.disabled = false;
+        return;
     }
-  } catch (error) {
-    console.log(error);
-  }
-  BtnGuardar.disabled = false;
-};
 
-const buscarAPI = async () => {
-  const url = "/base_login/clientes/buscarAPI";
-  const config = {
-    method: "GET",
-  };
-  try {
-    const respuesta = await fetch(url, config);
-    const datos = await respuesta.json();
-    const { codigo, mensaje, data } = datos;
-
-    if (codigo === 1) {
-      Datosdelatabla.clear().draw();
-      Datosdelatabla.rows.add(data).draw();
-    } else {
-      Swal.fire({
-        position: "center",
-        icon: "info",
-        title: "Información",
-        text: mensaje,
-        timer: 2000,
-      });
+    const body = new FormData(FormClientes);
+    const url = '/base_login/clientes/modificarAPI';
+    const config = {
+        method: 'POST',
+        body
     }
-  } catch (error) {
-    console.log(error);
-  }
-};
 
-const llenarFormulario = (e) => {
-  const datos = e.currentTarget.dataset;
-  document.getElementById("cliente_id").value = datos.cliente_id;
-  document.getElementById("cliente_nombres").value = datos.cliente_nombres;
-  document.getElementById("cliente_apellidos").value = datos.cliente_apellidos;
-  document.getElementById("cliente_nit").value = datos.cliente_nit;
-  document.getElementById("cliente_telefono").value = datos.cliente_telefono;
-  document.getElementById("cliente_correo").value = datos.cliente_correo;
+    try {
+        const respuesta = await fetch(url, config);
+        const datos = await respuesta.json();
+        const { codigo, mensaje } = datos
 
-  BtnGuardar.classList.add("d-none");
-  BtnModificar.classList.remove("d-none");
+        if (codigo == 1) {
+            await Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Éxito",
+                text: mensaje,
+                showConfirmButton: true,
+            });
 
-  window.scrollTo({
-    top: 0,
-  });
-};
+            limpiarTodo();
+            BuscarClientes();
+        } else {
+            await Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Error",
+                text: mensaje,
+                showConfirmButton: true,
+            });
+        }
 
-const limpiarFormulario = () => {
-  FormClientes.reset();
-  BtnGuardar.classList.remove("d-none");
-  BtnModificar.classList.add("d-none");
-};
-
-const modificarAPI = async (e) => {
-  e.preventDefault();
-  BtnModificar.disabled = true;
-
-  if (!validarFormulario(FormClientes, ["cliente_id"])) {
-    Swal.fire({
-      position: "center",
-      icon: "error",
-      title: "Campos obligatorios",
-      text: "Por favor, complete todos los campos obligatorios.",
-      showConfirmButton: true,
-    });
+    } catch (error) {
+        console.log(error)
+    }
     BtnModificar.disabled = false;
-    return;
-  }
+}
 
-  const body = new FormData(FormClientes);
-  const url = "/base_login/clientes/modificarAPI";
-  const config = {
-    method: "POST",
-    body,
-  };
-  try {
-    const respuesta = await fetch(url, config);
-    const datos = await respuesta.json();
-
-    const { codigo, mensaje } = datos;
-
-    if (codigo === 1) {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "Éxito",
-        text: mensaje,
-        timer: 2000,
-        showConfirmButton: false,
-      });
-
-      limpiarFormulario();
-      buscarAPI();
-    } else {
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        title: "Error",
-        text: mensaje,
-        showConfirmButton: true,
-      });
-    }
-  } catch (error) {
-    console.log(error);
-  }
-  BtnModificar.disabled = false;
-};
-
-const eliminarAPI = async (e) => {
+const EliminarCliente = async (e) => {
     const idCliente = e.currentTarget.dataset.id
 
-    const alertaConfirmaEliminar = await Swal.fire({
+    const AlertaConfirmarEliminar = await Swal.fire({
         position: "center",
         icon: "question",
         title: "¿Desea eliminar este cliente?",
@@ -292,51 +276,50 @@ const eliminarAPI = async (e) => {
         showCancelButton: true
     });
 
-   if (!alertaConfirmaEliminar.isConfirmed) return;
-
-    const body = new URLSearchParams();
-    body.append('cliente_id', idCliente);
-
-    try {
-        const respuesta = await fetch('/base_login/clientes/eliminarAPI', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body
-        });
-
-        const datos = await respuesta.json();
-        const { codigo, mensaje } = datos;
-
-        if (codigo === 1) {
-            await Swal.fire({
-                position: "center",
-                icon: "success",
-                title: "Éxito",
-                text: mensaje
-            });
-            buscarAPI();
-        } else {
-            await Swal.fire({
-                position: "center",
-                icon: "error",
-                title: "Error",
-                text: mensaje
-            });
+    if (AlertaConfirmarEliminar.isConfirmed) {
+        const url = `/base_login/clientes/eliminarAPI?id=${idCliente}`;
+        const config = {
+            method: 'GET'
         }
 
-    } catch (error) {
-        console.log(error);
+        try {
+            const consulta = await fetch(url, config);
+            const respuesta = await consulta.json();
+            const { codigo, mensaje } = respuesta;
+
+            if (codigo == 1) {
+                await Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Éxito",
+                    text: mensaje,
+                    showConfirmButton: true,
+                });
+                
+                BuscarClientes();
+            } else {
+                await Swal.fire({
+                    position: "center",
+                    icon: "error",
+                    title: "Error",
+                    text: mensaje,
+                    showConfirmButton: true,
+                });
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
     }
-};
+}
 
-// Inicializar
-buscarAPI();
+// Cargar clientes al iniciar
+BuscarClientes();
 
-// Event Listeners
-Datosdelatabla.on("click", ".eliminar", eliminarAPI);
-Datosdelatabla.on("click", ".modificar", llenarFormulario);
-validarTelefono.addEventListener("change", validacionTelefono);
-validarNit.addEventListener("change", validacionNIT);
-FormClientes.addEventListener("submit", guardarAPI);
-BtnLimpiar.addEventListener("click", limpiarFormulario);
-BtnModificar.addEventListener("click", modificarAPI);
+// Event listeners
+datatable.on('click', '.eliminar', EliminarCliente);
+datatable.on('click', '.modificar', llenarFormulario);
+FormClientes.addEventListener('submit', GuardarCliente);
+BtnLimpiar.addEventListener('click', limpiarTodo);
+BtnModificar.addEventListener('click', ModificarCliente);
+BtnBuscar.addEventListener('click', BuscarClientes);

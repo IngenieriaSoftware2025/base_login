@@ -4,31 +4,31 @@ import { validarFormulario } from '../funciones';
 import DataTable from "datatables.net-bs5";
 import { lenguaje } from "../lenguaje";
 
-const FormPermisos = document.getElementById('FormPermisos');
+const FormModelos = document.getElementById('FormModelos');
 const BtnGuardar = document.getElementById('BtnGuardar');
 const BtnModificar = document.getElementById('BtnModificar');
 const BtnLimpiar = document.getElementById('BtnLimpiar');
 const BtnBuscar = document.getElementById('BtnBuscar');
-const SelectAplicacion = document.getElementById('id_aplicacion');
+const SelectMarca = document.getElementById('id_marca');
 
-const GuardarPermiso = async (event) => {
+const GuardarModelo = async (event) => {
     event.preventDefault();
     BtnGuardar.disabled = true;
 
-    if (!validarFormulario(FormPermisos, ['id_permiso'])) {
+    if (!validarFormulario(FormModelos, ['id_modelo', 'color'])) {
         Swal.fire({
             position: "center",
             icon: "info",
             title: "FORMULARIO INCOMPLETO",
-            text: "Debe completar todos los campos",
+            text: "Debe completar los campos obligatorios",
             showConfirmButton: true,
         });
         BtnGuardar.disabled = false;
         return;
     }
 
-    const body = new FormData(FormPermisos);
-    const url = '/base_login/permisos/guardarAPI';
+    const body = new FormData(FormModelos);
+    const url = '/base_login/modelos/guardarAPI';
     const config = {
         method: 'POST',
         body
@@ -49,7 +49,7 @@ const GuardarPermiso = async (event) => {
             });
 
             limpiarTodo();
-            BuscarPermisos();
+            BuscarModelos();
         } else {
             await Swal.fire({
                 position: "center",
@@ -66,8 +66,8 @@ const GuardarPermiso = async (event) => {
     BtnGuardar.disabled = false;
 }
 
-const BuscarPermisos = async () => {
-    const url = `/base_login/permisos/buscarAPI`;
+const BuscarModelos = async () => {
+    const url = `/base_login/modelos/buscarAPI`;
     const config = {
         method: 'GET'
     }
@@ -84,7 +84,7 @@ const BuscarPermisos = async () => {
             await Swal.fire({
                 position: "center",
                 icon: "info",
-                title: "Error",
+                title: "Info",
                 text: mensaje,
                 showConfirmButton: true,
             });
@@ -95,8 +95,8 @@ const BuscarPermisos = async () => {
     }
 }
 
-const CargarAplicaciones = async () => {
-    const url = `/base_login/permisos/obtenerAplicacionesAPI`;
+const CargarMarcas = async () => {
+    const url = `/base_login/modelos/obtenerMarcasAPI`;
     const config = {
         method: 'GET'
     }
@@ -107,9 +107,9 @@ const CargarAplicaciones = async () => {
         const { codigo, data } = datos
 
         if (codigo == 1) {
-            SelectAplicacion.innerHTML = '<option value="">-- Seleccione una aplicación --</option>';
-            data.forEach(aplicacion => {
-                SelectAplicacion.innerHTML += `<option value="${aplicacion.id_aplicacion}">${aplicacion.nombre_app_md}</option>`;
+            SelectMarca.innerHTML = '<option value="">-- Seleccione una marca --</option>';
+            data.forEach(marca => {
+                SelectMarca.innerHTML += `<option value="${marca.id_marca}">${marca.nombre_marca}</option>`;
             });
         }
 
@@ -118,7 +118,7 @@ const CargarAplicaciones = async () => {
     }
 }
 
-const datatable = new DataTable('#TablePermisos', {
+const datatable = new DataTable('#TableModelos', {
     dom: `
         <"row mt-3 justify-content-between" 
             <"col" l> 
@@ -134,88 +134,104 @@ const datatable = new DataTable('#TablePermisos', {
     language: lenguaje,
     data: [],
     columns: [
-        {title: 'No.',data: 'id_permiso',width: '5%',render: (data, type, row, meta) => meta.row + 1},
-        { title: 'Aplicación', data: 'aplicacion_nombre', width: '20%'},
-        { title: 'Nombre Permiso', data: 'nombre_permiso', width: '25%'},
-        { title: 'Clave Permiso', data: 'clave_permiso', width: '15%'},
-        { title: 'Descripción', data: 'descripcion', width: '25%'},
-        { title: 'Fecha Creación', data: 'fecha', width: '15%', render: (data) => {
-            if(data) {
-                const fecha = new Date(data);
-                return fecha.toLocaleDateString('es-GT');
+        {
+            title: 'No.',
+            data: 'id_modelo',
+            width: '5%',
+            render: (data, type, row, meta) => meta.row + 1
+        },
+        { 
+            title: 'Marca', 
+            data: 'nombre_marca', 
+            width: '25%' 
+        },
+        { 
+            title: 'Modelo', 
+            data: 'nombre_modelo', 
+            width: '30%' 
+        },
+        { 
+            title: 'Color', 
+            data: 'color', 
+            width: '15%',
+            render: (data) => data || 'Sin especificar'
+        },
+        { 
+            title: 'Fecha Creación', 
+            data: 'fecha_creacion', 
+            width: '15%',
+            render: (data) => {
+                if(data) {
+                    const fecha = new Date(data);
+                    return fecha.toLocaleDateString('es-GT');
+                }
+                return '';
             }
-            return '';
-        }},
+        },
         {
             title: 'Acciones',
-            data: 'id_permiso',
+            data: 'id_modelo',
             searchable: false,
             orderable: false,
             width: '10%',
             render: (data, type, row, meta) => {
                 return `
-                    <div class='d-flex flex-column align-items-center'>
-                        <button class='btn btn-warning modificar btn-sm mb-1' 
-                            data-id="${data}" 
-                            data-aplicacion="${row.id_aplicacion}"  
-                            data-nombre="${row.nombre_permiso}"
-                            data-clave="${row.clave_permiso}"
-                            data-descripcion="${row.descripcion}"
-                            title="Modificar">
-                            <i class='bi bi-pencil-square'></i>
-                        </button>
-                        <button class='btn btn-danger eliminar btn-sm mb-1' 
-                            data-id="${data}"
-                            title="Eliminar">
-                            <i class="bi bi-trash3"></i>
-                        </button>
-                    </div>`;
+                 <div class='d-flex justify-content-center'>
+                     <button class='btn btn-warning modificar mx-1 btn-sm' 
+                         data-id="${data}" 
+                         data-marca="${row.id_marca}"  
+                         data-nombre="${row.nombre_modelo}"  
+                         data-color="${row.color || ''}">
+                         <i class='bi bi-pencil-square me-1'></i> Editar
+                     </button>
+                     <button class='btn btn-danger eliminar mx-1 btn-sm' 
+                         data-id="${data}">
+                        <i class="bi bi-trash3 me-1"></i>Eliminar
+                     </button>
+                 </div>`;
             }
         }
     ]
 });
 
-const limpiarTodo = () => {
-    FormPermisos.reset();
-    BtnGuardar.classList.remove('d-none');
-    BtnModificar.classList.add('d-none');
-}
-
 const llenarFormulario = (event) => {
-    const datos = event.currentTarget.dataset
+    const datos = event.currentTarget.dataset;
 
-    document.getElementById('id_permiso').value = datos.id
-    document.getElementById('id_aplicacion').value = datos.aplicacion
-    document.getElementById('nombre_permiso').value = datos.nombre
-    document.getElementById('clave_permiso').value = datos.clave
-    document.getElementById('descripcion').value = datos.descripcion
+    document.getElementById('id_modelo').value = datos.id;
+    document.getElementById('id_marca').value = datos.marca;
+    document.getElementById('nombre_modelo').value = datos.nombre;
+    document.getElementById('color').value = datos.color;
 
     BtnGuardar.classList.add('d-none');
     BtnModificar.classList.remove('d-none');
 
-    window.scrollTo({
-        top: 0,
-    })
+    window.scrollTo({ top: 0 });
 }
 
-const ModificarPermiso = async (event) => {
+const limpiarTodo = () => {
+    FormModelos.reset();
+    BtnGuardar.classList.remove('d-none');
+    BtnModificar.classList.add('d-none');
+}
+
+const ModificarModelo = async (event) => {
     event.preventDefault();
     BtnModificar.disabled = true;
 
-    if (!validarFormulario(FormPermisos, [''])) {
+    if (!validarFormulario(FormModelos, ['color'])) {
         Swal.fire({
             position: "center",
             icon: "info",
             title: "FORMULARIO INCOMPLETO",
-            text: "Debe completar todos los campos",
+            text: "Debe completar los campos obligatorios",
             showConfirmButton: true,
         });
         BtnModificar.disabled = false;
         return;
     }
 
-    const body = new FormData(FormPermisos);
-    const url = '/base_login/permisos/modificarAPI';
+    const body = new FormData(FormModelos);
+    const url = '/base_login/modelos/modificarAPI';
     const config = {
         method: 'POST',
         body
@@ -236,7 +252,7 @@ const ModificarPermiso = async (event) => {
             });
 
             limpiarTodo();
-            BuscarPermisos();
+            BuscarModelos();
         } else {
             await Swal.fire({
                 position: "center",
@@ -253,13 +269,13 @@ const ModificarPermiso = async (event) => {
     BtnModificar.disabled = false;
 }
 
-const EliminarPermisos = async (e) => {
-    const idPermiso = e.currentTarget.dataset.id
+const EliminarModelo = async (e) => {
+    const idModelo = e.currentTarget.dataset.id
 
     const AlertaConfirmarEliminar = await Swal.fire({
         position: "center",
         icon: "question",
-        title: "¿Desea eliminar este permiso?",
+        title: "¿Desea eliminar este modelo?",
         text: 'Esta acción no se puede deshacer',
         showConfirmButton: true,
         confirmButtonText: 'Sí, Eliminar',
@@ -269,7 +285,7 @@ const EliminarPermisos = async (e) => {
     });
 
     if (AlertaConfirmarEliminar.isConfirmed) {
-        const url = `/base_login/permisos/eliminarAPI?id=${idPermiso}`;
+        const url = `/base_login/modelos/eliminarAPI?id=${idModelo}`;
         const config = {
             method: 'GET'
         }
@@ -288,7 +304,7 @@ const EliminarPermisos = async (e) => {
                     showConfirmButton: true,
                 });
                 
-                BuscarPermisos();
+                BuscarModelos();
             } else {
                 await Swal.fire({
                     position: "center",
@@ -305,14 +321,14 @@ const EliminarPermisos = async (e) => {
     }
 }
 
+// Cargar datos al iniciar
+CargarMarcas();
+BuscarModelos();
 
-CargarAplicaciones();
-BuscarPermisos();
-
-
-datatable.on('click', '.eliminar', EliminarPermisos);
+// Event listeners
+datatable.on('click', '.eliminar', EliminarModelo);
 datatable.on('click', '.modificar', llenarFormulario);
-FormPermisos.addEventListener('submit', GuardarPermiso);
+FormModelos.addEventListener('submit', GuardarModelo);
 BtnLimpiar.addEventListener('click', limpiarTodo);
-BtnModificar.addEventListener('click', ModificarPermiso);
-BtnBuscar.addEventListener('click', BuscarPermisos);
+BtnModificar.addEventListener('click', ModificarModelo);
+BtnBuscar.addEventListener('click', BuscarModelos);

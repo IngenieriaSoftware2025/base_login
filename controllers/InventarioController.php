@@ -2,10 +2,10 @@
 
 namespace Controllers;
 
+use Exception;
 use MVC\Router;
 use Model\ActiveRecord;
 use Model\Inventario;
-use Exception;
 
 class InventarioController extends ActiveRecord
 {
@@ -18,77 +18,72 @@ class InventarioController extends ActiveRecord
     {
         getHeadersApi();
 
-        // Validaciones
-        if (empty($_POST['id_marca'])) {
+        // Validación modelo
+        if (empty($_POST['id_modelo'])) {
             http_response_code(400);
             echo json_encode([
                 'codigo' => 0,
-                'mensaje' => 'Debe seleccionar una marca'
+                'mensaje' => 'Debe seleccionar un modelo'
             ]);
             return;
         }
 
+        // Validación IMEI
+        if (empty($_POST['imei'])) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'El IMEI es obligatorio'
+            ]);
+            return;
+        }
+
+        // Validación precio de compra
         if (empty($_POST['precio_compra']) || $_POST['precio_compra'] <= 0) {
             http_response_code(400);
             echo json_encode([
                 'codigo' => 0,
-                'mensaje' => 'El precio de compra es obligatorio y debe ser mayor a 0'
+                'mensaje' => 'El precio de compra debe ser mayor a 0'
             ]);
             return;
         }
 
+        // Validación precio de venta
         if (empty($_POST['precio_venta']) || $_POST['precio_venta'] <= 0) {
             http_response_code(400);
             echo json_encode([
                 'codigo' => 0,
-                'mensaje' => 'El precio de venta es obligatorio y debe ser mayor a 0'
+                'mensaje' => 'El precio de venta debe ser mayor a 0'
             ]);
             return;
         }
 
-        if (empty($_POST['stock_disponible']) || $_POST['stock_disponible'] <= 0) {
-            http_response_code(400);
-            echo json_encode([
-                'codigo' => 0,
-                'mensaje' => 'El stock disponible es obligatorio y debe ser mayor a 0'
-            ]);
-            return;
-        }
+        // Sanitizar datos
+        $_POST['id_modelo'] = filter_var($_POST['id_modelo'], FILTER_SANITIZE_NUMBER_INT);
+        $_POST['imei'] = trim(htmlspecialchars($_POST['imei']));
+        $_POST['estado_celular'] = trim(htmlspecialchars($_POST['estado_celular'] ?? 'nuevo'));
+        $_POST['precio_compra'] = filter_var($_POST['precio_compra'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        $_POST['precio_venta'] = filter_var($_POST['precio_venta'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        $_POST['estado_inventario'] = trim(htmlspecialchars($_POST['estado_inventario'] ?? 'disponible'));
 
         try {
-            $_POST['id_marca'] = filter_var($_POST['id_marca'], FILTER_SANITIZE_NUMBER_INT);
-            $_POST['estado_dispositivo'] = trim(htmlspecialchars($_POST['estado_dispositivo'] ?? 'NUEVO'));
-            $_POST['estado_inventario'] = trim(htmlspecialchars($_POST['estado_inventario'] ?? 'DISPONIBLE'));
-            $_POST['numero_serie'] = trim(htmlspecialchars($_POST['numero_serie'] ?? ''));
-            $_POST['precio_compra'] = filter_var($_POST['precio_compra'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-            $_POST['precio_venta'] = filter_var($_POST['precio_venta'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-            $_POST['stock_disponible'] = filter_var($_POST['stock_disponible'], FILTER_SANITIZE_NUMBER_INT);
-            $_POST['observaciones'] = trim(htmlspecialchars($_POST['observaciones'] ?? ''));
+            $inventario = new Inventario($_POST);
+            $resultado = $inventario->crear();
 
-            $inventario = new Inventario([
-                'id_marca' => $_POST['id_marca'],
-                'estado_dispositivo' => $_POST['estado_dispositivo'],
-                'estado_inventario' => $_POST['estado_inventario'],
-                'numero_serie' => $_POST['numero_serie'],
-                'precio_compra' => $_POST['precio_compra'],
-                'precio_venta' => $_POST['precio_venta'],
-                'stock_disponible' => $_POST['stock_disponible'],
-                'observaciones' => $_POST['observaciones'],
-                'situacion' => 1
-            ]);
-
-            $crear = $inventario->crear();
-
-            http_response_code(200);
-            echo json_encode([
-                'codigo' => 1,
-                'mensaje' => 'Producto del inventario guardado exitosamente'
-            ]);
+            if ($resultado['resultado'] == 1) {
+                http_response_code(200);
+                echo json_encode([
+                    'codigo' => 1,
+                    'mensaje' => 'Inventario registrado correctamente'
+                ]);
+            } else {
+                throw new Exception('Error al crear el inventario');
+            }
         } catch (Exception $e) {
-            http_response_code(400);
+            http_response_code(500);
             echo json_encode([
                 'codigo' => 0,
-                'mensaje' => 'Error al guardar el producto',
+                'mensaje' => 'Error al registrar el inventario',
                 'detalle' => $e->getMessage()
             ]);
         }
@@ -98,25 +93,16 @@ class InventarioController extends ActiveRecord
     {
         getHeadersApi();
         try {
-            $inventario = Inventario::buscarConMarcas();
+            $inventario = Inventario::obtenerInventarioActivo();
 
-            if (count($inventario) > 0) {
-                http_response_code(200);
-                echo json_encode([
-                    'codigo' => 1,
-                    'mensaje' => 'Inventario obtenido correctamente',
-                    'data' => $inventario
-                ]);
-            } else {
-                http_response_code(200);
-                echo json_encode([
-                    'codigo' => 1,
-                    'mensaje' => 'No hay productos en el inventario',
-                    'data' => []
-                ]);
-            }
+            http_response_code(200);
+            echo json_encode([
+                'codigo' => 1,
+                'mensaje' => 'Inventario obtenido correctamente',
+                'data' => $inventario
+            ]);
         } catch (Exception $e) {
-            http_response_code(500);
+            http_response_code(400);
             echo json_encode([
                 'codigo' => 0,
                 'mensaje' => 'Error al obtener el inventario',
@@ -128,13 +114,24 @@ class InventarioController extends ActiveRecord
     public static function modificarAPI()
     {
         getHeadersApi();
+
         $id = $_POST['id_inventario'];
 
-        if (empty($_POST['id_marca'])) {
+        // Validaciones
+        if (empty($_POST['id_modelo'])) {
             http_response_code(400);
             echo json_encode([
                 'codigo' => 0,
-                'mensaje' => 'Debe seleccionar una marca'
+                'mensaje' => 'Debe seleccionar un modelo'
+            ]);
+            return;
+        }
+
+        if (empty($_POST['imei'])) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'El IMEI es obligatorio'
             ]);
             return;
         }
@@ -143,7 +140,7 @@ class InventarioController extends ActiveRecord
             http_response_code(400);
             echo json_encode([
                 'codigo' => 0,
-                'mensaje' => 'El precio de compra es obligatorio y debe ser mayor a 0'
+                'mensaje' => 'El precio de compra debe ser mayor a 0'
             ]);
             return;
         }
@@ -152,56 +149,43 @@ class InventarioController extends ActiveRecord
             http_response_code(400);
             echo json_encode([
                 'codigo' => 0,
-                'mensaje' => 'El precio de venta es obligatorio y debe ser mayor a 0'
+                'mensaje' => 'El precio de venta debe ser mayor a 0'
             ]);
             return;
         }
 
-        if (empty($_POST['stock_disponible']) || $_POST['stock_disponible'] <= 0) {
-            http_response_code(400);
-            echo json_encode([
-                'codigo' => 0,
-                'mensaje' => 'El stock disponible es obligatorio y debe ser mayor a 0'
-            ]);
-            return;
-        }
+        // Sanitizar datos
+        $_POST['id_modelo'] = filter_var($_POST['id_modelo'], FILTER_SANITIZE_NUMBER_INT);
+        $_POST['imei'] = trim(htmlspecialchars($_POST['imei']));
+        $_POST['estado_celular'] = trim(htmlspecialchars($_POST['estado_celular'] ?? 'nuevo'));
+        $_POST['precio_compra'] = filter_var($_POST['precio_compra'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        $_POST['precio_venta'] = filter_var($_POST['precio_venta'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        $_POST['estado_inventario'] = trim(htmlspecialchars($_POST['estado_inventario'] ?? 'disponible'));
 
         try {
-            $_POST['id_marca'] = filter_var($_POST['id_marca'], FILTER_SANITIZE_NUMBER_INT);
-            $_POST['estado_dispositivo'] = trim(htmlspecialchars($_POST['estado_dispositivo'] ?? 'NUEVO'));
-            $_POST['estado_inventario'] = trim(htmlspecialchars($_POST['estado_inventario'] ?? 'DISPONIBLE'));
-            $_POST['numero_serie'] = trim(htmlspecialchars($_POST['numero_serie'] ?? ''));
-            $_POST['precio_compra'] = filter_var($_POST['precio_compra'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-            $_POST['precio_venta'] = filter_var($_POST['precio_venta'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-            $_POST['stock_disponible'] = filter_var($_POST['stock_disponible'], FILTER_SANITIZE_NUMBER_INT);
-            $_POST['observaciones'] = trim(htmlspecialchars($_POST['observaciones'] ?? ''));
-
-            $data = Inventario::find($id);
-            $data->sincronizar([
-                'id_marca' => $_POST['id_marca'],
-                'estado_dispositivo' => $_POST['estado_dispositivo'],
-                'estado_inventario' => $_POST['estado_inventario'],
-                'numero_serie' => $_POST['numero_serie'],
+            $inventario = Inventario::find($id);
+            $inventario->sincronizar([
+                'id_modelo' => $_POST['id_modelo'],
+                'imei' => $_POST['imei'],
+                'estado_celular' => $_POST['estado_celular'],
                 'precio_compra' => $_POST['precio_compra'],
                 'precio_venta' => $_POST['precio_venta'],
-                'stock_disponible' => $_POST['stock_disponible'],
-                'observaciones' => $_POST['observaciones'],
+                'estado_inventario' => $_POST['estado_inventario'],
                 'situacion' => 1
             ]);
-            
-            $data->actualizar();
-                
+
+            $resultado = $inventario->actualizar();
+
             http_response_code(200);
             echo json_encode([
                 'codigo' => 1,
-                'mensaje' => 'Producto del inventario actualizado exitosamente'
+                'mensaje' => 'Inventario modificado correctamente'
             ]);
-            
         } catch (Exception $e) {
             http_response_code(400);
             echo json_encode([
                 'codigo' => 0,
-                'mensaje' => 'Error al actualizar el producto',
+                'mensaje' => 'Error al modificar el inventario',
                 'detalle' => $e->getMessage()
             ]);
         }
@@ -209,20 +193,21 @@ class InventarioController extends ActiveRecord
 
     public static function eliminarAPI()
     {
+        getHeadersApi();
         try {
             $id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
             Inventario::EliminarInventario($id);
-            
+
             http_response_code(200);
             echo json_encode([
                 'codigo' => 1,
-                'mensaje' => 'El producto ha sido eliminado del inventario correctamente'
+                'mensaje' => 'El inventario ha sido eliminado correctamente'
             ]);
         } catch (Exception $e) {
             http_response_code(400);
             echo json_encode([
                 'codigo' => 0,
-                'mensaje' => 'Error al eliminar el producto',
+                'mensaje' => 'Error al eliminar el inventario',
                 'detalle' => $e->getMessage()
             ]);
         }
@@ -230,8 +215,9 @@ class InventarioController extends ActiveRecord
 
     public static function obtenerMarcasAPI()
     {
+        getHeadersApi();
         try {
-            $marcas = Inventario::obtenerMarcas();
+            $marcas = Inventario::obtenerMarcasActivas();
 
             http_response_code(200);
             echo json_encode([
@@ -243,7 +229,30 @@ class InventarioController extends ActiveRecord
             http_response_code(400);
             echo json_encode([
                 'codigo' => 0,
-                'mensaje' => 'Error al obtener marcas',
+                'mensaje' => 'Error al obtener las marcas',
+                'detalle' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public static function obtenerModelosAPI()
+    {
+        getHeadersApi();
+        try {
+            $id_marca = filter_var($_GET['id_marca'], FILTER_SANITIZE_NUMBER_INT);
+            $modelos = Inventario::obtenerModelosPorMarca($id_marca);
+
+            http_response_code(200);
+            echo json_encode([
+                'codigo' => 1,
+                'mensaje' => 'Modelos obtenidos correctamente',
+                'data' => $modelos
+            ]);
+        } catch (Exception $e) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'Error al obtener los modelos',
                 'detalle' => $e->getMessage()
             ]);
         }

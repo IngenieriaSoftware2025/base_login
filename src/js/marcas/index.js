@@ -1,16 +1,102 @@
 import { Dropdown } from "bootstrap";
 import Swal from "sweetalert2";
+import { validarFormulario } from '../funciones';
 import DataTable from "datatables.net-bs5";
-import { validarFormulario } from "../funciones";
 import { lenguaje } from "../lenguaje";
 
-const FormMarcas = document.getElementById("FormMarcas");
-const BtnGuardar = document.getElementById("BtnGuardar");
-const BtnModificar = document.getElementById("BtnModificar");
-const BtnLimpiar = document.getElementById("BtnLimpiar");
+const FormMarcas = document.getElementById('FormMarcas');
+const BtnGuardar = document.getElementById('BtnGuardar');
+const BtnModificar = document.getElementById('BtnModificar');
+const BtnLimpiar = document.getElementById('BtnLimpiar');
+const BtnBuscar = document.getElementById('BtnBuscar');
 
-const Datosdelatabla = new DataTable("#TableMarcas", {
-  dom: `<"row mt-3 justify-content-between" 
+const GuardarMarca = async (event) => {
+    event.preventDefault();
+    BtnGuardar.disabled = true;
+
+    if (!validarFormulario(FormMarcas, ['id_marca', 'descripcion'])) {
+        Swal.fire({
+            position: "center",
+            icon: "info",
+            title: "FORMULARIO INCOMPLETO",
+            text: "Debe completar el nombre de la marca",
+            showConfirmButton: true,
+        });
+        BtnGuardar.disabled = false;
+        return;
+    }
+
+    const body = new FormData(FormMarcas);
+    const url = '/base_login/marcas/guardarAPI';
+    const config = {
+        method: 'POST',
+        body
+    }
+
+    try {
+        const respuesta = await fetch(url, config);
+        const datos = await respuesta.json();
+        const { codigo, mensaje } = datos
+
+        if (codigo == 1) {
+            await Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Éxito",
+                text: mensaje,
+                showConfirmButton: true,
+            });
+
+            limpiarTodo();
+            BuscarMarcas();
+        } else {
+            await Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Error",
+                text: mensaje,
+                showConfirmButton: true,
+            });
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+    BtnGuardar.disabled = false;
+}
+
+const BuscarMarcas = async () => {
+    const url = `/base_login/marcas/buscarAPI`;
+    const config = {
+        method: 'GET'
+    }
+
+    try {
+        const respuesta = await fetch(url, config);
+        const datos = await respuesta.json();
+        const { codigo, mensaje, data } = datos
+
+        if (codigo == 1) {
+            datatable.clear().draw();
+            datatable.rows.add(data).draw();
+        } else {
+            await Swal.fire({
+                position: "center",
+                icon: "info",
+                title: "Info",
+                text: mensaje,
+                showConfirmButton: true,
+            });
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const datatable = new DataTable('#TableMarcas', {
+    dom: `
+        <"row mt-3 justify-content-between" 
             <"col" l> 
             <"col" B> 
             <"col-3" f>
@@ -19,238 +105,147 @@ const Datosdelatabla = new DataTable("#TableMarcas", {
         <"row mt-3 justify-content-between" 
             <"col-md-3 d-flex align-items-center" i> 
             <"col-md-8 d-flex justify-content-end" p>
-        >`,
-  language: lenguaje,
-  data: [],
-  columns: [
-    {
-      title: "No.",
-      data: "id_marca",
-      width: "5%",
-      render: (data, type, row, meta) => meta.row + 1,
-    },
-    { title: "Nombre de la Marca", data: "marca_nombre", width: "25%" },
-    { 
-      title: "Modelo Principal", 
-      data: "marca_modelo", 
-      width: "20%",
-      render: (data) => data || 'N/A'
-    },
-    { 
-      title: "Descripción", 
-      data: "marca_descripcion", 
-      width: "25%",
-      render: (data) => data || 'Sin descripción'
-    },
-    { 
-      title: "Fecha Ingreso", 
-      data: "marca_fecha_ingreso", 
-      width: "15%", 
-      render: (data) => {
-        if(data) {
-          const fecha = new Date(data);
-          return fecha.toLocaleDateString('es-GT');
-        }
-        return '';
-      }
-    },
-    {
-      title: "Acciones",
-      data: "id_marca",
-      searchable: false,
-      orderable: false,
-      width: "10%",
-      render: (data, type, row, meta) => {
-        return `
-                <div class='d-flex justify-content-center'>
-                    <button class='btn btn-warning modificar mx-1' 
-                        data-id_marca="${data}" 
-                        data-marca_nombre="${row.marca_nombre}"  
-                        data-marca_descripcion="${row.marca_descripcion || ''}"
-                        data-marca_modelo="${row.marca_modelo || ''}">
-                        <i class='bi bi-pencil-square me-1'></i> Modificar
-                    </button>
-                    <button class='btn btn-danger eliminar mx-1' 
-                        data-id_marca="${data}">
+        >
+    `,
+    language: lenguaje,
+    data: [],
+    columns: [
+        {
+            title: 'No.',
+            data: 'id_marca',
+            width: '5%',
+            render: (data, type, row, meta) => meta.row + 1
+        },
+        { 
+            title: 'Nombre Marca', 
+            data: 'nombre_marca', 
+            width: '30%' 
+        },
+        { 
+            title: 'Descripción', 
+            data: 'descripcion', 
+            width: '40%',
+            render: (data) => data || 'Sin descripción'
+        },
+        { 
+            title: 'Fecha Creación', 
+            data: 'fecha_creacion', 
+            width: '15%',
+            render: (data) => {
+                if(data) {
+                    const fecha = new Date(data);
+                    return fecha.toLocaleDateString('es-GT');
+                }
+                return '';
+            }
+        },
+        {
+            title: 'Acciones',
+            data: 'id_marca',
+            searchable: false,
+            orderable: false,
+            width: '10%',
+            render: (data, type, row, meta) => {
+                return `
+                 <div class='d-flex justify-content-center'>
+                     <button class='btn btn-warning modificar mx-1 btn-sm' 
+                         data-id="${data}" 
+                         data-nombre="${row.nombre_marca}"  
+                         data-descripcion="${row.descripcion || ''}">
+                         <i class='bi bi-pencil-square me-1'></i> Editar
+                     </button>
+                     <button class='btn btn-danger eliminar mx-1 btn-sm' 
+                         data-id="${data}">
                         <i class="bi bi-trash3 me-1"></i>Eliminar
-                    </button>
-                </div>
-                `;
-      },
-    },
-  ],
+                     </button>
+                 </div>`;
+            }
+        }
+    ]
 });
 
-const guardarAPI = async (e) => {
-  e.preventDefault();
-  BtnGuardar.disabled = true;
+const llenarFormulario = (event) => {
+    const datos = event.currentTarget.dataset;
 
-  if (!validarFormulario(FormMarcas, ["id_marca", "marca_descripcion", "marca_modelo"])) {
-    Swal.fire({
-      position: "center",
-      icon: "error",
-      title: "Campos obligatorios",
-      text: "Por favor, complete el nombre de la marca.",
-      showConfirmButton: true,
-    });
-    BtnGuardar.disabled = false;
-    return;
-  }
+    document.getElementById('id_marca').value = datos.id;
+    document.getElementById('nombre_marca').value = datos.nombre;
+    document.getElementById('descripcion').value = datos.descripcion;
 
-  const body = new FormData(FormMarcas);
-  const url = "/base_login/marcas/guardarAPI";
-  const config = {
-    method: "POST",
-    body: body,
-  };
+    BtnGuardar.classList.add('d-none');
+    BtnModificar.classList.remove('d-none');
 
-  try {
-    const respuesta = await fetch(url, config);
-    const datos = await respuesta.json();
-    console.log(datos);
-    const { codigo, mensaje } = datos;
+    window.scrollTo({ top: 0 });
+}
 
-    if (codigo === 1) {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "éxito",
-        text: "Marca guardada correctamente",
-        timer: 2000,
-      });
+const limpiarTodo = () => {
+    FormMarcas.reset();
+    BtnGuardar.classList.remove('d-none');
+    BtnModificar.classList.add('d-none');
+}
 
-      limpiarFormulario();
-      buscarAPI();
+const ModificarMarca = async (event) => {
+    event.preventDefault();
+    BtnModificar.disabled = true;
+
+    if (!validarFormulario(FormMarcas, ['descripcion'])) {
+        Swal.fire({
+            position: "center",
+            icon: "info",
+            title: "FORMULARIO INCOMPLETO",
+            text: "Debe completar el nombre de la marca",
+            showConfirmButton: true,
+        });
+        BtnModificar.disabled = false;
+        return;
     }
-  } catch (error) {
-    console.log(error);
-  }
-  BtnGuardar.disabled = false;
-};
 
-const buscarAPI = async () => {
-  const url = "/base_login/marcas/buscarAPI";
-  const config = {
-    method: "GET",
-  };
-  try {
-    const respuesta = await fetch(url, config);
-    const datos = await respuesta.json();
-    const { codigo, mensaje, data } = datos;
-
-    if (codigo === 1) {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "éxito",
-        text: mensaje,
-        timer: 2000,
-      });
-
-      Datosdelatabla.clear().draw();
-      if (data && data.length > 0) {
-        Datosdelatabla.rows.add(data).draw();
-      }
-    } else {
-      Swal.fire({
-        position: "center",
-        icon: "info",
-        title: "información",
-        text: mensaje,
-        timer: 2000,
-      });
-      return;
+    const body = new FormData(FormMarcas);
+    const url = '/base_login/marcas/modificarAPI';
+    const config = {
+        method: 'POST',
+        body
     }
-  } catch (error) {
-    console.log(error);
-  }
-};
 
-const llenarFormulario = (e) => {
-  const datos = e.currentTarget.dataset;
-  document.getElementById("id_marca").value = datos.id_marca;
-  document.getElementById("marca_nombre").value = datos.marca_nombre;
-  document.getElementById("marca_descripcion").value = datos.marca_descripcion;
-  document.getElementById("marca_modelo").value = datos.marca_modelo;
+    try {
+        const respuesta = await fetch(url, config);
+        const datos = await respuesta.json();
+        const { codigo, mensaje } = datos
 
-  BtnGuardar.classList.add("d-none");
-  BtnModificar.classList.remove("d-none");
+        if (codigo == 1) {
+            await Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Éxito",
+                text: mensaje,
+                showConfirmButton: true,
+            });
 
-  window.scrollTo({
-    top: 0,
-  });
-};
+            limpiarTodo();
+            BuscarMarcas();
+        } else {
+            await Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Error",
+                text: mensaje,
+                showConfirmButton: true,
+            });
+        }
 
-const limpiarFormulario = () => {
-  FormMarcas.reset();
-  BtnGuardar.classList.remove("d-none");
-  BtnModificar.classList.add("d-none");
-};
-
-const modificarAPI = async (e) => {
-  e.preventDefault();
-  BtnModificar.disabled = true;
-
-  if (!validarFormulario(FormMarcas, ["id_marca"])) {
-    Swal.fire({
-      position: "center",
-      icon: "error",
-      title: "Campos obligatorios",
-      text: "Por favor, complete el nombre de la marca.",
-      showConfirmButton: true,
-    });
+    } catch (error) {
+        console.log(error)
+    }
     BtnModificar.disabled = false;
-    return;
-  }
+}
 
-  const body = new FormData(FormMarcas);
-  const url = "/base_login/marcas/modificarAPI";
-  const config = {
-    method: "POST",
-    body,
-  };
-  try {
-    const respuesta = await fetch(url, config);
-    const datos = await respuesta.json();
+const EliminarMarca = async (e) => {
+    const idMarca = e.currentTarget.dataset.id
 
-    const { codigo, mensaje, detalle } = datos;
-
-    if (codigo === 1) {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "éxito",
-        text: mensaje,
-        timer: 800,
-        showConfirmButton: false,
-      });
-
-      limpiarFormulario();
-      buscarAPI();
-    } else {
-      Swal.fire({
-        position: "center",
-        icon: "info",
-        title: "error",
-        text: detalle,
-        showConfirmButton: false,
-        timer: 20000,
-      });
-    }
-  } catch (error) {
-    console.log(error);
-  }
-  BtnModificar.disabled = false;
-};
-
-const eliminarAPI = async (e) => {
-    const idMarca = e.currentTarget.dataset.id_marca
-
-    const alertaConfirmaEliminar = await Swal.fire({
+    const AlertaConfirmarEliminar = await Swal.fire({
         position: "center",
         icon: "question",
         title: "¿Desea eliminar esta marca?",
-        text: 'Esta acción cambiará el estado de la marca a inactivo',
+        text: 'Esta acción no se puede deshacer',
         showConfirmButton: true,
         confirmButtonText: 'Sí, Eliminar',
         confirmButtonColor: '#dc3545',
@@ -258,41 +253,50 @@ const eliminarAPI = async (e) => {
         showCancelButton: true
     });
 
-   if (!alertaConfirmaEliminar.isConfirmed) return;
-
-    try {
-        const respuesta = await fetch(`/base_login/marcas/eliminarAPI?id=${idMarca}`, {
+    if (AlertaConfirmarEliminar.isConfirmed) {
+        const url = `/base_login/marcas/eliminarAPI?id=${idMarca}`;
+        const config = {
             method: 'GET'
-        });
-
-        const datos = await respuesta.json();
-        const { codigo, mensaje } = datos;
-
-        if (codigo === 1) {
-            await Swal.fire({
-                position: "center",
-                icon: "success",
-                title: "Éxito",
-                text: mensaje
-            });
-            buscarAPI();
-        } else {
-            await Swal.fire({
-                position: "center",
-                icon: "error",
-                title: "Error",
-                text: mensaje
-            });
         }
 
-    } catch (error) {
-        console.log(error);
-    }
-};
+        try {
+            const consulta = await fetch(url, config);
+            const respuesta = await consulta.json();
+            const { codigo, mensaje } = respuesta;
 
-buscarAPI();
-Datosdelatabla.on("click", ".eliminar", eliminarAPI);
-Datosdelatabla.on("click", ".modificar", llenarFormulario);
-FormMarcas.addEventListener("submit", guardarAPI);
-BtnLimpiar.addEventListener("click", limpiarFormulario);
-BtnModificar.addEventListener("click", modificarAPI);
+            if (codigo == 1) {
+                await Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Éxito",
+                    text: mensaje,
+                    showConfirmButton: true,
+                });
+                
+                BuscarMarcas();
+            } else {
+                await Swal.fire({
+                    position: "center",
+                    icon: "error",
+                    title: "Error",
+                    text: mensaje,
+                    showConfirmButton: true,
+                });
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+}
+
+// Cargar marcas al iniciar
+BuscarMarcas();
+
+// Event listeners
+datatable.on('click', '.eliminar', EliminarMarca);
+datatable.on('click', '.modificar', llenarFormulario);
+FormMarcas.addEventListener('submit', GuardarMarca);
+BtnLimpiar.addEventListener('click', limpiarTodo);
+BtnModificar.addEventListener('click', ModificarMarca);
+BtnBuscar.addEventListener('click', BuscarMarcas);

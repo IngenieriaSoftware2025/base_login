@@ -32,21 +32,35 @@
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/base_login/registro"><i class="bi bi-person"></i></i>Registro</a>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/base_login/aplicacion"><i class="bi bi-person"></i></i>Aplicacion</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/base_login/permisos"><i class="bi bi-person"></i></i>Permisos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/base_login/clientes"><i class="bi bi-people"></i> Clientes</a>
-                    </li>
-                      <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/base_login/marcas"><i class="bi bi-people"></i> Marcas</a>
                     </li>
-                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/base_login/inventario"><i class="bi bi-people"></i> Inventario</a>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/base_login/modelos">
+                            <i class="bi bi-phone"></i> Modelos
+                        </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/base_login/clientes">
+                            <i class="bi bi-person-vcard"></i> Clientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/base_login/inventario">
+                            <i class="bi bi-box-seam"></i> Inventario
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/base_login/reparaciones">
+                            <i class="bi bi-tools"></i> Reparaciones
+                        </a>
+                    </li>
+
+
+
+
+
 
                     <div class="nav-item dropdown ">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">

@@ -2,12 +2,24 @@ import { Dropdown } from "bootstrap";
 import Swal from "sweetalert2";
 import { validarFormulario } from '../funciones';
 
+// Verificar que los elementos existan antes de usarlos
 const FormLogin = document.getElementById('FormLogin');
 const BtnIniciarSesion = document.getElementById('BtnIniciarSesion');
 const InputDpi = document.getElementById('dpi');
 
+// Verificar que todos los elementos existan
+if (!FormLogin || !BtnIniciarSesion || !InputDpi) {
+    console.error('Elementos del formulario no encontrados:', {
+        FormLogin: !!FormLogin,
+        BtnIniciarSesion: !!BtnIniciarSesion,
+        InputDpi: !!InputDpi
+    });
+}
+
 // Validación en tiempo real del DPI
 const ValidarDPI = () => {
+    if (!InputDpi) return;
+    
     const dpi = InputDpi.value.trim();
     
     // Remover caracteres no numéricos
@@ -27,6 +39,12 @@ const ValidarDPI = () => {
 
 const login = async (e) => {
     e.preventDefault();
+    
+    if (!BtnIniciarSesion) {
+        console.error('Botón de iniciar sesión no encontrado');
+        return;
+    }
+    
     BtnIniciarSesion.disabled = true;
 
     // Validar formulario
@@ -42,7 +60,14 @@ const login = async (e) => {
     }
 
     // Validar DPI específicamente
-    const dpi = document.getElementById('dpi').value.trim();
+    const dpiInput = document.getElementById('dpi');
+    if (!dpiInput) {
+        console.error('Campo DPI no encontrado');
+        BtnIniciarSesion.disabled = false;
+        return;
+    }
+    
+    const dpi = dpiInput.value.trim();
     if (dpi.length !== 13 || !/^\d{13}$/.test(dpi)) {
         Swal.fire({
             title: "DPI inválido",
@@ -62,8 +87,21 @@ const login = async (e) => {
             body
         };
 
+        console.log('Enviando petición a:', url);
+        
         const respuesta = await fetch(url, config);
+        
+        // Verificar si la respuesta es JSON válido
+        const contentType = respuesta.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            const textResponse = await respuesta.text();
+            console.error('Respuesta no es JSON:', textResponse);
+            throw new Error('El servidor no devolvió una respuesta JSON válida');
+        }
+        
         const data = await respuesta.json();
+        console.log('Respuesta del servidor:', data);
+        
         const { codigo, mensaje, usuario } = data;
 
         if (codigo == 1) {
@@ -80,8 +118,8 @@ const login = async (e) => {
 
             FormLogin.reset();
             
-            // Redirigir a la página principal o dashboard
-            location.href = '/base_login/'; // Cambia esta ruta según tu aplicación
+            // Redirigir a la página principal
+            location.href = '/base_login/';
         } else {
             Swal.fire({
                 title: '¡Error de autenticación!',
@@ -106,18 +144,23 @@ const login = async (e) => {
     BtnIniciarSesion.disabled = false;
 }
 
-// Event listeners
-FormLogin.addEventListener('submit', login);
-InputDpi.addEventListener('input', ValidarDPI);
+// Event listeners con verificación
+if (FormLogin) {
+    FormLogin.addEventListener('submit', login);
+}
 
-// Prevenir caracteres no numéricos en el campo DPI
-InputDpi.addEventListener('keypress', (e) => {
-    // Permitir solo números, backspace, delete, tab, escape, enter
-    const allowedKeys = [8, 9, 27, 13, 46];
-    const isNumber = (e.which >= 48 && e.which <= 57);
-    const isAllowedKey = allowedKeys.includes(e.which);
+if (InputDpi) {
+    InputDpi.addEventListener('input', ValidarDPI);
     
-    if (!isNumber && !isAllowedKey) {
-        e.preventDefault();
-    }
-});
+    // Prevenir caracteres no numéricos en el campo DPI
+    InputDpi.addEventListener('keypress', (e) => {
+        // Permitir solo números, backspace, delete, tab, escape, enter
+        const allowedKeys = [8, 9, 27, 13, 46];
+        const isNumber = (e.which >= 48 && e.which <= 57);
+        const isAllowedKey = allowedKeys.includes(e.which);
+        
+        if (!isNumber && !isAllowedKey) {
+            e.preventDefault();
+        }
+    });
+}

@@ -5,11 +5,11 @@ use MVC\Router;
 use Controllers\AppController;
 use Controllers\LoginController;
 use Controllers\RegistroController;
-use Controllers\AplicacionController;
-use Controllers\PermisosController;
-use Controllers\ClienteController;
 use Controllers\MarcasController;
+use Controllers\ModelosController;
+use Controllers\ClientesController;
 use Controllers\InventarioController;
+use Controllers\ReparacionesController; // <- AGREGAR ESTA LÍNEA
 
 $router = new Router();
 $router->setBaseURL('/' . $_ENV['APP_NAME']);
@@ -17,7 +17,9 @@ $router->setBaseURL('/' . $_ENV['APP_NAME']);
 $router->get('/', [AppController::class,'index']);
 
 //LOGIN
-$router->get('/login', [LoginController::class, 'renderizarPAgina']);
+$router->get('/login', [LoginController::class, 'renderizarPagina']);
+$router->post('/login/loginAPI', [LoginController::class, 'loginAPI']);
+$router->post('/login/logout', [LoginController::class, 'logout']);
 
 //REGISTRO
 $router->get('/registro', [RegistroController::class, 'renderizarPagina']);
@@ -26,47 +28,45 @@ $router->get('/registro/buscarAPI', [RegistroController::class, 'buscarAPI']);
 $router->post('/registro/modificarAPI', [RegistroController::class, 'modificarAPI']);
 $router->get('/registro/eliminarAPI', [RegistroController::class, 'eliminarAPI']);
 
-//APLICACION
-$router->get('/aplicacion', [AplicacionController::class, 'renderizarPagina']);
-$router->post('/aplicacion/guardarAPI', [AplicacionController::class, 'guardarAPI']);
-$router->get('/aplicacion/buscarAPI', [AplicacionController::class, 'buscarAPI']);
-$router->post('/aplicacion/modificarAPI', [AplicacionController::class, 'modificarAPI']);
-$router->get('/aplicacion/eliminarAPI', [AplicacionController::class, 'eliminarAPI']);
-
-
-//PERMISOS
-$router->get('/permisos', [PermisosController::class, 'renderizarPagina']);
-$router->post('/permisos/guardarAPI', [PermisosController::class, 'guardarAPI']);
-$router->get('/permisos/buscarAPI', [PermisosController::class, 'buscarAPI']);
-$router->post('/permisos/modificarAPI', [PermisosController::class, 'modificarAPI']);
-$router->get('/permisos/eliminarAPI', [PermisosController::class, 'eliminarAPI']);
-
-$router->get('/permisos/buscarAPI', [PermisosController::class, 'buscarAPI']);
-$router->get('/permisos/obtenerAplicacionesAPI', [PermisosController::class, 'obtenerAplicacionesAPI']);
-
-
-
-//CLIENTES
-$router->get('/clientes', [ClienteController::class, 'renderizarPagina']);
-$router->post('/clientes/guardarAPI', [ClienteController::class, 'guardarAPI']);
-$router->get('/clientes/buscarAPI', [ClienteController::class, 'buscarAPI']);
-$router->post('/clientes/modificarAPI', [ClienteController::class, 'modificarAPI']);
-$router->post('/clientes/eliminarAPI', [ClienteController::class, 'eliminarAPI']);
-
 //MARCAS
 $router->get('/marcas', [MarcasController::class, 'renderizarPagina']);
 $router->post('/marcas/guardarAPI', [MarcasController::class, 'guardarAPI']);
 $router->get('/marcas/buscarAPI', [MarcasController::class, 'buscarAPI']);
 $router->post('/marcas/modificarAPI', [MarcasController::class, 'modificarAPI']);
-$router->post('/marcas/eliminarAPI', [MarcasController::class, 'eliminarAPI']);
+$router->get('/marcas/eliminarAPI', [MarcasController::class, 'eliminarAPI']);
 
-//  inventario
+//MODELOS
+$router->get('/modelos', [ModelosController::class, 'renderizarPagina']);
+$router->post('/modelos/guardarAPI', [ModelosController::class, 'guardarAPI']);
+$router->get('/modelos/buscarAPI', [ModelosController::class, 'buscarAPI']);
+$router->post('/modelos/modificarAPI', [ModelosController::class, 'modificarAPI']);
+$router->get('/modelos/eliminarAPI', [ModelosController::class, 'eliminarAPI']);
+$router->get('/modelos/obtenerMarcasAPI', [ModelosController::class, 'obtenerMarcasAPI']);
+
+//CLIENTES
+$router->get('/clientes', [ClientesController::class, 'renderizarPagina']);
+$router->post('/clientes/guardarAPI', [ClientesController::class, 'guardarAPI']);
+$router->get('/clientes/buscarAPI', [ClientesController::class, 'buscarAPI']);
+$router->post('/clientes/modificarAPI', [ClientesController::class, 'modificarAPI']);
+$router->get('/clientes/eliminarAPI', [ClientesController::class, 'eliminarAPI']);
+
+//INVENTARIO
 $router->get('/inventario', [InventarioController::class, 'renderizarPagina']);
 $router->post('/inventario/guardarAPI', [InventarioController::class, 'guardarAPI']);
 $router->get('/inventario/buscarAPI', [InventarioController::class, 'buscarAPI']);
 $router->post('/inventario/modificarAPI', [InventarioController::class, 'modificarAPI']);
-$router->post('/inventario/eliminarAPI', [InventarioController::class, 'eliminarAPI']);
+$router->get('/inventario/eliminarAPI', [InventarioController::class, 'eliminarAPI']);
 $router->get('/inventario/obtenerMarcasAPI', [InventarioController::class, 'obtenerMarcasAPI']);
-$router->get('/inventario/buscarConMarcas', [InventarioController::class, 'buscarConMarcas']);
+$router->get('/inventario/obtenerModelosAPI', [InventarioController::class, 'obtenerModelosAPI']);
 
+
+
+//REPARACIONES
+$router->get('/reparaciones', [ReparacionesController::class, 'renderizarPagina']);
+$router->post('/reparaciones/guardarAPI', [ReparacionesController::class, 'guardarAPI']);
+$router->get('/reparaciones/buscarAPI', [ReparacionesController::class, 'buscarAPI']);
+$router->post('/reparaciones/modificarAPI', [ReparacionesController::class, 'modificarAPI']);
+$router->get('/reparaciones/eliminarAPI', [ReparacionesController::class, 'eliminarAPI']);
+$router->get('/reparaciones/obtenerClientesAPI', [ReparacionesController::class, 'obtenerClientesAPI']);
+$router->get('/reparaciones/obtenerUsuariosAPI', [ReparacionesController::class, 'obtenerUsuariosAPI']);
 $router->comprobarRutas();

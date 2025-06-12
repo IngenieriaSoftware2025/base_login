@@ -1,70 +1,73 @@
 <?php
-
 namespace Model;
 
 class Inventario extends ActiveRecord {
-
+    
     public static $tabla = 'inventario';
+    public static $idTabla = 'id_inventario';
     public static $columnasDB = [
-        'id_marca',
-        'estado_dispositivo',
-        'estado_inventario',
-        'numero_serie',
+        'id_modelo',
+        'imei',
+        'estado_celular',
         'precio_compra',
         'precio_venta',
-        'stock_disponible',
-        'observaciones',
+        'estado_inventario',
         'situacion'
-        // fecha_ingreso automaticamnte en la bd
     ];
-
-    public static $idTabla = 'id_inventario';
+    
     public $id_inventario;
-    public $id_marca;
-    public $estado_dispositivo;
-    public $estado_inventario;
-    public $numero_serie;
+    public $id_modelo;
+    public $imei;
+    public $estado_celular;
     public $precio_compra;
     public $precio_venta;
-    public $stock_disponible;
     public $fecha_ingreso;
-    public $observaciones;
+    public $estado_inventario;
     public $situacion;
-
-    public function __construct($args = []){
-        $this->id_inventario = $args['id_inventario'] ?? null;
-        $this->id_marca = $args['id_marca'] ?? null;
-        $this->estado_dispositivo = $args['estado_dispositivo'] ?? 'NUEVO';
-        $this->estado_inventario = $args['estado_inventario'] ?? 'DISPONIBLE';
-        $this->numero_serie = $args['numero_serie'] ?? '';
-        $this->precio_compra = $args['precio_compra'] ?? 0;
-        $this->precio_venta = $args['precio_venta'] ?? 0;
-        $this->stock_disponible = $args['stock_disponible'] ?? 0;
-        //$this->fecha_ingreso = $args['fecha_ingreso'] ?? '';
-        $this->observaciones = $args['observaciones'] ?? '';
-        $this->situacion = $args['situacion'] ?? 1;
+    
+    public function __construct($inventario = [])
+    {
+        $this->id_inventario = $inventario['id_inventario'] ?? null;
+        $this->id_modelo = $inventario['id_modelo'] ?? '';
+        $this->imei = $inventario['imei'] ?? '';
+        $this->estado_celular = $inventario['estado_celular'] ?? 'nuevo';
+        $this->precio_compra = $inventario['precio_compra'] ?? '';
+        $this->precio_venta = $inventario['precio_venta'] ?? '';
+        $this->fecha_ingreso = $inventario['fecha_ingreso'] ?? '';
+        $this->estado_inventario = $inventario['estado_inventario'] ?? 'disponible';
+        $this->situacion = $inventario['situacion'] ?? 1;
     }
-
+    
+    // Método para eliminar inventario (cambiar situacion = 0)
     public static function EliminarInventario($id){
         $sql = "UPDATE inventario SET situacion = 0 WHERE id_inventario = $id";
         return self::SQL($sql);
     }
-
-    // Método para obtener marcas para el dropdown
-    public static function obtenerMarcas(){
-        $sql = "SELECT id_marca, marca_nombre FROM marcas WHERE marca_situacion = 1 ORDER BY marca_nombre";
+    
+    // Método para buscar inventario activo con información de marca y modelo
+    public static function obtenerInventarioActivo(){
+        $sql = "SELECT i.id_inventario, i.id_modelo, i.imei, i.estado_celular, 
+                       i.precio_compra, i.precio_venta, i.fecha_ingreso, 
+                       i.estado_inventario, i.situacion,
+                       m.nombre_modelo, ma.nombre_marca 
+                FROM inventario i 
+                INNER JOIN modelos m ON i.id_modelo = m.id_modelo 
+                INNER JOIN marcas ma ON m.id_marca = ma.id_marca 
+                WHERE i.situacion = 1 AND m.situacion = 1 AND ma.situacion = 1 
+                ORDER BY ma.nombre_marca, m.nombre_modelo, i.fecha_ingreso DESC";
         return self::fetchArray($sql);
     }
-
-    // Método para buscar inventario con información de marca
-    public static function buscarConMarcas(){
-        $sql = "SELECT 
-                    i.*,
-                    m.marca_nombre
-                FROM inventario i 
-                INNER JOIN marcas m ON i.id_marca = m.id_marca 
-                WHERE i.situacion = 1 
-                ORDER BY i.fecha_ingreso DESC";
+    
+    // Método para obtener marcas activas para el dropdown
+    public static function obtenerMarcasActivas(){
+        $sql = "SELECT id_marca, nombre_marca FROM marcas WHERE situacion = 1 ORDER BY nombre_marca";
+        return self::fetchArray($sql);
+    }
+    
+    // Método para obtener modelos por marca
+    public static function obtenerModelosPorMarca($id_marca){
+        $sql = "SELECT id_modelo, nombre_modelo FROM modelos WHERE id_marca = $id_marca AND situacion = 1 ORDER BY nombre_modelo";
         return self::fetchArray($sql);
     }
 }
+?>

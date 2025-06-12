@@ -12,19 +12,14 @@
                         
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="marca_nombre" class="form-label">Nombre de la Marca</label>
-                                <input type="text" class="form-control" id="marca_nombre" name="marca_nombre" placeholder="Ej: Samsung, Apple, Xiaomi" required>
+                                <label for="nombre_marca" class="form-label">Nombre de la Marca *</label>
+                                <input type="text" class="form-control" id="nombre_marca" name="nombre_marca" 
+                                       placeholder="Ej: Samsung, Apple, Huawei" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="marca_modelo" class="form-label">Modelo Principal</label>
-                                <input type="text" class="form-control" id="marca_modelo" name="marca_modelo" placeholder="Ej: Galaxy, iPhone, Redmi">
-                            </div>
-                        </div>
-                        
-                        <div class="row mb-3">
-                            <div class="col-md-12">
-                                <label for="marca_descripcion" class="form-label">Descripción</label>
-                                <textarea class="form-control" id="marca_descripcion" name="marca_descripcion" rows="3" placeholder="Descripción de la marca..."></textarea>
+                                <label for="descripcion" class="form-label">Descripción</label>
+                                <textarea class="form-control" id="descripcion" name="descripcion" rows="3" 
+                                          placeholder="Descripción opcional de la marca"></textarea>
                             </div>
                         </div>
                         
