@@ -1,13 +1,13 @@
 import Swal from 'sweetalert2';
 import { validarFormulario } from '../funciones';
+//import { Dropdown } from "bootstrap";
 
 const FormLogin = document.getElementById('FormLogin');
-const BtnIniciarSesion = document.getElementById('BtnIniciarSesion');
+const BtnIniciar = document.getElementById('BtnIniciar');
 
 const login = async (e) => {
     e.preventDefault();
-
-    BtnIniciarSesion.disabled = true;
+    BtnIniciar.disabled = true;
 
     if (!validarFormulario(FormLogin, [''])) {
         Swal.fire({
@@ -15,14 +15,13 @@ const login = async (e) => {
             text: "Debe llenar todos los campos",
             icon: "info"
         });
-        BtnIniciarSesion.disabled = false;
+        BtnIniciar.disabled = false;
         return;
     }
 
     try {
         const body = new FormData(FormLogin);
-        const url = '/base_login/API/login';
-
+        const url = '/base_login/login';  
         const config = {
             method: 'POST',
             body
@@ -40,11 +39,15 @@ const login = async (e) => {
                 showConfirmButton: true,
                 timer: 1500,
                 timerProgressBar: false,
-                background: '#e0f7fa'
+                background: '#e0f7fa',
+                customClass: {
+                    title: 'custom-title-class',
+                    text: 'custom-text-class'
+                }
             });
 
             FormLogin.reset();
-            location.href = '/base_login/inicio'
+            location.href = '/base_login/inicio';
         } else {
             Swal.fire({
                 title: '¡Error!',
@@ -53,7 +56,11 @@ const login = async (e) => {
                 showConfirmButton: true,
                 timer: 1500,
                 timerProgressBar: false,
-                background: '#e0f7fa'
+                background: '#e0f7fa',
+                customClass: {
+                    title: 'custom-title-class',
+                    text: 'custom-text-class'
+                }
             });
         }
 
@@ -66,7 +73,13 @@ const login = async (e) => {
         });
     }
 
-    BtnIniciarSesion.disabled = false;
-};
+    BtnIniciar.disabled = false;
+}
 
-FormLogin.addEventListener('submit', login);
+// Event listeners
+if (FormLogin) {
+    FormLogin.addEventListener('submit', login);
+    console.log('Login script cargado correctamente');
+} else {
+    console.log('ERROR: Formulario FormLogin no encontrado');
+}

@@ -6,7 +6,7 @@ module.exports = {
     "js/app": "./src/js/app.js",
     "js/inicio": "./src/js/inicio.js",
     "js/registro/index": "./src/js/registro/index.js",
-    "js/login/index": "./src/js/login/index.js",
+    "js/login/login": "./src/js/login/login.js",
     "js/marcas/index": "./src/js/marcas/index.js",
     "js/modelos/index": "./src/js/modelos/index.js",
     "js/clientes/index": "./src/js/clientes/index.js",

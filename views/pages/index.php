@@ -1,5 +1,5 @@
 <?php
-session_start();
+//session_start();
 ?>
 
 <div class="container mt-4">
@@ -9,17 +9,17 @@ session_start();
                 <div class="card-header bg-success text-white text-center">
                     <h3 class="mb-0">
                         <i class="bi bi-house-door-fill me-2"></i>
-                        Bienvenido al Sistema
+                        Bienvenido al Sistema de Gestion de Celulares
                     </h3>
                 </div>
                 <div class="card-body text-center">
                     <div class="row mb-4">
                         <div class="col-12">
                             <h4 class="text-primary">
-                                ¡Hola, <?= $_SESSION['user'] ?? 'Usuario' ?>!
+                                <?= $_SESSION['user'] ?? 'Usuario' ?> 
                             </h4>
                             <p class="lead">
-                                Tu rol en el sistema: 
+                              
                                 <span class="badge bg-primary fs-6"><?= $_SESSION['rol'] ?? 'Sin rol' ?></span>
                             </p>
                         </div>
@@ -69,7 +69,7 @@ session_start();
 
                     <div class="row mt-4">
                         <div class="col-12">
-                            <h5 class="text-muted">Accesos Rápidos</h5>
+                            <h5 class="text-muted">Tienes Acceso a:</h5>
                         </div>
                         <div class="col-md-4 mb-2">
                             <a href="/base_login/marcas" class="btn btn-outline-secondary w-100">
@@ -92,8 +92,7 @@ session_start();
                         <div class="col-12">
                             <p class="text-muted">
                                 <small>
-                                    <i class="bi bi-info-circle me-1"></i>
-                                    Sistema de Gestión de Celulares - Sesión iniciada correctamente
+                                   Sesión iniciada
                                 </small>
                             </p>
                         </div>

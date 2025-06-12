@@ -6,7 +6,7 @@ use Exception;
 use MVC\Router;
 use Model\ActiveRecord;
 use Model\Usuarios;
-use Model\Roles;  // ← AGREGADO
+use Model\Roles; 
 
 class RegistroController extends ActiveRecord
 {
@@ -19,7 +19,7 @@ class RegistroController extends ActiveRecord
     {
         getHeadersApi();
 
-        // VALIDACIÓN DEL ROL (NUEVO)
+        // VALIDACIÓN DEL ROL 
         if (empty($_POST['id_rol'])) {
             http_response_code(400);
             echo json_encode([
@@ -275,7 +275,7 @@ class RegistroController extends ActiveRecord
     public static function buscarAPI()
     {
         try {
-            // CAMBIADO: Usar método que incluye información de rol
+            // Usar método que incluye información de rol
             $data = Usuarios::obtenerUsuariosConRol();
 
             http_response_code(200);
@@ -301,7 +301,7 @@ class RegistroController extends ActiveRecord
         try {
             $id = $_POST['id_usuario'];
 
-            // VALIDACIÓN DEL ROL (NUEVO)
+            // VALIDACIÓN DEL ROL 
             if (empty($_POST['id_rol'])) {
                 http_response_code(400);
                 echo json_encode([
@@ -424,7 +424,7 @@ class RegistroController extends ActiveRecord
                 'direccion' => $_POST['direccion'],
                 'dpi' => $_POST['dpi'],
                 'correo' => $_POST['correo'],
-                'id_rol' => $_POST['id_rol'],  // ← AGREGADO
+                'id_rol' => $_POST['id_rol'],  
                 'situacion' => 1
             ]);
 
@@ -466,7 +466,7 @@ class RegistroController extends ActiveRecord
         }
     }
 
-    // MÉTODO NUEVO: Para obtener roles en el dropdown
+    // para obtener roles en el dropdown
     public static function obtenerRolesAPI()
     {
         getHeadersApi();

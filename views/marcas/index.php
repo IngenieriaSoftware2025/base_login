@@ -12,9 +12,9 @@
                         
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="nombre_marca" class="form-label">Nombre de la Marca *</label>
+                                <label for="nombre_marca" class="form-label">Nombre de la Marca </label>
                                 <input type="text" class="form-control" id="nombre_marca" name="nombre_marca" 
-                                       placeholder="Ej: Samsung, Apple, Huawei" required>
+                                       placeholder="Samsung, Apple, Huawei" required>
                             </div>
                             <div class="col-md-6">
                                 <label for="descripcion" class="form-label">Descripción</label>

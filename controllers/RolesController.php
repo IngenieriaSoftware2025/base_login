@@ -230,36 +230,5 @@ class RolesController extends ActiveRecord
         }
     }
 
-    // Método adicional para obtener estadísticas de roles
-    public static function estadisticasAPI()
-    {
-        getHeadersApi();
-        try {
-            $sql = "SELECT 
-                        r.nombre_rol, 
-                        r.nombre_corto,
-                        COUNT(u.id_usuario) as total_usuarios
-                    FROM roles r 
-                    LEFT JOIN usuarios u ON r.id_rol = u.id_rol AND u.situacion = 1
-                    WHERE r.situacion = 1 
-                    GROUP BY r.id_rol, r.nombre_rol, r.nombre_corto
-                    ORDER BY total_usuarios DESC";
-            
-            $estadisticas = self::fetchArray($sql);
-
-            http_response_code(200);
-            echo json_encode([
-                'codigo' => 1,
-                'mensaje' => 'Estadísticas obtenidas correctamente',
-                'data' => $estadisticas
-            ]);
-        } catch (Exception $e) {
-            http_response_code(400);
-            echo json_encode([
-                'codigo' => 0,
-                'mensaje' => 'Error al obtener estadísticas',
-                'detalle' => $e->getMessage()
-            ]);
-        }
-    }
+ 
 }

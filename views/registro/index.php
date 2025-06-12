@@ -34,7 +34,7 @@
                                         <div class="col-md-6">
                                             <div class="form-outline mb-4">
                                                 <input type="text" id="primer_nombre" name="primer_nombre" class="form-control form-control-lg"  />
-                                                <label class="form-label" for="primer_nombre">Primer Nombre *</label>
+                                                <label class="form-label" for="primer_nombre">Primer Nombre </label>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -49,7 +49,7 @@
                                         <div class="col-md-6">
                                             <div class="form-outline mb-4">
                                                 <input type="text" id="primer_apellido" name="primer_apellido" class="form-control form-control-lg"  />
-                                                <label class="form-label" for="primer_apellido">Primer Apellido *</label>
+                                                <label class="form-label" for="primer_apellido">Primer Apellido </label>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -70,7 +70,7 @@
                                         <div class="col-md-6">
                                             <div class="form-outline mb-4">
                                                 <input type="email" id="correo" name="correo" class="form-control form-control-lg"  />
-                                                <label class="form-label" for="correo">Correo Electrónico *</label>
+                                                <label class="form-label" for="correo">Correo Electrónico </label>
                                             </div>
                                         </div>
                                     </div>
@@ -90,20 +90,20 @@
                                         </div>
                                     </div>
 
-                                    <!-- NUEVA FILA: ROL Y FOTOGRAFÍA -->
+                                    <!-- NUEVA FILA ROL Y FOTOGRAFÍA -->
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="mb-4">
-                                                <label class="form-label" for="id_rol">Rol del Usuario *</label>
+                                                <label class="form-label" for="id_rol">Rol del Usuario </label>
                                                 <select id="id_rol" name="id_rol" class="form-select form-control-lg" required>
-                                                    <option value="">-- Seleccione un rol --</option>
+                                                    <option value="">Seleccione un rol</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-4">
                                                 <label class="form-label" for="fotografia">Fotografía</label>
-                                                <input type="file" id="fotografia" name="fotografia" class="form-control form-control-lg" accept="image/*" />
+                                                <input type="file" id="fotografia" name="fotografia" class="form-control form-control-lg" accept="image/" />
                                             </div>
                                         </div>
                                     </div>
@@ -112,7 +112,7 @@
                                         <div class="col-md-6">
                                             <div class="form-outline mb-4">
                                                 <input type="password" id="contrasena" name="contrasena" class="form-control form-control-lg"  />
-                                                <label class="form-label" for="contrasena">Contraseña *</label>
+                                                <label class="form-label" for="contrasena">Contraseña </label>
                                             </div>
                                         </div>
 

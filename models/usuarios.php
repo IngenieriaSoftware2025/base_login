@@ -21,7 +21,7 @@ class Usuarios extends ActiveRecord {
         // 'fecha_creacion',
         // 'fecha_contrasena',
         'fotografia',
-        'id_rol',  // ← LÍNEA AGREGADA
+        'id_rol',  
         'situacion'
     ];
     
@@ -39,7 +39,7 @@ class Usuarios extends ActiveRecord {
     public $fecha_creacion;
     public $fecha_contrasena;
     public $fotografia;
-    public $id_rol;  // ← LÍNEA AGREGADA
+    public $id_rol;  
     public $situacion;
     
     public function __construct($usuario = [])
@@ -58,7 +58,7 @@ class Usuarios extends ActiveRecord {
         $this->fecha_creacion = $usuario['fecha_creacion'] ?? '';
         $this->fecha_contrasena = $usuario['fecha_contrasena'] ?? '';
         $this->fotografia = $usuario['fotografia'] ?? '';
-        $this->id_rol = $usuario['id_rol'] ?? null;  // ← LÍNEA AGREGADA
+        $this->id_rol = $usuario['id_rol'] ?? null;  
         $this->situacion = $usuario['situacion'] ?? 1;
     }
     

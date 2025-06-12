@@ -1,4 +1,4 @@
-import { Dropdown } from "bootstrap";
+//import { Dropdown } from "bootstrap";
 import Swal from "sweetalert2";
 import { validarFormulario } from '../funciones';
 import DataTable from "datatables.net-bs5";
@@ -412,5 +412,3 @@ BtnLimpiar.addEventListener('click', limpiarTodo);
 BtnModificar.addEventListener('click', ModificarRol);
 BtnBuscar.addEventListener('click', MostrarTabla);
 
-// Cargar datos al inicializar (opcional)
-// BuscarRoles();

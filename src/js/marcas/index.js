@@ -1,4 +1,4 @@
-import { Dropdown } from "bootstrap";
+//import { Dropdown } from "bootstrap";
 import Swal from "sweetalert2";
 import { validarFormulario } from '../funciones';
 import DataTable from "datatables.net-bs5";
@@ -290,10 +290,10 @@ const EliminarMarca = async (e) => {
     }
 }
 
-// Cargar marcas al iniciar
+
 BuscarMarcas();
 
-// Event listeners
+
 datatable.on('click', '.eliminar', EliminarMarca);
 datatable.on('click', '.modificar', llenarFormulario);
 FormMarcas.addEventListener('submit', GuardarMarca);

@@ -12,7 +12,7 @@
                         
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="primer_nombre" class="form-label">Primer Nombre *</label>
+                                <label for="primer_nombre" class="form-label">Primer Nombre </label>
                                 <input type="text" class="form-control" id="primer_nombre" name="primer_nombre" 
                                        placeholder="Ingrese el primer nombre" required>
                             </div>
@@ -25,7 +25,7 @@
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="primer_apellido" class="form-label">Primer Apellido *</label>
+                                <label for="primer_apellido" class="form-label">Primer Apellido </label>
                                 <input type="text" class="form-control" id="primer_apellido" name="primer_apellido" 
                                        placeholder="Ingrese el primer apellido" required>
                             </div>

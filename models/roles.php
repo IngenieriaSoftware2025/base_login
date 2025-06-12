@@ -9,7 +9,7 @@ class Roles extends ActiveRecord {
         'nombre_rol',
         'nombre_corto', 
         'descripcion',
-        'fecha_creacion',
+       // 'fecha_creacion',
         'situacion'
     ];
 

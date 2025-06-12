@@ -1,4 +1,5 @@
 import Swal from "sweetalert2";
+//import { Dropdown } from "bootstrap";
 
 // 1. OBTENER LOS ELEMENTOS DEL HTML
 const FormPermisos = document.getElementById('FormPermisos');

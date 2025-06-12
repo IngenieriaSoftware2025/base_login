@@ -1,4 +1,4 @@
-import { Dropdown } from "bootstrap";
+//import { Dropdown } from "bootstrap";
 import Swal from "sweetalert2";
 import { validarFormulario } from '../funciones';
 import DataTable from "datatables.net-bs5";
@@ -107,7 +107,7 @@ const CargarMarcas = async () => {
         const { codigo, data } = datos
 
         if (codigo == 1) {
-            SelectMarca.innerHTML = '<option value="">-- Seleccione una marca --</option>';
+            SelectMarca.innerHTML = '<option value="">Seleccione una marca</option>';
             data.forEach(marca => {
                 SelectMarca.innerHTML += `<option value="${marca.id_marca}">${marca.nombre_marca}</option>`;
             });
@@ -321,11 +321,11 @@ const EliminarModelo = async (e) => {
     }
 }
 
-// Cargar datos al iniciar
+
 CargarMarcas();
 BuscarModelos();
 
-// Event listeners
+
 datatable.on('click', '.eliminar', EliminarModelo);
 datatable.on('click', '.modificar', llenarFormulario);
 FormModelos.addEventListener('submit', GuardarModelo);

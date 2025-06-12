@@ -17,7 +17,7 @@
 <body>
     <div class="container mt-4">
         
-        <!-- FORMULARIO SIMPLE -->
+  
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card">
@@ -33,13 +33,13 @@
 
                             <div class="row">
                                 <div class="col-md-6">
-                                    <label for="nombre_permiso" class="form-label">Nombre del Permiso *</label>
+                                    <label for="nombre_permiso" class="form-label">Nombre del Permiso </label>
                                     <input type="text" id="nombre_permiso" name="nombre_permiso" 
                                            class="form-control" 
                                            placeholder="Ej: Administrar Usuarios" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="descripcion" class="form-label">Descripción *</label>
+                                    <label for="descripcion" class="form-label">Descripción </label>
                                     <input type="text" id="descripcion" name="descripcion" 
                                            class="form-control" 
                                            placeholder="Ej: Puede crear, editar y eliminar usuarios" required>
@@ -66,7 +66,7 @@
             </div>
         </div>
 
-        <!-- TABLA SIMPLE -->
+      
         <div class="row" id="seccionTabla" style="display: none;">
             <div class="col-12">
                 <div class="card">
@@ -89,7 +89,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="bodyPermisos">
-                                    <!-- Aquí se llenan los datos con JavaScript -->
+                           
                                 </tbody>
                             </table>
                         </div>

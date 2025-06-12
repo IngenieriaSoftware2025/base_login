@@ -1,8 +1,9 @@
-import { Dropdown } from "bootstrap";
+
 import Swal from "sweetalert2";
 import { validarFormulario } from '../funciones';
 import DataTable from "datatables.net-bs5";
 import { lenguaje } from "../lenguaje";
+
 
 const FormUsuarios = document.getElementById('FormUsuarios');
 const BtnGuardar = document.getElementById('BtnGuardar');
@@ -10,9 +11,9 @@ const BtnModificar = document.getElementById('BtnModificar');
 const BtnLimpiar = document.getElementById('BtnLimpiar');
 const BtnBuscarUsuarios = document.getElementById('BtnBuscarUsuarios');
 const seccionTabla = document.getElementById('seccionTabla');
-const SelectRol = document.getElementById('id_rol'); // ← NUEVO
+const SelectRol = document.getElementById('id_rol'); 
 
-// NUEVA FUNCIÓN: Cargar roles en el dropdown
+// Cargar roles en el dropdown
 const CargarRoles = async () => {
     const url = `/base_login/registro/obtenerRolesAPI`;
     const config = {
@@ -25,7 +26,7 @@ const CargarRoles = async () => {
         const { codigo, data } = datos
 
         if (codigo == 1) {
-            SelectRol.innerHTML = '<option value="">-- Seleccione un rol --</option>';
+            SelectRol.innerHTML = '<option value="">Seleccione un rol</option>';
             data.forEach(rol => {
                 SelectRol.innerHTML += `<option value="${rol.id_rol}">${rol.nombre_rol}</option>`;
             });
@@ -164,7 +165,7 @@ const datatable = new DataTable('#TableUsuarios', {
         { title: 'Correo', data: 'correo', width: '12%' },
         { title: 'Teléfono', data: 'telefono', width: '8%' },
         { title: 'DPI', data: 'dpi', width: '8%' },
-        { title: 'Rol', data: 'nombre_rol', width: '8%' }, // ← NUEVA COLUMNA
+        { title: 'Rol', data: 'nombre_rol', width: '8%' }, 
         { title: 'Dirección', data: 'direccion', width: '10%' },
         {
             title: 'Fotografía',
@@ -225,7 +226,7 @@ const llenarFormulario = (event) => {
     document.getElementById('direccion').value = datos.direccion;
     document.getElementById('dpi').value = datos.dpi;
     document.getElementById('correo').value = datos.correo;
-    document.getElementById('id_rol').value = datos.id_rol; // ← NUEVO
+    document.getElementById('id_rol').value = datos.id_rol;
 
     // Ocultar campos de contraseña en modificación
     document.getElementById('contrasena').style.display = 'none';
@@ -369,8 +370,8 @@ const EliminarUsuarios = async (e) => {
     }
 }
 
-// INICIALIZAR: Cargar roles al inicio
-CargarRoles(); // ← NUEVA LÍNEA
+
+CargarRoles(); 
 
 datatable.on('click', '.eliminar', EliminarUsuarios);
 datatable.on('click', '.modificar', llenarFormulario);

@@ -1,23 +1,67 @@
 create database proyecto_celulares
 
 
-create table usuarios(
-    id_usuario serial primary key,
-    primer_nombre varchar(100) not null,
-    segundo_nombre varchar(100),
-    primer_apellido varchar(100) not null,
-    segundo_apellido varchar(100),
-    telefono varchar(15),
-    direccion varchar(100),
-    dpi varchar(100),
-    correo varchar(100),
-    contrasena lvarchar(1056),
-    token lvarchar(1056),
-    fecha_creacion date default today,
-    fecha_contrasena date default today,
-    fotografia lvarchar(2056),
-    situacion smallint default 1
+CREATE TABLE permisos(
+    id_permiso SERIAL PRIMARY KEY,
+    nombre_permiso VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(250),
+    fecha_creacion DATE DEFAULT TODAY,
+    situacion SMALLINT DEFAULT 1
 );
+INSERT INTO permisos (nombre_permiso, descripcion) VALUES 
+('Administrar Usuarios', 'Puede crear, editar y eliminar usuarios');
+INSERT INTO permisos (nombre_permiso, descripcion) VALUES 
+('Ver Inventario', 'Puede consultar el inventario de celulares');
+INSERT INTO permisos (nombre_permiso, descripcion) VALUES 
+('Realizar Ventas', 'Puede hacer ventas de celulares');
+INSERT INTO permisos (nombre_permiso, descripcion) VALUES 
+('Hacer Reparaciones', 'Puede recibir y gestionar reparaciones');
+INSERT INTO permisos (nombre_permiso, descripcion) VALUES 
+('Ver Reportes', 'Puede ver estadísticas y reportes del negocio');
+
+
+
+
+CREATE TABLE roles(
+    id_rol SERIAL PRIMARY KEY,
+    nombre_rol VARCHAR(100) NOT NULL,
+    nombre_corto VARCHAR(25) NOT NULL,
+    descripcion VARCHAR(250),
+    fecha_creacion DATE DEFAULT TODAY,
+    situacion SMALLINT DEFAULT 1
+);
+INSERT INTO roles (nombre_rol, nombre_corto, descripcion) VALUES 
+('Administrador', 'ADMIN', 'Acceso completo al sistema');
+INSERT INTO roles (nombre_rol, nombre_corto, descripcion) VALUES 
+('Técnico', 'TECNICO', 'Puede manejar reparaciones e inventario');
+INSERT INTO roles (nombre_rol, nombre_corto, descripcion) VALUES 
+('Vendedor', 'VENDEDOR', 'Puede realizar ventas');
+INSERT INTO roles (nombre_rol, nombre_corto, descripcion) VALUES 
+('Usuario', 'USER', 'Acceso básico');
+
+
+
+
+CREATE TABLE usuarios(
+    id_usuario SERIAL PRIMARY KEY,
+    primer_nombre VARCHAR(100) NOT NULL,
+    segundo_nombre VARCHAR(100),
+    primer_apellido VARCHAR(100) NOT NULL,
+    segundo_apellido VARCHAR(100),
+    telefono VARCHAR(15),
+    direccion VARCHAR(100),
+    dpi VARCHAR(100),
+    correo VARCHAR(100),
+    contrasena LVARCHAR(1056),
+    token LVARCHAR(1056),
+    fecha_creacion DATE DEFAULT TODAY,
+    fecha_contrasena DATE DEFAULT TODAY,
+    fotografia LVARCHAR(2056),
+    id_rol INTEGER,
+    situacion SMALLINT DEFAULT 1,
+    FOREIGN KEY (id_rol) REFERENCES roles(id_rol)
+);
+
 
 
 CREATE TABLE marcas(
@@ -27,7 +71,6 @@ CREATE TABLE marcas(
     fecha_creacion DATE DEFAULT TODAY,
     situacion SMALLINT DEFAULT 1
 );
-select * from marcas
 
 
 CREATE TABLE modelos(
@@ -39,7 +82,6 @@ CREATE TABLE modelos(
     situacion SMALLINT DEFAULT 1,
     FOREIGN KEY (id_marca) REFERENCES marcas(id_marca)
 );
-select * from modelos
 
 CREATE TABLE clientes(
     id_cliente SERIAL PRIMARY KEY,
@@ -93,15 +135,14 @@ CREATE TABLE reparaciones(
     FOREIGN KEY (id_usuario_asignado) REFERENCES usuarios(id_usuario)
 );
 
-SELECT * FROM usuarios
 
 
 
-CREATE TABLE roles(
-    id_rol SERIAL PRIMARY KEY,
-    nombre_rol VARCHAR(100) NOT NULL,
-    nombre_corto VARCHAR(25) NOT NULL,
-    descripcion VARCHAR(250),
-    fecha_creacion DATE DEFAULT TODAY,
-    situacion SMALLINT DEFAULT 1
-);
+
+
+
+
+
+
+
+
