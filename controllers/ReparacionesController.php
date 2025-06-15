@@ -16,7 +16,7 @@ class ReparacionesController extends ActiveRecord
 
 {
 
-    
+
     public static function renderizarPagina(Router $router)
     {
         $router->render('reparaciones/index', []);
@@ -69,8 +69,19 @@ class ReparacionesController extends ActiveRecord
         $_POST['estado_reparacion'] = trim(htmlspecialchars($_POST['estado_reparacion'] ?? 'recibido'));
         $_POST['costo_total'] = !empty($_POST['costo_total']) ? filter_var($_POST['costo_total'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0;
 
-        // Generar número de orden automático
-        $_POST['numero_orden'] = Reparaciones::generarNumeroOrden();
+        $_POST['fecha_asignacion'] = !empty($_POST['fecha_asignacion']) ? $_POST['fecha_asignacion'] : null;
+        $_POST['fecha_entrega_real'] = !empty($_POST['fecha_entrega_real']) ? $_POST['fecha_entrega_real'] : null;
+
+        $numeroOrden = Reparaciones::generarNumeroOrden();
+        $_POST['numero_orden'] = $numeroOrden;
+
+
+echo "Número generado: " . $numeroOrden;
+exit; // Para ver solo este mensaje
+
+
+
+
 
         try {
             $reparacion = new Reparaciones($_POST);
@@ -83,7 +94,11 @@ class ReparacionesController extends ActiveRecord
                     'mensaje' => 'Reparación registrada correctamente'
                 ]);
             } else {
-                throw new Exception('Error al crear la reparación');
+                http_response_code(500);
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'Error al crear la reparación'
+                ]);
             }
         } catch (Exception $e) {
             http_response_code(500);
@@ -166,6 +181,8 @@ class ReparacionesController extends ActiveRecord
         $_POST['estado_reparacion'] = trim(htmlspecialchars($_POST['estado_reparacion'] ?? 'recibido'));
         $_POST['costo_total'] = !empty($_POST['costo_total']) ? filter_var($_POST['costo_total'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0;
 
+        $_POST['fecha_asignacion'] = !empty($_POST['fecha_asignacion']) ? $_POST['fecha_asignacion'] : null;
+        $_POST['fecha_entrega_real'] = !empty($_POST['fecha_entrega_real']) ? $_POST['fecha_entrega_real'] : null;
         try {
             $reparacion = Reparaciones::find($id);
             $reparacion->sincronizar([

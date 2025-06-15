@@ -1,8 +1,10 @@
 <?php
+
 namespace Model;
 
-class Reparaciones extends ActiveRecord {
-    
+class Reparaciones extends ActiveRecord
+{
+
     public static $tabla = 'reparaciones';
     public static $idTabla = 'id_reparacion';
     public static $columnasDB = [
@@ -15,6 +17,7 @@ class Reparaciones extends ActiveRecord {
         'imei',
         'motivo_ingreso',
         'diagnostico',
+        //'fecha_ingreso',
         'fecha_asignacion',
         'fecha_entrega_real',
         'tipo_servicio',
@@ -22,7 +25,7 @@ class Reparaciones extends ActiveRecord {
         'costo_total',
         'situacion'
     ];
-    
+
     public $id_reparacion;
     public $id_cliente;
     public $id_usuario_recibe;
@@ -40,7 +43,7 @@ class Reparaciones extends ActiveRecord {
     public $estado_reparacion;
     public $costo_total;
     public $situacion;
-    
+
     public function __construct($reparacion = [])
     {
         $this->id_reparacion = $reparacion['id_reparacion'] ?? null;
@@ -59,21 +62,22 @@ class Reparaciones extends ActiveRecord {
         $this->tipo_servicio = $reparacion['tipo_servicio'] ?? '';
         $this->estado_reparacion = $reparacion['estado_reparacion'] ?? 'recibido';
         $this->costo_total = $reparacion['costo_total'] ?? 0;
+        $this->fecha_asignacion = $reparacion['fecha_asignacion'] ?? null;
+        $this->fecha_entrega_real = $reparacion['fecha_entrega_real'] ?? null;
         $this->situacion = $reparacion['situacion'] ?? 1;
     }
-    
-    // Método para eliminar reparación (cambiar situacion = 0)
-    public static function EliminarReparacion($id){
+
+    // Método para eliminar reparación
+    public static function EliminarReparacion($id)
+    {
         $sql = "UPDATE reparaciones SET situacion = 0 WHERE id_reparacion = $id";
         return self::SQL($sql);
     }
-    
-    // Método para buscar reparaciones activas con información completa
-    public static function obtenerReparacionesActivas(){
-        $sql = "SELECT r.id_reparacion, r.id_cliente, r.id_usuario_recibe, r.id_usuario_asignado,
-                       r.numero_orden, r.tipo_celular, r.marca_celular, r.imei, r.motivo_ingreso,
-                       r.diagnostico, r.fecha_ingreso, r.fecha_asignacion, r.fecha_entrega_real,
-                       r.tipo_servicio, r.estado_reparacion, r.costo_total, r.situacion,
+
+    // Método para buscar reparaciones activas
+    public static function obtenerReparacionesActivas()
+    {
+        $sql = "SELECT r.*, 
                        c.primer_nombre || ' ' || c.primer_apellido AS nombre_cliente,
                        u1.primer_nombre || ' ' || u1.primer_apellido AS usuario_recibe,
                        u2.primer_nombre || ' ' || u2.primer_apellido AS usuario_asignado
@@ -85,27 +89,39 @@ class Reparaciones extends ActiveRecord {
                 ORDER BY r.fecha_ingreso DESC, r.id_reparacion DESC";
         return self::fetchArray($sql);
     }
-    
-    // Método para obtener clientes activos para el dropdown
-    public static function obtenerClientesActivos(){
+
+    // Método para obtener clientes activos
+    public static function obtenerClientesActivos()
+    {
         $sql = "SELECT id_cliente, primer_nombre || ' ' || primer_apellido AS nombre_completo 
                 FROM clientes WHERE situacion = 1 ORDER BY primer_apellido, primer_nombre";
         return self::fetchArray($sql);
     }
-    
-    // Método para obtener usuarios activos para el dropdown
-    public static function obtenerUsuariosActivos(){
+
+    // Método para obtener usuarios activos
+    public static function obtenerUsuariosActivos()
+    {
         $sql = "SELECT id_usuario, primer_nombre || ' ' || primer_apellido AS nombre_completo 
                 FROM usuarios WHERE situacion = 1 ORDER BY primer_apellido, primer_nombre";
         return self::fetchArray($sql);
     }
-    
+
     // Método para generar número de orden automático
-    public static function generarNumeroOrden(){
+    public static function generarNumeroOrden()
+    {
         $sql = "SELECT MAX(id_reparacion) AS ultimo_id FROM reparaciones";
         $resultado = self::fetchFirst($sql);
         $siguiente = ($resultado['ultimo_id'] ?? 0) + 1;
-        return 'REP-' . str_pad($siguiente, 4, '0', STR_PAD_LEFT);
+
+        // Formatear número con ceros a la izquierda
+        if ($siguiente < 10) {
+            return 'REP-000' . $siguiente;
+        } else if ($siguiente < 100) {
+            return 'REP-00' . $siguiente;
+        } else if ($siguiente < 1000) {
+            return 'REP-0' . $siguiente;
+        } else {
+            return 'REP-' . $siguiente;
+        }
     }
 }
-?>

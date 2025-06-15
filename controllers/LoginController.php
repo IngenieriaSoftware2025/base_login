@@ -99,27 +99,30 @@ class LoginController extends ActiveRecord
         $router->render('pages/index', [], 'layout/layout');
     }
 
-    public static function logout()
-    {
-        getHeadersApi();
+    // public static function logout()
+    // {
+    //     getHeadersApi();
         
-        try {
-            if (session_status() === PHP_SESSION_NONE) {
-                session_start();
-            }
-            session_destroy();
+    //     try {
+    //         if (session_status() === PHP_SESSION_NONE) {
+    //             session_start();
+    //         }
+    //         session_destroy();
             
-            echo json_encode([
-                'codigo' => 1,
-                'mensaje' => 'Sesión cerrada correctamente'
-            ]);
+    //         echo json_encode([
+    //             'codigo' => 1,
+    //             'mensaje' => 'Sesión cerrada correctamente'
+    //         ]);
             
-        } catch (Exception $e) {
-            echo json_encode([
-                'codigo' => 0,
-                'mensaje' => 'Error al cerrar sesión',
-                'detalle' => $e->getMessage()
-            ]);
-        }
-    }
+    //     } catch (Exception $e) {
+    //         echo json_encode([
+    //             'codigo' => 0,
+    //             'mensaje' => 'Error al cerrar sesión',
+    //             'detalle' => $e->getMessage()
+    //         ]);
+    //     }
+
+    // }
+
+    
 }

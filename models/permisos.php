@@ -9,7 +9,7 @@ class Permisos extends ActiveRecord {
     public static $columnasDB = [
         'nombre_permiso',
         'descripcion',
-        'fecha_creacion',
+      // 'fecha_creacion',
         'situacion'
     ];
 

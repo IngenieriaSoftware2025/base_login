@@ -20,17 +20,19 @@ const login = async (e) => {
     }
 
     try {
+        //PREPARAR DATOS
         const body = new FormData(FormLogin);
         const url = '/base_login/login';  
         const config = {
             method: 'POST',
             body
         };
-
+        //ENVIAR PETICION AJAX
         const respuesta = await fetch(url, config);
         const data = await respuesta.json();
         const { codigo, mensaje } = data;
 
+        //MANEJAR LA RESPUESTA
         if (codigo == 1) {
             await Swal.fire({
                 title: 'Éxito',
@@ -48,6 +50,7 @@ const login = async (e) => {
 
             FormLogin.reset();
             location.href = '/base_login/inicio';
+            //ERROR DE LOGIN
         } else {
             Swal.fire({
                 title: '¡Error!',
@@ -63,7 +66,7 @@ const login = async (e) => {
                 }
             });
         }
-
+        //ERROR DE CONEXION
     } catch (error) {
         console.log(error);
         Swal.fire({
@@ -72,7 +75,7 @@ const login = async (e) => {
             icon: 'error'
         });
     }
-
+    //HABILITAR BOTON
     BtnIniciar.disabled = false;
 }
 

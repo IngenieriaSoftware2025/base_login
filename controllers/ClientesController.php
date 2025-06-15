@@ -38,6 +38,57 @@ class ClientesController extends ActiveRecord
             return;
         }
 
+        if (empty($_POST['telefono'])) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'El teléfono es obligatorio'
+            ]);
+            return;
+        }
+
+
+        // Validación DPI
+        if (empty($_POST['dpi'])) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'El DPI es obligatorio'
+            ]);
+            return;
+        }
+
+        // Validación formato DPI (13 números)
+        $_POST['dpi'] = trim(htmlspecialchars($_POST['dpi']));
+        if (strlen($_POST['dpi']) != 13) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'El DPI debe tener 13 dígitos'
+            ]);
+            return;
+        }
+
+        // Validación correo
+        if (empty($_POST['correo'])) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'El correo electrónico es obligatorio'
+            ]);
+            return;
+        }
+
+        // Validación dirección
+        if (empty($_POST['direccion'])) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'La dirección es obligatoria'
+            ]);
+            return;
+        }
+
         // Sanitizar datos
         $_POST['primer_nombre'] = ucwords(strtolower(trim(htmlspecialchars($_POST['primer_nombre']))));
         $_POST['segundo_nombre'] = ucwords(strtolower(trim(htmlspecialchars($_POST['segundo_nombre'] ?? ''))));
@@ -47,6 +98,29 @@ class ClientesController extends ActiveRecord
         $_POST['dpi'] = trim(htmlspecialchars($_POST['dpi'] ?? ''));
         $_POST['correo'] = strtolower(trim(htmlspecialchars($_POST['correo'] ?? '')));
         $_POST['direccion'] = ucwords(strtolower(trim(htmlspecialchars($_POST['direccion'] ?? ''))));
+
+        // Verificar si el DPI ya existe
+        $dpiExistente = Clientes::where('dpi', $_POST['dpi']);
+        if (count($dpiExistente) > 0) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'Este DPI ya está registrado en el sistema'
+            ]);
+            return;
+        }
+
+        // Verificar si el correo ya existe
+        $correoExistente = Clientes::where('correo', $_POST['correo']);
+        if (count($correoExistente) > 0) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'El correo electrónico ya está registrado'
+            ]);
+            return;
+        }
+
 
         try {
             $cliente = new Clientes($_POST);
@@ -59,7 +133,11 @@ class ClientesController extends ActiveRecord
                     'mensaje' => 'Cliente registrado correctamente'
                 ]);
             } else {
-                throw new Exception('Error al crear el cliente');
+                http_response_code(500);
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'Error al crear el cliente'
+                ]);
             }
         } catch (Exception $e) {
             http_response_code(500);
@@ -70,6 +148,10 @@ class ClientesController extends ActiveRecord
             ]);
         }
     }
+
+
+
+
 
     public static function buscarAPI()
     {
@@ -92,6 +174,9 @@ class ClientesController extends ActiveRecord
             ]);
         }
     }
+
+
+
 
     public static function modificarAPI()
     {
@@ -118,6 +203,57 @@ class ClientesController extends ActiveRecord
             return;
         }
 
+        // Validación teléfono
+        if (empty($_POST['telefono'])) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'El teléfono es obligatorio'
+            ]);
+            return;
+        }
+
+        // Validación DPI
+        if (empty($_POST['dpi'])) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'El DPI es obligatorio'
+            ]);
+            return;
+        }
+
+        // Validación formato DPI (13 números)
+        $_POST['dpi'] = trim(htmlspecialchars($_POST['dpi']));
+        if (strlen($_POST['dpi']) != 13) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'El DPI debe tener 13 dígitos'
+            ]);
+            return;
+        }
+
+        // Validación correo
+        if (empty($_POST['correo'])) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'El correo electrónico es obligatorio'
+            ]);
+            return;
+        }
+
+        // Validación dirección
+        if (empty($_POST['direccion'])) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'La dirección es obligatoria'
+            ]);
+            return;
+        }
+
         // Sanitizar datos
         $_POST['primer_nombre'] = ucwords(strtolower(trim(htmlspecialchars($_POST['primer_nombre']))));
         $_POST['segundo_nombre'] = ucwords(strtolower(trim(htmlspecialchars($_POST['segundo_nombre'] ?? ''))));
@@ -127,6 +263,33 @@ class ClientesController extends ActiveRecord
         $_POST['dpi'] = trim(htmlspecialchars($_POST['dpi'] ?? ''));
         $_POST['correo'] = strtolower(trim(htmlspecialchars($_POST['correo'] ?? '')));
         $_POST['direccion'] = ucwords(strtolower(trim(htmlspecialchars($_POST['direccion'] ?? ''))));
+
+
+        // Verificar si el DPI ya existe 
+        $consultaDpi = "SELECT * FROM clientes WHERE dpi = '{$_POST['dpi']}' AND id_cliente != {$id}";
+        $dpiExistente = Clientes::fetchArray($consultaDpi);
+        if (count($dpiExistente) > 0) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'Este DPI ya está registrado por otro cliente'
+            ]);
+            return;
+        }
+
+        // Verificar si el correo ya existe 
+        $consultaCorreo = "SELECT * FROM clientes WHERE correo = '{$_POST['correo']}' AND id_cliente != {$id}";
+        $correoExistente = Clientes::fetchArray($consultaCorreo);
+        if (count($correoExistente) > 0) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'El correo electrónico ya está registrado por otro cliente'
+            ]);
+            return;
+        }
+
+
 
         try {
             $cliente = Clientes::find($id);

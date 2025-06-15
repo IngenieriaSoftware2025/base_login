@@ -3,25 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Glassmorphism Style</title>
-    <!-- Bootstrap CSS -->
+    <title>Login</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- MDB CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.css" rel="stylesheet">
 </head>
 <body>
 
-<!-- Section: Design Block -->
 <section class="text-center vh-100">
-  <!-- Background image -->
   <div class="p-5 bg-image" style="
         background-image: url('https://mdbootstrap.com/img/new/textures/full/171.jpg');
         height: 400px;
         "></div>
-  <!-- Background image -->
-  
   <div class="card mx-4 mx-md-5 shadow-5-strong bg-body-tertiary" style="
         margin-top: -150px;
         backdrop-filter: blur(30px);

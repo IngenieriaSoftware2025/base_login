@@ -13,27 +13,27 @@
                         <div class="row mb-3">
                             <div class="col-md-4">
                                 <label for="id_marca" class="form-label">Marca *</label>
-                                <select class="form-select" id="id_marca" name="id_marca" required>
+                                <select class="form-select" id="id_marca" name="id_marca" >
                                     <option value="">-- Seleccione una marca --</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 <label for="id_modelo" class="form-label">Modelo *</label>
-                                <select class="form-select" id="id_modelo" name="id_modelo" required>
+                                <select class="form-select" id="id_modelo" name="id_modelo" >
                                     <option value="">-- Seleccione un modelo --</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 <label for="imei" class="form-label">IMEI *</label>
                                 <input type="text" class="form-control" id="imei" name="imei" 
-                                       placeholder="Ej: 123456789012345" required>
+                                       placeholder="Ej: 123456789012345" >
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-4">
                                 <label for="estado_celular" class="form-label">Estado del Celular *</label>
-                                <select class="form-select" id="estado_celular" name="estado_celular" required>
+                                <select class="form-select" id="estado_celular" name="estado_celular" >
                                     <option value="nuevo">Nuevo</option>
                                     <option value="usado">Usado</option>
                                     <option value="dañado">Dañado</option>
@@ -42,19 +42,19 @@
                             <div class="col-md-4">
                                 <label for="precio_compra" class="form-label">Precio de Compra *</label>
                                 <input type="number" class="form-control" id="precio_compra" name="precio_compra" 
-                                       step="0.01" min="0" placeholder="0.00" required>
+                                       step="0.01" min="0" placeholder="0.00" >
                             </div>
                             <div class="col-md-4">
                                 <label for="precio_venta" class="form-label">Precio de Venta *</label>
                                 <input type="number" class="form-control" id="precio_venta" name="precio_venta" 
-                                       step="0.01" min="0" placeholder="0.00" required>
+                                       step="0.01" min="0" placeholder="0.00" >
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-4">
                                 <label for="estado_inventario" class="form-label">Estado del Inventario *</label>
-                                <select class="form-select" id="estado_inventario" name="estado_inventario" required>
+                                <select class="form-select" id="estado_inventario" name="estado_inventario" >
                                     <option value="disponible">Disponible</option>
                                     <option value="vendido">Vendido</option>
                                     <option value="en_reparacion">En Reparación</option>

@@ -28,6 +28,16 @@ class MarcasController extends ActiveRecord
             return;
         }
 
+        // Validación descripción
+        if (empty($_POST['descripcion'])) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'La descripción de la marca es obligatoria'
+            ]);
+            return;
+        }
+
         // Sanitizar datos
         $_POST['nombre_marca'] = ucwords(strtolower(trim(htmlspecialchars($_POST['nombre_marca']))));
         $_POST['descripcion'] = trim(htmlspecialchars($_POST['descripcion'] ?? ''));
@@ -54,7 +64,11 @@ class MarcasController extends ActiveRecord
                     'mensaje' => 'Marca registrada correctamente'
                 ]);
             } else {
-                throw new Exception('Error al crear la marca');
+                http_response_code(500);
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'Error al crear la marca'
+                ]);
             }
         } catch (Exception $e) {
             http_response_code(500);
@@ -100,6 +114,17 @@ class MarcasController extends ActiveRecord
             echo json_encode([
                 'codigo' => 0,
                 'mensaje' => 'El nombre de la marca es obligatorio'
+            ]);
+            return;
+        }
+
+
+        // Validación descripción
+        if (empty($_POST['descripcion'])) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'La descripción de la marca es obligatoria'
             ]);
             return;
         }

@@ -26,7 +26,7 @@ class Marcas extends ActiveRecord {
         $this->situacion = $marca['situacion'] ?? 1;
     }
     
-    // Método para eliminar marca (cambiar situacion = 0)
+    // Método para eliminar marca 
     public static function EliminarMarca($id){
         $sql = "UPDATE marcas SET situacion = 0 WHERE id_marca = $id";
         return self::SQL($sql);

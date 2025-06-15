@@ -63,11 +63,11 @@ class Usuarios extends ActiveRecord {
     }
     
     public static function EliminarUsuarios($id){
-        $sql = "DELETE FROM usuarios WHERE id_usuario = $id";
-        return self::SQL($sql);
-    }
+    $sql = "UPDATE usuarios SET situacion = 0 WHERE id_usuario = $id";
+    return self::SQL($sql);
+}
 
-    // MÉTODO AGREGADO: Obtener usuarios con información de rol
+    //Obtener usuarios con información de rol
     public static function obtenerUsuariosConRol(){
         $sql = "SELECT u.*, r.nombre_rol, r.nombre_corto as rol_corto 
                 FROM usuarios u 
@@ -77,7 +77,7 @@ class Usuarios extends ActiveRecord {
         return self::fetchArray($sql);
     }
 
-    // MÉTODO AGREGADO: Validar credenciales de login (para uso futuro)
+    //Validar credenciales de login
     public static function validarCredenciales($correo, $contrasena){
         $sql = "SELECT u.*, r.nombre_rol, r.nombre_corto as rol_corto 
                 FROM usuarios u 

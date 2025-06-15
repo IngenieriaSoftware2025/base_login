@@ -13,14 +13,14 @@
                         <div class="row mb-3">
                             <div class="col-md-4">
                                 <label for="id_marca" class="form-label">Marca </label>
-                                <select class="form-select" id="id_marca" name="id_marca" required>
+                                <select class="form-select" id="id_marca" name="id_marca">
                                     <option value="">Seleccione una marca</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 <label for="nombre_modelo" class="form-label">Nombre del Modelo </label>
                                 <input type="text" class="form-control" id="nombre_modelo" name="nombre_modelo" 
-                                       placeholder="Galaxy S23, iPhone 14, P30 Pro" required>
+                                       placeholder="Galaxy S23, iPhone 14, P30 Pro">
                             </div>
                             <div class="col-md-4">
                                 <label for="color" class="form-label">Color</label>
