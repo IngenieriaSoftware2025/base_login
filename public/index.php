@@ -12,6 +12,7 @@ use Controllers\InventarioController;
 use Controllers\ReparacionesController;
 use Controllers\RolesController;
 use Controllers\PermisosController;
+use Controllers\VentasController;
 
 $router = new Router();
 $router->setBaseURL('/' . $_ENV['APP_NAME']);
@@ -90,5 +91,17 @@ $router->post('/permisos/guardarAPI', [PermisosController::class, 'guardarAPI'])
 $router->get('/permisos/buscarAPI', [PermisosController::class, 'buscarAPI']);
 $router->post('/permisos/modificarAPI', [PermisosController::class, 'modificarAPI']);
 $router->get('/permisos/eliminarAPI', [PermisosController::class, 'eliminarAPI']);
+
+
+
+$router->get('/ventas', [VentasController::class, 'renderizarPagina']);
+$router->post('/ventas/guardarAPI', [VentasController::class, 'guardarAPI']);
+$router->get('/ventas/buscarAPI', [VentasController::class, 'buscarAPI']);
+$router->post('/ventas/modificarAPI', [VentasController::class, 'modificarAPI']);
+$router->get('/ventas/eliminarAPI', [VentasController::class, 'eliminarAPI']);
+$router->get('/ventas/obtenerClientesAPI', [VentasController::class, 'obtenerClientesAPI']);
+$router->get('/ventas/obtenerInventarioAPI', [VentasController::class, 'obtenerInventarioAPI']);
+$router->get('/ventas/obtenerDetalleAPI', [VentasController::class, 'obtenerDetalleAPI']);
+
 
 $router->comprobarRutas();

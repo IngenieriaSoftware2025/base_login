@@ -138,7 +138,35 @@ CREATE TABLE reparaciones(
 
 
 
+CREATE TABLE ventas(
+    id_venta SERIAL PRIMARY KEY,
+    id_cliente INTEGER NOT NULL,
+    id_usuario INTEGER NOT NULL,
+    numero_venta VARCHAR(50) UNIQUE,
+    fecha_venta DATE DEFAULT TODAY,
+    subtotal DECIMAL(10,2) DEFAULT 0,
+    descuento DECIMAL(10,2) DEFAULT 0,
+    total DECIMAL(10,2) DEFAULT 0,
+    metodo_pago VARCHAR(50) DEFAULT 'efectivo' CHECK (metodo_pago IN ('efectivo', 'tarjeta', 'transferencia')),
+    estado_venta VARCHAR(20) DEFAULT 'completada' CHECK (estado_venta IN ('completada', 'cancelada', 'pendiente')),
+    observaciones LVARCHAR(500),
+    situacion SMALLINT DEFAULT 1,
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+);
 
+
+CREATE TABLE detalle_ventas(
+    id_detalle SERIAL PRIMARY KEY,
+    id_venta INTEGER NOT NULL,
+    id_inventario INTEGER NOT NULL,
+    precio_unitario DECIMAL(10,2) NOT NULL,
+    cantidad INTEGER DEFAULT 1,
+    subtotal_detalle DECIMAL(10,2) NOT NULL,
+    situacion SMALLINT DEFAULT 1,
+    FOREIGN KEY (id_venta) REFERENCES ventas(id_venta),
+    FOREIGN KEY (id_inventario) REFERENCES inventario(id_inventario)
+);
 
 
 
