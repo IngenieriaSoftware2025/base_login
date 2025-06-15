@@ -33,32 +33,35 @@ class RolesController extends ActiveRecord
             http_response_code(400);
             echo json_encode([
                 'codigo' => 0,
-                'mensaje' => 'El nombre corto del rol es obligatorio'
-            ]);
-            return;
-        }
-
-        if (empty($_POST['descripcion'])) {
-            http_response_code(400);
-            echo json_encode([
-                'codigo' => 0,
-                'mensaje' => 'La descripción del rol es obligatoria'
+                'mensaje' => 'El código del rol es obligatorio'
             ]);
             return;
         }
 
         try {
-            // Sanitizar datos
-            $_POST['nombre_rol'] = ucwords(strtolower(trim(htmlspecialchars($_POST['nombre_rol']))));
-            $_POST['nombre_corto'] = strtoupper(trim(htmlspecialchars($_POST['nombre_corto'])));
-            $_POST['descripcion'] = trim(htmlspecialchars($_POST['descripcion']));
+            // Sanitizar datos - FORMATO CORRECTO
+            $_POST['nombre_rol'] = ucwords(strtolower(trim($_POST['nombre_rol'])));
+            $_POST['nombre_corto'] = strtoupper(trim($_POST['nombre_corto']));
+            $_POST['descripcion'] = !empty($_POST['descripcion']) ? ucfirst(strtolower(trim($_POST['descripcion']))) : '';
 
             // Validar que no exista un rol con el mismo nombre
-            if (Roles::existeRol($_POST['nombre_rol'])) {
+            $existeNombre = self::fetchFirst("SELECT id_rol FROM roles WHERE LOWER(nombre_rol) = LOWER('{$_POST['nombre_rol']}') AND situacion = 1");
+            if ($existeNombre) {
                 http_response_code(400);
                 echo json_encode([
                     'codigo' => 0,
                     'mensaje' => 'Ya existe un rol con ese nombre'
+                ]);
+                return;
+            }
+
+            // Validar que no exista un código igual
+            $existeCodigo = self::fetchFirst("SELECT id_rol FROM roles WHERE UPPER(nombre_corto) = UPPER('{$_POST['nombre_corto']}') AND situacion = 1");
+            if ($existeCodigo) {
+                http_response_code(400);
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'Ya existe un rol con ese código'
                 ]);
                 return;
             }
@@ -138,32 +141,35 @@ class RolesController extends ActiveRecord
             http_response_code(400);
             echo json_encode([
                 'codigo' => 0,
-                'mensaje' => 'El nombre corto del rol es obligatorio'
-            ]);
-            return;
-        }
-
-        if (empty($_POST['descripcion'])) {
-            http_response_code(400);
-            echo json_encode([
-                'codigo' => 0,
-                'mensaje' => 'La descripción del rol es obligatoria'
+                'mensaje' => 'El código del rol es obligatorio'
             ]);
             return;
         }
 
         try {
-            // Sanitizar datos
-            $_POST['nombre_rol'] = ucwords(strtolower(trim(htmlspecialchars($_POST['nombre_rol']))));
-            $_POST['nombre_corto'] = strtoupper(trim(htmlspecialchars($_POST['nombre_corto'])));
-            $_POST['descripcion'] = trim(htmlspecialchars($_POST['descripcion']));
+            // Sanitizar datos - FORMATO CORRECTO
+            $_POST['nombre_rol'] = ucwords(strtolower(trim($_POST['nombre_rol'])));
+            $_POST['nombre_corto'] = strtoupper(trim($_POST['nombre_corto']));
+            $_POST['descripcion'] = !empty($_POST['descripcion']) ? ucfirst(strtolower(trim($_POST['descripcion']))) : '';
 
             // Validar que no exista otro rol con el mismo nombre (excluyendo el actual)
-            if (Roles::existeRol($_POST['nombre_rol'], $id)) {
+            $existeNombre = self::fetchFirst("SELECT id_rol FROM roles WHERE LOWER(nombre_rol) = LOWER('{$_POST['nombre_rol']}') AND situacion = 1 AND id_rol != $id");
+            if ($existeNombre) {
                 http_response_code(400);
                 echo json_encode([
                     'codigo' => 0,
                     'mensaje' => 'Ya existe otro rol con ese nombre'
+                ]);
+                return;
+            }
+
+            // Validar que no exista otro código igual (excluyendo el actual)
+            $existeCodigo = self::fetchFirst("SELECT id_rol FROM roles WHERE UPPER(nombre_corto) = UPPER('{$_POST['nombre_corto']}') AND situacion = 1 AND id_rol != $id");
+            if ($existeCodigo) {
+                http_response_code(400);
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'Ya existe otro rol con ese código'
                 ]);
                 return;
             }
@@ -229,6 +235,4 @@ class RolesController extends ActiveRecord
             ]);
         }
     }
-
- 
 }

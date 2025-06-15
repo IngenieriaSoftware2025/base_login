@@ -97,10 +97,9 @@ CREATE TABLE clientes(
     situacion SMALLINT DEFAULT 1
 );
 
-CREATE TABLE inventario(
+create TABLE inventario(
     id_inventario SERIAL PRIMARY KEY,
     id_modelo INTEGER NOT NULL,
-    imei VARCHAR(20) UNIQUE,
     estado_celular VARCHAR(20) DEFAULT 'nuevo' CHECK (estado_celular IN ('nuevo', 'usado', 'dañado')),
     precio_compra DECIMAL(10,2),
     precio_venta DECIMAL(10,2),
@@ -111,30 +110,27 @@ CREATE TABLE inventario(
 );
 
 
-
 CREATE TABLE reparaciones(
     id_reparacion SERIAL PRIMARY KEY,
     id_cliente INTEGER NOT NULL,
     id_usuario_recibe INTEGER NOT NULL,
     id_usuario_asignado INTEGER,
-    numero_orden VARCHAR(50) UNIQUE,
     tipo_celular VARCHAR(100),
     marca_celular VARCHAR(100),
-    imei VARCHAR(20),
     motivo_ingreso LVARCHAR(1000),
     diagnostico LVARCHAR(1000),
     fecha_ingreso DATE DEFAULT TODAY,
     fecha_asignacion DATE,
     fecha_entrega_real DATE,
     tipo_servicio VARCHAR(50),
-    estado_reparacion VARCHAR(20) DEFAULT 'recibido' CHECK (estado_reparacion IN ('recibido', 'en_proceso', 'terminado', 'entregado', 'cancelado')),
+    estado_reparacion VARCHAR(20) DEFAULT 'recibido' CHECK 
+    (estado_reparacion IN ('recibido', 'en_proceso', 'terminado', 'entregado', 'cancelado')),
     costo_total DECIMAL(10,2) DEFAULT 0,
     situacion SMALLINT DEFAULT 1,
     FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
     FOREIGN KEY (id_usuario_recibe) REFERENCES usuarios(id_usuario),
     FOREIGN KEY (id_usuario_asignado) REFERENCES usuarios(id_usuario)
 );
-
 
 
 
@@ -146,15 +142,16 @@ CREATE TABLE ventas(
     fecha_venta DATE DEFAULT TODAY,
     subtotal DECIMAL(10,2) DEFAULT 0,
     descuento DECIMAL(10,2) DEFAULT 0,
-    total DECIMAL(10,2) DEFAULT 0,
-    metodo_pago VARCHAR(50) DEFAULT 'efectivo' CHECK (metodo_pago IN ('efectivo', 'tarjeta', 'transferencia')),
-    estado_venta VARCHAR(20) DEFAULT 'completada' CHECK (estado_venta IN ('completada', 'cancelada', 'pendiente')),
+    total DECIMAL(10,3) DEFAULT 0,
+    metodo_pago VARCHAR(50) DEFAULT 'efectivo',
+    estado_venta VARCHAR(20) DEFAULT 'completada',
     observaciones LVARCHAR(500),
     situacion SMALLINT DEFAULT 1,
     FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
-    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
+    CHECK (metodo_pago IN ('efectivo', 'tarjeta', 'transferencia')),
+    CHECK (estado_venta IN ('completada', 'cancelada', 'pendiente'))
 );
-
 
 CREATE TABLE detalle_ventas(
     id_detalle SERIAL PRIMARY KEY,
@@ -167,6 +164,19 @@ CREATE TABLE detalle_ventas(
     FOREIGN KEY (id_venta) REFERENCES ventas(id_venta),
     FOREIGN KEY (id_inventario) REFERENCES inventario(id_inventario)
 );
+
+
+
+select * from usuarios
+select * from roles
+select * from reparaciones
+select * from clientes
+select * from permisos
+select * from inventario
+select * from modelos
+select * from marcas
+
+
 
 
 

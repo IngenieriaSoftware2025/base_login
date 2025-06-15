@@ -10,58 +10,72 @@
                     <form id="FormReparaciones">
                         <input type="hidden" id="id_reparacion" name="id_reparacion">
                         
+                        <!-- Primera fila -->
                         <div class="row mb-3">
-                            <div class="col-md-4">
-                                <label for="id_cliente" class="form-label">Cliente *</label>
-                                <select class="form-select" id="id_cliente" name="id_cliente" required>
-                                    <option value="">-- Seleccione un cliente --</option>
+                            <div class="col-md-3">
+                                <label for="id_cliente" class="form-label">Cliente</label>
+                                <select class="form-select" id="id_cliente" name="id_cliente" >
+                                    <option value="">-- Seleccione cliente --</option>
                                 </select>
                             </div>
-                            <div class="col-md-4">
-                                <label for="id_usuario_recibe" class="form-label">Usuario que Recibe *</label>
-                                <select class="form-select" id="id_usuario_recibe" name="id_usuario_recibe" required>
-                                    <option value="">-- Seleccione empleado --</option>
+                            <div class="col-md-3">
+                                <label for="id_usuario_recibe" class="form-label">Usuario que Recibe</label>
+                                <select class="form-select" id="id_usuario_recibe" name="id_usuario_recibe" >
+                                    <option value="">-- Seleccione usuario --</option>
                                 </select>
                             </div>
-                            <div class="col-md-4">
-                                <label for="id_usuario_asignado" class="form-label">Técnico Asignado</label>
+                            <div class="col-md-3">
+                                <label for="id_usuario_asignado" class="form-label">Usuario Asignado</label>
                                 <select class="form-select" id="id_usuario_asignado" name="id_usuario_asignado">
-                                    <option value="">-- Seleccione técnico --</option>
+                                    <option value="">-- Seleccione usuario --</option>
                                 </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="numero_orden" class="form-label">Número de Orden</label>
+                                <input type="text" class="form-control" id="numero_orden" name="numero_orden" 
+                                       placeholder="REP-001" >
                             </div>
                         </div>
-
+                        
+                        <!-- Segunda fila -->
                         <div class="row mb-3">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="tipo_celular" class="form-label">Tipo de Celular</label>
                                 <input type="text" class="form-control" id="tipo_celular" name="tipo_celular" 
-                                       placeholder="Ej: Smartphone, Tablet">
+                                       placeholder="Smartphone, Celular básico" >
                             </div>
-                            <div class="col-md-4">
-                                <label for="marca_celular" class="form-label">Marca</label>
+                            <div class="col-md-3">
+                                <label for="marca_celular" class="form-label">Marca del Celular</label>
                                 <input type="text" class="form-control" id="marca_celular" name="marca_celular" 
-                                       placeholder="Ej: Samsung, iPhone, Huawei">
+                                       placeholder="Samsung, Apple, Huawei" >
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="imei" class="form-label">IMEI</label>
                                 <input type="text" class="form-control" id="imei" name="imei" 
-                                       placeholder="IMEI del equipo">
+                                       placeholder="123456789012345">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="costo_total" class="form-label">Costo Total</label>
+                                <input type="number" class="form-control" id="costo_total" name="costo_total" 
+                                       placeholder="0.00" step="0.01" min="0">
                             </div>
                         </div>
-
+                        
+                        <!-- Tercera fila -->
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="motivo_ingreso" class="form-label">Motivo de Ingreso *</label>
+                                <label for="motivo_ingreso" class="form-label">Motivo de Ingreso</label>
                                 <textarea class="form-control" id="motivo_ingreso" name="motivo_ingreso" rows="3" 
-                                          placeholder="Describa el problema reportado por el cliente" required></textarea>
+                                          placeholder="Describe el problema que presenta el celular" ></textarea>
                             </div>
                             <div class="col-md-6">
-                                <label for="diagnostico" class="form-label">Diagnóstico Técnico</label>
+                                <label for="diagnostico" class="form-label">Diagnóstico</label>
                                 <textarea class="form-control" id="diagnostico" name="diagnostico" rows="3" 
                                           placeholder="Diagnóstico técnico del problema"></textarea>
                             </div>
                         </div>
-
+                        
+                        <!-- Cuarta fila -->
                         <div class="row mb-3">
                             <div class="col-md-3">
                                 <label for="tipo_servicio" class="form-label">Tipo de Servicio</label>
@@ -78,8 +92,8 @@
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <label for="estado_reparacion" class="form-label">Estado *</label>
-                                <select class="form-select" id="estado_reparacion" name="estado_reparacion" required>
+                                <label for="estado_reparacion" class="form-label">Estado</label>
+                                <select class="form-select" id="estado_reparacion" name="estado_reparacion" >
                                     <option value="recibido">Recibido</option>
                                     <option value="en_proceso">En Proceso</option>
                                     <option value="terminado">Terminado</option>
@@ -94,14 +108,6 @@
                             <div class="col-md-3">
                                 <label for="fecha_entrega_real" class="form-label">Fecha Entrega</label>
                                 <input type="date" class="form-control" id="fecha_entrega_real" name="fecha_entrega_real">
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-3">
-                                <label for="costo_total" class="form-label">Costo Total</label>
-                                <input type="number" class="form-control" id="costo_total" name="costo_total" 
-                                       step="0.01" min="0" placeholder="0.00">
                             </div>
                         </div>
                         

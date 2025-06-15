@@ -28,16 +28,6 @@ class InventarioController extends ActiveRecord
             return;
         }
 
-        // Validación IMEI
-        if (empty($_POST['imei'])) {
-            http_response_code(400);
-            echo json_encode([
-                'codigo' => 0,
-                'mensaje' => 'El IMEI es obligatorio'
-            ]);
-            return;
-        }
-
         // Validación precio de compra
         if (empty($_POST['precio_compra']) || $_POST['precio_compra'] <= 0) {
             http_response_code(400);
@@ -58,9 +48,19 @@ class InventarioController extends ActiveRecord
             return;
         }
 
+        // Validar que el modelo exista
+        $modeloExiste = self::SQL("SELECT id_modelo FROM modelos WHERE id_modelo = {$_POST['id_modelo']} AND situacion = 1");
+        if (empty($modeloExiste)) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'El modelo seleccionado no existe'
+            ]);
+            return;
+        }
+
         // Sanitizar datos
         $_POST['id_modelo'] = filter_var($_POST['id_modelo'], FILTER_SANITIZE_NUMBER_INT);
-        $_POST['imei'] = trim(htmlspecialchars($_POST['imei']));
         $_POST['estado_celular'] = trim(htmlspecialchars($_POST['estado_celular'] ?? 'nuevo'));
         $_POST['precio_compra'] = filter_var($_POST['precio_compra'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $_POST['precio_venta'] = filter_var($_POST['precio_venta'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
@@ -70,14 +70,22 @@ class InventarioController extends ActiveRecord
             $inventario = new Inventario($_POST);
             $resultado = $inventario->crear();
 
-            if ($resultado['resultado'] == 1) {
+            // Verificar diferentes tipos de respuesta del método crear()
+            $success = false;
+            if (is_array($resultado)) {
+                $success = ($resultado['resultado'] == 1) || ($resultado['codigo'] == 1);
+            } else {
+                $success = (bool)$resultado;
+            }
+
+            if ($success) {
                 http_response_code(200);
                 echo json_encode([
                     'codigo' => 1,
                     'mensaje' => 'Inventario registrado correctamente'
                 ]);
             } else {
-                throw new Exception('Error al crear el inventario');
+                throw new Exception('Error al crear el inventario en la base de datos');
             }
         } catch (Exception $e) {
             http_response_code(500);
@@ -127,15 +135,6 @@ class InventarioController extends ActiveRecord
             return;
         }
 
-        if (empty($_POST['imei'])) {
-            http_response_code(400);
-            echo json_encode([
-                'codigo' => 0,
-                'mensaje' => 'El IMEI es obligatorio'
-            ]);
-            return;
-        }
-
         if (empty($_POST['precio_compra']) || $_POST['precio_compra'] <= 0) {
             http_response_code(400);
             echo json_encode([
@@ -156,7 +155,6 @@ class InventarioController extends ActiveRecord
 
         // Sanitizar datos
         $_POST['id_modelo'] = filter_var($_POST['id_modelo'], FILTER_SANITIZE_NUMBER_INT);
-        $_POST['imei'] = trim(htmlspecialchars($_POST['imei']));
         $_POST['estado_celular'] = trim(htmlspecialchars($_POST['estado_celular'] ?? 'nuevo'));
         $_POST['precio_compra'] = filter_var($_POST['precio_compra'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $_POST['precio_venta'] = filter_var($_POST['precio_venta'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
@@ -166,7 +164,6 @@ class InventarioController extends ActiveRecord
             $inventario = Inventario::find($id);
             $inventario->sincronizar([
                 'id_modelo' => $_POST['id_modelo'],
-                'imei' => $_POST['imei'],
                 'estado_celular' => $_POST['estado_celular'],
                 'precio_compra' => $_POST['precio_compra'],
                 'precio_venta' => $_POST['precio_venta'],

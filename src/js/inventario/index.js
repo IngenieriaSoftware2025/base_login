@@ -1,4 +1,3 @@
-//import { Dropdown } from "bootstrap";
 import Swal from "sweetalert2";
 import { validarFormulario } from '../funciones';
 import DataTable from "datatables.net-bs5";
@@ -68,36 +67,7 @@ const GuardarInventario = async (event) => {
 }
 
 const BuscarInventario = async () => {
-    const url = `/base_login/inventario/buscarAPI`;
-    const config = {
-        method: 'GET'
-    }
-
-    try {
-        const respuesta = await fetch(url, config);
-        const datos = await respuesta.json();
-        const { codigo, mensaje, data } = datos
-
-        if (codigo == 1) {
-            datatable.clear().draw();
-            datatable.rows.add(data).draw();
-        } else {
-            await Swal.fire({
-                position: "center",
-                icon: "info",
-                title: "Info",
-                text: mensaje,
-                showConfirmButton: true,
-            });
-        }
-
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-const CargarMarcas = async () => {
-    const url = `/base_login/inventario/obtenerMarcasAPI`;
+    const url = '/base_login/inventario/buscarAPI';
     const config = {
         method: 'GET'
     }
@@ -108,7 +78,29 @@ const CargarMarcas = async () => {
         const { codigo, data } = datos
 
         if (codigo == 1) {
-            SelectMarca.innerHTML = '<option value="">-- Seleccione una marca --</option>';
+            datatable.clear().rows.add(data).draw();
+        } else {
+            console.log('Error al obtener inventario');
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const CargarMarcas = async () => {
+    const url = '/base_login/inventario/obtenerMarcasAPI';
+    const config = {
+        method: 'GET'
+    }
+
+    try {
+        const respuesta = await fetch(url, config);
+        const datos = await respuesta.json();
+        const { codigo, data } = datos
+
+        if (codigo == 1) {
+            SelectMarca.innerHTML = '<option value="">Seleccione una marca</option>';
             data.forEach(marca => {
                 SelectMarca.innerHTML += `<option value="${marca.id_marca}">${marca.nombre_marca}</option>`;
             });
@@ -131,17 +123,17 @@ const CargarModelos = async (id_marca) => {
         const { codigo, data } = datos
 
         if (codigo == 1) {
-            SelectModelo.innerHTML = '<option value="">-- Seleccione un modelo --</option>';
+            SelectModelo.innerHTML = '<option value="">Seleccione un modelo</option>';
             data.forEach(modelo => {
                 SelectModelo.innerHTML += `<option value="${modelo.id_modelo}">${modelo.nombre_modelo}</option>`;
             });
         } else {
-            SelectModelo.innerHTML = '<option value="">-- No hay modelos --</option>';
+            SelectModelo.innerHTML = '<option value="">No hay modelos</option>';
         }
 
     } catch (error) {
         console.log(error)
-        SelectModelo.innerHTML = '<option value="">-- Error al cargar modelos --</option>';
+        SelectModelo.innerHTML = '<option value="">Error al cargar modelos</option>';
     }
 }
 
@@ -152,7 +144,7 @@ SelectMarca.addEventListener('change', (event) => {
     if (id_marca) {
         CargarModelos(id_marca);
     } else {
-        SelectModelo.innerHTML = '<option value="">-- Seleccione un modelo --</option>';
+        SelectModelo.innerHTML = '<option value="">Seleccione un modelo</option>';
     }
 });
 
@@ -181,22 +173,17 @@ const datatable = new DataTable('#TableInventario', {
         { 
             title: 'Marca', 
             data: 'nombre_marca', 
-            width: '15%' 
+            width: '20%' 
         },
         { 
             title: 'Modelo', 
             data: 'nombre_modelo', 
-            width: '15%' 
-        },
-        { 
-            title: 'IMEI', 
-            data: 'imei', 
-            width: '15%' 
+            width: '20%' 
         },
         { 
             title: 'Estado Celular', 
             data: 'estado_celular', 
-            width: '10%',
+            width: '15%',
             render: (data) => {
                 const badges = {
                     'nuevo': '<span class="badge bg-success">Nuevo</span>',
@@ -209,24 +196,24 @@ const datatable = new DataTable('#TableInventario', {
         { 
             title: 'Precio Compra', 
             data: 'precio_compra', 
-            width: '10%',
+            width: '12%',
             render: (data) => `Q. ${parseFloat(data).toFixed(2)}`
         },
         { 
             title: 'Precio Venta', 
             data: 'precio_venta', 
-            width: '10%',
+            width: '12%',
             render: (data) => `Q. ${parseFloat(data).toFixed(2)}`
         },
         { 
             title: 'Estado Inventario', 
             data: 'estado_inventario', 
-            width: '10%',
+            width: '15%',
             render: (data) => {
                 const badges = {
-                    'disponible': '<span class="badge bg-primary">Disponible</span>',
-                    'vendido': '<span class="badge bg-secondary">Vendido</span>',
-                    'en_reparacion': '<span class="badge bg-info">En Reparación</span>'
+                    'disponible': '<span class="badge bg-success">Disponible</span>',
+                    'vendido': '<span class="badge bg-info">Vendido</span>',
+                    'en_reparacion': '<span class="badge bg-warning">En Reparación</span>'
                 };
                 return badges[data] || data;
             }
@@ -236,19 +223,18 @@ const datatable = new DataTable('#TableInventario', {
             data: 'id_inventario',
             searchable: false,
             orderable: false,
-            width: '10%',
+            width: '15%',
             render: (data, type, row, meta) => {
                 return `
                  <div class='d-flex justify-content-center'>
                      <button class='btn btn-warning modificar mx-1 btn-sm' 
                          data-id="${data}" 
-                         data-modelo="${row.id_modelo}"  
-                         data-imei="${row.imei}"  
-                         data-estado-celular="${row.estado_celular}"  
-                         data-precio-compra="${row.precio_compra}"  
-                         data-precio-venta="${row.precio_venta}"  
-                         data-estado-inventario="${row.estado_inventario}">
-                         <i class='bi bi-pencil-square me-1'></i> Editar
+                         data-modelo="${row.id_modelo}"
+                         data-estado_celular="${row.estado_celular}"
+                         data-precio_compra="${row.precio_compra}"
+                         data-precio_venta="${row.precio_venta}"
+                         data-estado_inventario="${row.estado_inventario}">
+                        <i class="bi bi-pencil-square me-1"></i>Editar
                      </button>
                      <button class='btn btn-danger eliminar mx-1 btn-sm' 
                          data-id="${data}">
@@ -265,11 +251,10 @@ const llenarFormulario = (event) => {
 
     document.getElementById('id_inventario').value = datos.id;
     document.getElementById('id_modelo').value = datos.modelo;
-    document.getElementById('imei').value = datos.imei;
-    document.getElementById('estado_celular').value = datos.estadoCelular;
-    document.getElementById('precio_compra').value = datos.precioCompra;
-    document.getElementById('precio_venta').value = datos.precioVenta;
-    document.getElementById('estado_inventario').value = datos.estadoInventario;
+    document.getElementById('estado_celular').value = datos.estado_celular;
+    document.getElementById('precio_compra').value = datos.precio_compra;
+    document.getElementById('precio_venta').value = datos.precio_venta;
+    document.getElementById('estado_inventario').value = datos.estado_inventario;
 
     BtnGuardar.classList.add('d-none');
     BtnModificar.classList.remove('d-none');
@@ -279,7 +264,7 @@ const llenarFormulario = (event) => {
 
 const limpiarTodo = () => {
     FormInventario.reset();
-    SelectModelo.innerHTML = '<option value="">-- Seleccione un modelo --</option>';
+    SelectModelo.innerHTML = '<option value="">Seleccione un modelo</option>';
     BtnGuardar.classList.remove('d-none');
     BtnModificar.classList.add('d-none');
 }
@@ -346,12 +331,13 @@ const EliminarInventario = async (e) => {
         position: "center",
         icon: "question",
         title: "¿Desea eliminar este inventario?",
-        text: 'Esta acción no se puede deshacer',
+        text: "Esta acción no se puede deshacer",
         showConfirmButton: true,
-        confirmButtonText: 'Sí, Eliminar',
-        confirmButtonColor: '#dc3545',
-        cancelButtonText: 'No, Cancelar',
-        showCancelButton: true
+        confirmButtonText: "Si, eliminar",
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6"
     });
 
     if (AlertaConfirmarEliminar.isConfirmed) {
@@ -361,9 +347,9 @@ const EliminarInventario = async (e) => {
         }
 
         try {
-            const consulta = await fetch(url, config);
-            const respuesta = await consulta.json();
-            const { codigo, mensaje } = respuesta;
+            const respuesta = await fetch(url, config);
+            const datos = await respuesta.json();
+            const { codigo, mensaje } = datos;
 
             if (codigo == 1) {
                 await Swal.fire({
@@ -373,7 +359,6 @@ const EliminarInventario = async (e) => {
                     text: mensaje,
                     showConfirmButton: true,
                 });
-                
                 BuscarInventario();
             } else {
                 await Swal.fire({
@@ -384,21 +369,22 @@ const EliminarInventario = async (e) => {
                     showConfirmButton: true,
                 });
             }
-
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
     }
 }
 
-// Cargar datos al iniciar
-CargarMarcas();
-BuscarInventario();
-
-// Event listeners
-datatable.on('click', '.eliminar', EliminarInventario);
-datatable.on('click', '.modificar', llenarFormulario);
+// Event Listeners principales
 FormInventario.addEventListener('submit', GuardarInventario);
-BtnLimpiar.addEventListener('click', limpiarTodo);
 BtnModificar.addEventListener('click', ModificarInventario);
 BtnBuscar.addEventListener('click', BuscarInventario);
+BtnLimpiar.addEventListener('click', limpiarTodo);
+
+// Event listeners para botones de la tabla (estilo del profesor)
+datatable.on('click', '.modificar', llenarFormulario);
+datatable.on('click', '.eliminar', EliminarInventario);
+
+// Inicialización cuando carga la página
+CargarMarcas();
+BuscarInventario();

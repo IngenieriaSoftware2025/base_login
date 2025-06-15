@@ -7,7 +7,6 @@ class Inventario extends ActiveRecord {
     public static $idTabla = 'id_inventario';
     public static $columnasDB = [
         'id_modelo',
-        'imei',
         'estado_celular',
         'precio_compra',
         'precio_venta',
@@ -17,7 +16,6 @@ class Inventario extends ActiveRecord {
     
     public $id_inventario;
     public $id_modelo;
-    public $imei;
     public $estado_celular;
     public $precio_compra;
     public $precio_venta;
@@ -29,7 +27,6 @@ class Inventario extends ActiveRecord {
     {
         $this->id_inventario = $inventario['id_inventario'] ?? null;
         $this->id_modelo = $inventario['id_modelo'] ?? '';
-        $this->imei = $inventario['imei'] ?? '';
         $this->estado_celular = $inventario['estado_celular'] ?? 'nuevo';
         $this->precio_compra = $inventario['precio_compra'] ?? '';
         $this->precio_venta = $inventario['precio_venta'] ?? '';
@@ -46,7 +43,7 @@ class Inventario extends ActiveRecord {
     
     // Método para buscar inventario activo con información de marca y modelo
     public static function obtenerInventarioActivo(){
-        $sql = "SELECT i.id_inventario, i.id_modelo, i.imei, i.estado_celular, 
+        $sql = "SELECT i.id_inventario, i.id_modelo, i.estado_celular, 
                        i.precio_compra, i.precio_venta, i.fecha_ingreso, 
                        i.estado_inventario, i.situacion,
                        m.nombre_modelo, ma.nombre_marca 

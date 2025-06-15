@@ -4,7 +4,6 @@ import { validarFormulario } from '../funciones';
 import DataTable from "datatables.net-bs5";
 import { lenguaje } from "../lenguaje";
 
-
 const FormReparaciones = document.getElementById('FormReparaciones');
 const BtnGuardar = document.getElementById('BtnGuardar');
 const BtnModificar = document.getElementById('BtnModificar');
@@ -18,7 +17,7 @@ const GuardarReparacion = async (event) => {
     event.preventDefault();
     BtnGuardar.disabled = true;
 
-    if (!validarFormulario(FormReparaciones, ['id_reparacion', 'id_usuario_asignado', 'tipo_celular', 'marca_celular', 'imei', 'diagnostico', 'fecha_asignacion', 'fecha_entrega_real', 'tipo_servicio', 'costo_total'])) {
+    if (!validarFormulario(FormReparaciones, ['id_reparacion', 'id_usuario_asignado', 'imei', 'diagnostico', 'fecha_asignacion', 'fecha_entrega_real', 'tipo_servicio', 'costo_total'])) {
         Swal.fire({
             position: "center",
             icon: "info",
@@ -166,23 +165,23 @@ const datatable = new DataTable('#TableReparaciones', {
         {
             title: 'No.',
             data: 'id_reparacion',
-            width: '5%',
+            width: '4%',
             render: (data, type, row, meta) => meta.row + 1
         },
         { 
             title: 'N° Orden', 
             data: 'numero_orden', 
-            width: '10%' 
+            width: '8%' 
         },
         { 
             title: 'Cliente', 
             data: 'nombre_cliente', 
-            width: '15%' 
+            width: '12%' 
         },
         { 
             title: 'Dispositivo', 
             data: 'tipo_celular', 
-            width: '12%',
+            width: '10%',
             render: (data, type, row) => {
                 let dispositivo = data || 'N/A';
                 if(row.marca_celular) {
@@ -194,30 +193,52 @@ const datatable = new DataTable('#TableReparaciones', {
         { 
             title: 'Motivo', 
             data: 'motivo_ingreso', 
-            width: '20%',
+            width: '15%',
             render: (data) => {
-                return data ? (data.length > 50 ? data.substring(0, 50) + '...' : data) : 'Sin especificar';
+                return data ? (data.length > 50 ? data.substring(0, 50) + '...' : data) : 'Sin motivo';
             }
         },
         { 
             title: 'Estado', 
             data: 'estado_reparacion', 
-            width: '10%',
+            width: '8%',
             render: (data) => {
                 const estados = {
-                    'recibido': '<span class="badge bg-primary">Recibido</span>',
-                    'en_proceso': '<span class="badge bg-warning">En Proceso</span>',
-                    'terminado': '<span class="badge bg-success">Terminado</span>',
-                    'entregado': '<span class="badge bg-info">Entregado</span>',
-                    'cancelado': '<span class="badge bg-danger">Cancelado</span>'
+                    'recibido': 'bg-info',
+                    'en_proceso': 'bg-warning text-dark',
+                    'terminado': 'bg-success',
+                    'entregado': 'bg-primary',
+                    'cancelado': 'bg-danger'
                 };
-                return estados[data] || '<span class="badge bg-secondary">Sin Estado</span>';
+                const clase = estados[data] || 'bg-secondary';
+                const texto = data.replace('_', ' ').toUpperCase();
+                return `<span class="badge ${clase}">${texto}</span>`;
+            }
+        },
+        { 
+            title: 'Usuario Recibe', 
+            data: 'usuario_recibe_nombre', 
+            width: '10%',
+            render: (data) => data || 'N/A'
+        },
+        { 
+            title: 'Usuario Asignado', 
+            data: 'usuario_asignado_nombre', 
+            width: '10%',
+            render: (data) => data || 'Sin asignar'
+        },
+        { 
+            title: 'Costo', 
+            data: 'costo_total', 
+            width: '7%',
+            render: (data) => {
+                return data ? `Q${parseFloat(data).toFixed(2)}` : 'Q0.00';
             }
         },
         { 
             title: 'Fecha Ingreso', 
-            data: 'fecha_ingreso', 
-            width: '10%',
+            data: 'fecha_creacion', 
+            width: '8%',
             render: (data) => {
                 if(data) {
                     const fecha = new Date(data);
@@ -226,38 +247,31 @@ const datatable = new DataTable('#TableReparaciones', {
                 return '';
             }
         },
-        { 
-            title: 'Costo', 
-            data: 'costo_total', 
-            width: '8%',
-            render: (data) => {
-                return data && data > 0 ? `Q. ${parseFloat(data).toFixed(2)}` : 'Pendiente';
-            }
-        },
         {
             title: 'Acciones',
             data: 'id_reparacion',
             searchable: false,
             orderable: false,
-            width: '10%',
+            width: '8%',
             render: (data, type, row, meta) => {
                 return `
                  <div class='d-flex justify-content-center'>
                      <button class='btn btn-warning modificar mx-1 btn-sm' 
                          data-id="${data}" 
-                         data-cliente="${row.id_cliente}"
-                         data-usuario-recibe="${row.id_usuario_recibe}"
-                         data-usuario-asignado="${row.id_usuario_asignado || ''}"
+                         data-id-cliente="${row.id_cliente || ''}"
+                         data-id-usuario-recibe="${row.id_usuario_recibe || ''}"
+                         data-id-usuario-asignado="${row.id_usuario_asignado || ''}"
+                         data-numero-orden="${row.numero_orden || ''}"
                          data-tipo-celular="${row.tipo_celular || ''}"
                          data-marca-celular="${row.marca_celular || ''}"
                          data-imei="${row.imei || ''}"
-                         data-motivo="${row.motivo_ingreso}"
+                         data-motivo-ingreso="${row.motivo_ingreso || ''}"
                          data-diagnostico="${row.diagnostico || ''}"
-                         data-fecha-asignacion="${row.fecha_asignacion || ''}"
-                         data-fecha-entrega="${row.fecha_entrega_real || ''}"
                          data-tipo-servicio="${row.tipo_servicio || ''}"
-                         data-estado="${row.estado_reparacion}"
-                         data-costo="${row.costo_total || '0'}">
+                         data-estado-reparacion="${row.estado_reparacion || 'recibido'}"
+                         data-fecha-asignacion="${row.fecha_asignacion || ''}"
+                         data-fecha-entrega-real="${row.fecha_entrega_real || ''}"
+                         data-costo-total="${row.costo_total || ''}">
                          <i class='bi bi-pencil-square me-1'></i> Editar
                      </button>
                      <button class='btn btn-danger eliminar mx-1 btn-sm' 
@@ -274,28 +288,31 @@ const llenarFormulario = (event) => {
     const datos = event.currentTarget.dataset;
 
     document.getElementById('id_reparacion').value = datos.id;
-    document.getElementById('id_cliente').value = datos.cliente;
-    document.getElementById('id_usuario_recibe').value = datos.usuarioRecibe;
-    document.getElementById('id_usuario_asignado').value = datos.usuarioAsignado;
+    document.getElementById('id_cliente').value = datos.idCliente;
+    document.getElementById('id_usuario_recibe').value = datos.idUsuarioRecibe;
+    document.getElementById('id_usuario_asignado').value = datos.idUsuarioAsignado;
+    document.getElementById('numero_orden').value = datos.numeroOrden;
     document.getElementById('tipo_celular').value = datos.tipoCelular;
     document.getElementById('marca_celular').value = datos.marcaCelular;
     document.getElementById('imei').value = datos.imei;
-    document.getElementById('motivo_ingreso').value = datos.motivo;
+    document.getElementById('motivo_ingreso').value = datos.motivoIngreso;
     document.getElementById('diagnostico').value = datos.diagnostico;
-    document.getElementById('fecha_asignacion').value = datos.fechaAsignacion;
-    document.getElementById('fecha_entrega_real').value = datos.fechaEntrega;
     document.getElementById('tipo_servicio').value = datos.tipoServicio;
-    document.getElementById('estado_reparacion').value = datos.estado;
-    document.getElementById('costo_total').value = datos.costo;
+    document.getElementById('estado_reparacion').value = datos.estadoReparacion;
+    document.getElementById('fecha_asignacion').value = datos.fechaAsignacion;
+    document.getElementById('fecha_entrega_real').value = datos.fechaEntregaReal;
+    document.getElementById('costo_total').value = datos.costoTotal;
 
     BtnGuardar.classList.add('d-none');
     BtnModificar.classList.remove('d-none');
 
-    window.scrollTo({ top: 0 });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 const limpiarTodo = () => {
     FormReparaciones.reset();
+    document.getElementById('id_reparacion').value = '';
+    document.getElementById('estado_reparacion').value = 'recibido';
     BtnGuardar.classList.remove('d-none');
     BtnModificar.classList.add('d-none');
 }
@@ -304,7 +321,7 @@ const ModificarReparacion = async (event) => {
     event.preventDefault();
     BtnModificar.disabled = true;
 
-    if (!validarFormulario(FormReparaciones, ['id_usuario_asignado', 'tipo_celular', 'marca_celular', 'imei', 'diagnostico', 'fecha_asignacion', 'fecha_entrega_real', 'tipo_servicio', 'costo_total'])) {
+    if (!validarFormulario(FormReparaciones, ['id_usuario_asignado', 'imei', 'diagnostico', 'fecha_asignacion', 'fecha_entrega_real', 'tipo_servicio', 'costo_total'])) {
         Swal.fire({
             position: "center",
             icon: "info",
@@ -412,7 +429,7 @@ CargarClientes();
 CargarUsuarios();
 BuscarReparaciones();
 
-// Event listeners
+// Event Listeners
 datatable.on('click', '.eliminar', EliminarReparacion);
 datatable.on('click', '.modificar', llenarFormulario);
 FormReparaciones.addEventListener('submit', GuardarReparacion);

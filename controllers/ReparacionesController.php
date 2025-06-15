@@ -7,16 +7,8 @@ use MVC\Router;
 use Model\ActiveRecord;
 use Model\Reparaciones;
 
-
-
-
-
-
 class ReparacionesController extends ActiveRecord
-
 {
-
-
     public static function renderizarPagina(Router $router)
     {
         $router->render('reparaciones/index', []);
@@ -26,64 +18,79 @@ class ReparacionesController extends ActiveRecord
     {
         getHeadersApi();
 
-        // Validación cliente
-        if (empty($_POST['id_cliente'])) {
-            http_response_code(400);
-            echo json_encode([
-                'codigo' => 0,
-                'mensaje' => 'Debe seleccionar un cliente'
-            ]);
-            return;
-        }
-
-        // Validación usuario que recibe
-        if (empty($_POST['id_usuario_recibe'])) {
-            http_response_code(400);
-            echo json_encode([
-                'codigo' => 0,
-                'mensaje' => 'Debe seleccionar el usuario que recibe'
-            ]);
-            return;
-        }
-
-        // Validación motivo de ingreso
-        if (empty($_POST['motivo_ingreso'])) {
-            http_response_code(400);
-            echo json_encode([
-                'codigo' => 0,
-                'mensaje' => 'El motivo de ingreso es obligatorio'
-            ]);
-            return;
-        }
-
-        // Sanitizar datos
-        $_POST['id_cliente'] = filter_var($_POST['id_cliente'], FILTER_SANITIZE_NUMBER_INT);
-        $_POST['id_usuario_recibe'] = filter_var($_POST['id_usuario_recibe'], FILTER_SANITIZE_NUMBER_INT);
-        $_POST['id_usuario_asignado'] = !empty($_POST['id_usuario_asignado']) ? filter_var($_POST['id_usuario_asignado'], FILTER_SANITIZE_NUMBER_INT) : null;
-        $_POST['tipo_celular'] = trim(htmlspecialchars($_POST['tipo_celular'] ?? ''));
-        $_POST['marca_celular'] = trim(htmlspecialchars($_POST['marca_celular'] ?? ''));
-        $_POST['imei'] = trim(htmlspecialchars($_POST['imei'] ?? ''));
-        $_POST['motivo_ingreso'] = trim(htmlspecialchars($_POST['motivo_ingreso']));
-        $_POST['diagnostico'] = trim(htmlspecialchars($_POST['diagnostico'] ?? ''));
-        $_POST['tipo_servicio'] = trim(htmlspecialchars($_POST['tipo_servicio'] ?? ''));
-        $_POST['estado_reparacion'] = trim(htmlspecialchars($_POST['estado_reparacion'] ?? 'recibido'));
-        $_POST['costo_total'] = !empty($_POST['costo_total']) ? filter_var($_POST['costo_total'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0;
-
-        $_POST['fecha_asignacion'] = !empty($_POST['fecha_asignacion']) ? $_POST['fecha_asignacion'] : null;
-        $_POST['fecha_entrega_real'] = !empty($_POST['fecha_entrega_real']) ? $_POST['fecha_entrega_real'] : null;
-
-        $numeroOrden = Reparaciones::generarNumeroOrden();
-        $_POST['numero_orden'] = $numeroOrden;
-
-
-echo "Número generado: " . $numeroOrden;
-exit; // Para ver solo este mensaje
-
-
-
-
-
         try {
+            // Validación cliente
+            if (empty($_POST['id_cliente'])) {
+                http_response_code(400);
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'Debe seleccionar un cliente'
+                ]);
+                return;
+            }
+
+            // Validación usuario que recibe
+            if (empty($_POST['id_usuario_recibe'])) {
+                http_response_code(400);
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'Debe seleccionar el usuario que recibe'
+                ]);
+                return;
+            }
+
+            // Validación tipo de celular
+            if (empty($_POST['tipo_celular'])) {
+                http_response_code(400);
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'El tipo de celular es obligatorio'
+                ]);
+                return;
+            }
+
+            // Validación marca del celular
+            if (empty($_POST['marca_celular'])) {
+                http_response_code(400);
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'La marca del celular es obligatoria'
+                ]);
+                return;
+            }
+
+            // Validación motivo de ingreso
+            if (empty($_POST['motivo_ingreso'])) {
+                http_response_code(400);
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'El motivo de ingreso es obligatorio'
+                ]);
+                return;
+            }
+
+            // Sanitizar datos
+            $_POST['id_cliente'] = filter_var($_POST['id_cliente'], FILTER_SANITIZE_NUMBER_INT);
+            $_POST['id_usuario_recibe'] = filter_var($_POST['id_usuario_recibe'], FILTER_SANITIZE_NUMBER_INT);
+            $_POST['id_usuario_asignado'] = !empty($_POST['id_usuario_asignado']) ? filter_var($_POST['id_usuario_asignado'], FILTER_SANITIZE_NUMBER_INT) : null;
+            $_POST['tipo_celular'] = trim(htmlspecialchars($_POST['tipo_celular']));
+            $_POST['marca_celular'] = trim(htmlspecialchars($_POST['marca_celular']));
+            $_POST['imei'] = trim(htmlspecialchars($_POST['imei'] ?? ''));
+            $_POST['motivo_ingreso'] = trim(htmlspecialchars($_POST['motivo_ingreso']));
+            $_POST['diagnostico'] = trim(htmlspecialchars($_POST['diagnostico'] ?? ''));
+            $_POST['fecha_asignacion'] = !empty($_POST['fecha_asignacion']) ? $_POST['fecha_asignacion'] : null;
+            $_POST['fecha_entrega_real'] = !empty($_POST['fecha_entrega_real']) ? $_POST['fecha_entrega_real'] : null;
+            $_POST['tipo_servicio'] = trim(htmlspecialchars($_POST['tipo_servicio'] ?? ''));
+            $_POST['estado_reparacion'] = trim(htmlspecialchars($_POST['estado_reparacion'] ?? 'recibido'));
+            $_POST['costo_total'] = !empty($_POST['costo_total']) ? filter_var($_POST['costo_total'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0;
+
+            // Generar número de orden automático si no se proporciona
+            if (empty($_POST['numero_orden'])) {
+                $_POST['numero_orden'] = Reparaciones::generarNumeroOrden();
+            } else {
+                $_POST['numero_orden'] = trim(htmlspecialchars($_POST['numero_orden']));
+            }
+
             $reparacion = new Reparaciones($_POST);
             $resultado = $reparacion->crear();
 
@@ -91,15 +98,13 @@ exit; // Para ver solo este mensaje
                 http_response_code(200);
                 echo json_encode([
                     'codigo' => 1,
-                    'mensaje' => 'Reparación registrada correctamente'
+                    'mensaje' => 'Reparación registrada correctamente',
+                    'numero_orden' => $_POST['numero_orden']
                 ]);
             } else {
-                http_response_code(500);
-                echo json_encode([
-                    'codigo' => 0,
-                    'mensaje' => 'Error al crear la reparación'
-                ]);
+                throw new Exception('Error al crear la reparación en la base de datos');
             }
+
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode([
@@ -136,54 +141,70 @@ exit; // Para ver solo este mensaje
     {
         getHeadersApi();
 
-        $id = $_POST['id_reparacion'];
-
-        // Validaciones
-        if (empty($_POST['id_cliente'])) {
-            http_response_code(400);
-            echo json_encode([
-                'codigo' => 0,
-                'mensaje' => 'Debe seleccionar un cliente'
-            ]);
-            return;
-        }
-
-        if (empty($_POST['id_usuario_recibe'])) {
-            http_response_code(400);
-            echo json_encode([
-                'codigo' => 0,
-                'mensaje' => 'Debe seleccionar el usuario que recibe'
-            ]);
-            return;
-        }
-
-        if (empty($_POST['motivo_ingreso'])) {
-            http_response_code(400);
-            echo json_encode([
-                'codigo' => 0,
-                'mensaje' => 'El motivo de ingreso es obligatorio'
-            ]);
-            return;
-        }
-
-        // Sanitizar datos
-        $_POST['id_cliente'] = filter_var($_POST['id_cliente'], FILTER_SANITIZE_NUMBER_INT);
-        $_POST['id_usuario_recibe'] = filter_var($_POST['id_usuario_recibe'], FILTER_SANITIZE_NUMBER_INT);
-        $_POST['id_usuario_asignado'] = !empty($_POST['id_usuario_asignado']) ? filter_var($_POST['id_usuario_asignado'], FILTER_SANITIZE_NUMBER_INT) : null;
-        $_POST['tipo_celular'] = trim(htmlspecialchars($_POST['tipo_celular'] ?? ''));
-        $_POST['marca_celular'] = trim(htmlspecialchars($_POST['marca_celular'] ?? ''));
-        $_POST['imei'] = trim(htmlspecialchars($_POST['imei'] ?? ''));
-        $_POST['motivo_ingreso'] = trim(htmlspecialchars($_POST['motivo_ingreso']));
-        $_POST['diagnostico'] = trim(htmlspecialchars($_POST['diagnostico'] ?? ''));
-        $_POST['fecha_asignacion'] = !empty($_POST['fecha_asignacion']) ? $_POST['fecha_asignacion'] : null;
-        $_POST['fecha_entrega_real'] = !empty($_POST['fecha_entrega_real']) ? $_POST['fecha_entrega_real'] : null;
-        $_POST['tipo_servicio'] = trim(htmlspecialchars($_POST['tipo_servicio'] ?? ''));
-        $_POST['estado_reparacion'] = trim(htmlspecialchars($_POST['estado_reparacion'] ?? 'recibido'));
-        $_POST['costo_total'] = !empty($_POST['costo_total']) ? filter_var($_POST['costo_total'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0;
-
-        $_POST['fecha_asignacion'] = !empty($_POST['fecha_asignacion']) ? $_POST['fecha_asignacion'] : null;
-        $_POST['fecha_entrega_real'] = !empty($_POST['fecha_entrega_real']) ? $_POST['fecha_entrega_real'] : null;
         try {
+            $id = $_POST['id_reparacion'];
+
+            // Validaciones básicas
+            if (empty($_POST['id_cliente'])) {
+                http_response_code(400);
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'Debe seleccionar un cliente'
+                ]);
+                return;
+            }
+
+            if (empty($_POST['id_usuario_recibe'])) {
+                http_response_code(400);
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'Debe seleccionar el usuario que recibe'
+                ]);
+                return;
+            }
+
+            if (empty($_POST['tipo_celular'])) {
+                http_response_code(400);
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'El tipo de celular es obligatorio'
+                ]);
+                return;
+            }
+
+            if (empty($_POST['marca_celular'])) {
+                http_response_code(400);
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'La marca del celular es obligatoria'
+                ]);
+                return;
+            }
+
+            if (empty($_POST['motivo_ingreso'])) {
+                http_response_code(400);
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'El motivo de ingreso es obligatorio'
+                ]);
+                return;
+            }
+
+            // Sanitizar datos
+            $_POST['id_cliente'] = filter_var($_POST['id_cliente'], FILTER_SANITIZE_NUMBER_INT);
+            $_POST['id_usuario_recibe'] = filter_var($_POST['id_usuario_recibe'], FILTER_SANITIZE_NUMBER_INT);
+            $_POST['id_usuario_asignado'] = !empty($_POST['id_usuario_asignado']) ? filter_var($_POST['id_usuario_asignado'], FILTER_SANITIZE_NUMBER_INT) : null;
+            $_POST['tipo_celular'] = trim(htmlspecialchars($_POST['tipo_celular']));
+            $_POST['marca_celular'] = trim(htmlspecialchars($_POST['marca_celular']));
+            $_POST['imei'] = trim(htmlspecialchars($_POST['imei'] ?? ''));
+            $_POST['motivo_ingreso'] = trim(htmlspecialchars($_POST['motivo_ingreso']));
+            $_POST['diagnostico'] = trim(htmlspecialchars($_POST['diagnostico'] ?? ''));
+            $_POST['fecha_asignacion'] = !empty($_POST['fecha_asignacion']) ? $_POST['fecha_asignacion'] : null;
+            $_POST['fecha_entrega_real'] = !empty($_POST['fecha_entrega_real']) ? $_POST['fecha_entrega_real'] : null;
+            $_POST['tipo_servicio'] = trim(htmlspecialchars($_POST['tipo_servicio'] ?? ''));
+            $_POST['estado_reparacion'] = trim(htmlspecialchars($_POST['estado_reparacion'] ?? 'recibido'));
+            $_POST['costo_total'] = !empty($_POST['costo_total']) ? filter_var($_POST['costo_total'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0;
+
             $reparacion = Reparaciones::find($id);
             $reparacion->sincronizar([
                 'id_cliente' => $_POST['id_cliente'],
@@ -209,6 +230,7 @@ exit; // Para ver solo este mensaje
                 'codigo' => 1,
                 'mensaje' => 'Reparación modificada correctamente'
             ]);
+
         } catch (Exception $e) {
             http_response_code(400);
             echo json_encode([

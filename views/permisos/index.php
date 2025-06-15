@@ -36,13 +36,13 @@
                                     <label for="nombre_permiso" class="form-label">Nombre del Permiso </label>
                                     <input type="text" id="nombre_permiso" name="nombre_permiso" 
                                            class="form-control" 
-                                           placeholder="Ej: Administrar Usuarios" required>
+                                           placeholder="Ej: Administrar Usuarios" >
                                 </div>
                                 <div class="col-md-6">
                                     <label for="descripcion" class="form-label">Descripción </label>
                                     <input type="text" id="descripcion" name="descripcion" 
                                            class="form-control" 
-                                           placeholder="Ej: Puede crear, editar y eliminar usuarios" required>
+                                           placeholder="Ej: Puede crear, editar y eliminar usuarios" >
                                 </div>
                             </div>
 
