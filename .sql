@@ -138,7 +138,6 @@ CREATE TABLE ventas(
     id_venta SERIAL PRIMARY KEY,
     id_cliente INTEGER NOT NULL,
     id_usuario INTEGER NOT NULL,
-    numero_venta VARCHAR(50) UNIQUE,
     fecha_venta DATE DEFAULT TODAY,
     subtotal DECIMAL(10,2) DEFAULT 0,
     descuento DECIMAL(10,2) DEFAULT 0,

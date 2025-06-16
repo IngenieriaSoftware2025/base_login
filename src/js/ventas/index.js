@@ -1,412 +1,41 @@
-import { Modal } from "bootstrap";
 import Swal from "sweetalert2";
 import { validarFormulario } from '../funciones';
 import DataTable from "datatables.net-bs5";
 import { lenguaje } from "../lenguaje";
 
-// Elementos del DOM
 const FormVentas = document.getElementById('FormVentas');
-const selectCliente = document.getElementById('id_cliente');
-const selectMetodoPago = document.getElementById('metodo_pago');
-const inputDescuento = document.getElementById('descuento');
-const BtnCargarProductos = document.getElementById('BtnCargarProductos');
 const BtnGuardar = document.getElementById('BtnGuardar');
 const BtnModificar = document.getElementById('BtnModificar');
-const BtnLimpiar = document.getElementById('BtnLimpiar');
-const seccionProductos = document.getElementById('seccionProductos');
+const BtnCancelar = document.getElementById('BtnCancelar');
+const BtnBuscar = document.getElementById('BtnBuscar');
+const BtnCargarInventario = document.getElementById('BtnCargarInventario');
+
+const SelectCliente = document.getElementById('id_cliente');
+const SelectUsuario = document.getElementById('id_usuario');
+const InputDescuento = document.getElementById('descuento');
+
+const seccionInventario = document.getElementById('seccionInventario');
 const seccionCarrito = document.getElementById('seccionCarrito');
-const seccionObservaciones = document.getElementById('seccionObservaciones');
+const inventarioDisponible = document.getElementById('inventarioDisponible');
+const carritoItems = document.getElementById('carritoItems');
 const subtotalVenta = document.getElementById('subtotalVenta');
 const descuentoVenta = document.getElementById('descuentoVenta');
 const totalVenta = document.getElementById('totalVenta');
 
-// Variables globales
+let inventario = [];
 let carrito = [];
-let productos = [];
-let datatableProductos = null;
-let datatableCarrito = null;
 
-// Cargar clientes al inicializar
-const CargarClientes = async () => {
-    try {
-        const respuesta = await fetch('/base_login/ventas/clientesAPI');
-        const datos = await respuesta.json();
-        
-        if (datos.codigo == 1) {
-            selectCliente.innerHTML = '<option value="">-- Seleccione un cliente --</option>';
-            
-            datos.data.forEach(cliente => {
-                selectCliente.innerHTML += `
-                    <option value="${cliente.id_cliente}">
-                        ${cliente.nombres} ${cliente.apellidos}
-                    </option>
-                `;
-            });
-        }
-    } catch (error) {
-        Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "No se pudieron cargar los clientes"
-        });
-    }
-};
-
-// Cargar productos disponibles
-const CargarProductos = async () => {
-    if (!selectCliente.value) {
-        Swal.fire({
-            icon: "warning",
-            title: "Cliente requerido",
-            text: "Debe seleccionar un cliente primero"
-        });
-        return;
-    }
-
-    try {
-        const respuesta = await fetch('/base_login/ventas/productosAPI');
-        const datos = await respuesta.json();
-        
-        if (datos.codigo == 1) {
-            productos = datos.data;
-            MostrarProductos();
-            seccionObservaciones.style.display = 'block';
-        } else {
-            Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: datos.mensaje || "Error al cargar productos"
-            });
-        }
-    } catch (error) {
-        Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "No se pudieron cargar los productos"
-        });
-    }
-};
-
-// Mostrar productos en la tabla dinámica
-const MostrarProductos = () => {
-    if (!productos || productos.length === 0) {
-        if (datatableProductos) {
-            datatableProductos.destroy();
-        }
-        seccionProductos.style.display = 'none';
-        return;
-    }
-
-    // Destruir DataTable existente si existe
-    if (datatableProductos) {
-        datatableProductos.destroy();
-    }
-
-    // Crear DataTable para productos disponibles
-    datatableProductos = new DataTable('#TableProductosDisponibles', {
-        language: lenguaje,
-        data: productos,
-        pageLength: 5,
-        lengthMenu: [5, 10, 15],
-        columns: [
-            {
-                title: 'Seleccionar',
-                data: 'id_producto',
-                width: '8%',
-                orderable: false,
-                searchable: false,
-                render: (data, type, row) => {
-                    return `<input type="checkbox" class="form-check-input producto-check" data-id="${data}">`;
-                }
-            },
-            {
-                title: 'Producto',
-                data: 'nombre',
-                width: '25%',
-                render: (data, type, row) => {
-                    return `<strong>${data}</strong>`;
-                }
-            },
-            {
-                title: 'Precio',
-                data: 'precio',
-                width: '12%',
-                render: (data, type, row) => {
-                    return `Q. ${parseFloat(data).toFixed(2)}`;
-                }
-            },
-            {
-                title: 'Stock',
-                data: 'cantidad',
-                width: '10%',
-                render: (data, type, row) => {
-                    let badgeClass = 'bg-success';
-                    if (data <= 0) badgeClass = 'bg-danger';
-                    else if (data <= 5) badgeClass = 'bg-warning';
-                    
-                    return `<span class="badge ${badgeClass}">${data}</span>`;
-                }
-            },
-            {
-                title: 'Cantidad',
-                data: 'id_producto',
-                width: '15%',
-                orderable: false,
-                searchable: false,
-                render: (data, type, row) => {
-                    return `<input type="number" class="form-control form-control-sm cantidad-input" 
-                           data-id="${data}" min="1" max="${row.cantidad}" value="1" disabled>`;
-                }
-            },
-            {
-                title: 'Descripción',
-                data: 'descripcion',
-                width: '20%',
-                render: (data, type, row) => {
-                    return data || 'Sin descripción';
-                }
-            },
-            {
-                title: 'Acción',
-                data: 'id_producto',
-                width: '10%',
-                orderable: false,
-                searchable: false,
-                render: (data, type, row) => {
-                    return `<button type="button" class="btn btn-sm btn-primary agregar-btn" 
-                           data-id="${data}" disabled>
-                        <i class="bi bi-plus-circle me-1"></i>Agregar
-                    </button>`;
-                }
-            }
-        ]
-    });
-
-    seccionProductos.style.display = 'block';
-    AgregarEventosProductos();
-};
-
-// Agregar eventos a los productos (usando delegación de eventos)
-const AgregarEventosProductos = () => {
-    // Usar delegación de eventos para checkboxes
-    $('#TableProductosDisponibles').on('change', '.producto-check', function() {
-        const id = this.dataset.id;
-        const fila = $(this).closest('tr');
-        const cantidadInput = fila.find('.cantidad-input')[0];
-        const agregarBtn = fila.find('.agregar-btn')[0];
-        
-        if (this.checked) {
-            cantidadInput.disabled = false;
-            agregarBtn.disabled = false;
-        } else {
-            cantidadInput.disabled = true;
-            agregarBtn.disabled = true;
-        }
-    });
-
-    // Usar delegación de eventos para botones agregar
-    $('#TableProductosDisponibles').on('click', '.agregar-btn', function() {
-        const id = this.dataset.id;
-        AgregarAlCarrito(id);
-    });
-};
-
-// Agregar producto al carrito
-const AgregarAlCarrito = (productoId) => {
-    const producto = productos.find(p => p.id_producto == productoId);
-    const fila = $(`#TableProductosDisponibles .agregar-btn[data-id="${productoId}"]`).closest('tr');
-    const cantidadInput = fila.find('.cantidad-input')[0];
-    const cantidad = parseInt(cantidadInput.value);
-    
-    if (cantidad > producto.cantidad) {
-        Swal.fire({
-            icon: "error",
-            title: "Stock insuficiente",
-            text: `Solo hay ${producto.cantidad} unidades disponibles`
-        });
-        return;
-    }
-
-    const existe = carrito.findIndex(item => item.producto_id == productoId);
-    
-    if (existe !== -1) {
-        carrito[existe].cantidad = cantidad;
-        carrito[existe].subtotal = cantidad * producto.precio;
-    } else {
-        carrito.push({
-            producto_id: productoId,
-            nombre: producto.nombre,
-            descripcion: producto.descripcion,
-            precio: producto.precio,
-            cantidad: cantidad,
-            subtotal: cantidad * producto.precio
-        });
-    }
-
-    ActualizarCarrito();
-    
-    // Mostrar botón guardar y limpiar checks
-    BtnGuardar.style.display = 'inline-block';
-    
-    // Limpiar selección en la tabla de productos
-    fila.find('.producto-check')[0].checked = false;
-    fila.find('.cantidad-input')[0].disabled = true;
-    fila.find('.agregar-btn')[0].disabled = true;
-};
-
-// Actualizar el carrito con DataTable
-const ActualizarCarrito = () => {
-    let subtotal = 0;
-
-    // Destruir DataTable existente si existe
-    if (datatableCarrito) {
-        datatableCarrito.destroy();
-    }
-
-    carrito.forEach(item => {
-        subtotal += item.subtotal;
-    });
-
-    const descuento = parseFloat(inputDescuento.value) || 0;
-    const total = subtotal - descuento;
-
-    subtotalVenta.textContent = `Q. ${subtotal.toFixed(2)}`;
-    descuentoVenta.textContent = `Q. ${descuento.toFixed(2)}`;
-    totalVenta.textContent = `Q. ${total.toFixed(2)}`;
-
-    if (carrito.length > 0) {
-        // Crear DataTable para el carrito
-        datatableCarrito = new DataTable('#TableCarrito', {
-            language: lenguaje,
-            data: carrito,
-            paging: false,
-            searching: false,
-            info: false,
-            columns: [
-                {
-                    title: 'Producto',
-                    data: 'nombre',
-                    width: '35%',
-                    render: (data, type, row) => {
-                        return `
-                            <strong>${data}</strong><br>
-                            <small class="text-muted">${row.descripcion || 'Sin descripción'}</small>
-                        `;
-                    }
-                },
-                {
-                    title: 'Precio Unitario',
-                    data: 'precio',
-                    width: '15%',
-                    render: (data, type, row) => {
-                        return `Q. ${parseFloat(data).toFixed(2)}`;
-                    }
-                },
-                {
-                    title: 'Cantidad',
-                    data: 'cantidad',
-                    width: '15%',
-                    render: (data, type, row, meta) => {
-                        return `<input type="number" class="form-control form-control-sm cantidad-carrito" 
-                               value="${data}" min="1" data-index="${meta.row}">`;
-                    }
-                },
-                {
-                    title: 'Subtotal',
-                    data: 'subtotal',
-                    width: '15%',
-                    render: (data, type, row) => {
-                        return `Q. ${parseFloat(data).toFixed(2)}`;
-                    }
-                },
-                {
-                    title: 'Acción',
-                    data: null,
-                    width: '20%',
-                    orderable: false,
-                    render: (data, type, row, meta) => {
-                        return `
-                            <button type="button" class="btn btn-sm btn-danger quitar-carrito" 
-                                    data-index="${meta.row}">
-                                <i class="bi bi-trash me-1"></i>Quitar
-                            </button>
-                        `;
-                    }
-                }
-            ]
-        });
-
-        // Agregar eventos para cantidad y quitar
-        $('#TableCarrito').on('change', '.cantidad-carrito', function() {
-            const index = parseInt(this.dataset.index);
-            const nuevaCantidad = parseInt(this.value);
-            CambiarCantidad(index, nuevaCantidad);
-        });
-
-        $('#TableCarrito').on('click', '.quitar-carrito', function() {
-            const index = parseInt(this.dataset.index);
-            QuitarDelCarrito(index);
-        });
-
-        seccionCarrito.style.display = 'block';
-    } else {
-        seccionCarrito.style.display = 'none';
-        BtnGuardar.style.display = 'none';
-    }
-};
-
-// Cambiar cantidad en el carrito
-window.CambiarCantidad = (index, nuevaCantidad) => {
-    const item = carrito[index];
-    const producto = productos.find(p => p.id_producto == item.producto_id);
-    
-    if (nuevaCantidad > producto.cantidad) {
-        Swal.fire({
-            icon: "error",
-            title: "Stock insuficiente",
-            text: `Solo hay ${producto.cantidad} unidades disponibles`
-        });
-        ActualizarCarrito();
-        return;
-    }
-
-    carrito[index].cantidad = parseInt(nuevaCantidad);
-    carrito[index].subtotal = parseInt(nuevaCantidad) * item.precio;
-    ActualizarCarrito();
-};
-
-// Quitar del carrito
-window.QuitarDelCarrito = (index) => {
-    carrito.splice(index, 1);
-    ActualizarCarrito();
-};
-
-// Validar descuento
-const ValidarDescuento = () => {
-    const descuento = parseFloat(inputDescuento.value) || 0;
-    
-    if (descuento < 0) {
-        inputDescuento.value = 0;
-        Swal.fire({
-            icon: "warning",
-            title: "Descuento inválido",
-            text: "El descuento no puede ser negativo"
-        });
-    }
-    
-    ActualizarCarrito();
-};
-
-// Guardar venta
 const GuardarVenta = async (event) => {
     event.preventDefault();
     BtnGuardar.disabled = true;
 
-    if (!selectCliente.value) {
+    if (!validarFormulario(FormVentas, ['id_venta', 'observaciones'])) {
         Swal.fire({
-            icon: "warning",
-            title: "Cliente requerido",
-            text: "Debe seleccionar un cliente"
+            position: "center",
+            icon: "info",
+            title: "FORMULARIO INCOMPLETO",
+            text: "Debe completar los campos obligatorios",
+            showConfirmButton: true,
         });
         BtnGuardar.disabled = false;
         return;
@@ -414,99 +43,338 @@ const GuardarVenta = async (event) => {
 
     if (carrito.length === 0) {
         Swal.fire({
+            position: "center",
             icon: "warning",
-            title: "Carrito vacío",
-            text: "Debe agregar al menos un producto"
+            title: "CARRITO VACÍO",
+            text: "Debe agregar al menos un producto",
+            showConfirmButton: true,
         });
         BtnGuardar.disabled = false;
         return;
     }
 
-    const formData = new FormData(FormVentas);
+    const formData = new FormData();
+    formData.append('id_cliente', SelectCliente.value);
+    formData.append('id_usuario', SelectUsuario.value);
+    formData.append('descuento', InputDescuento.value);
+    formData.append('metodo_pago', document.getElementById('metodo_pago').value);
+    formData.append('observaciones', document.getElementById('observaciones').value);
     formData.append('productos', JSON.stringify(carrito));
 
-    try {
-        const respuesta = await fetch('/base_login/ventas/guardarAPI', {
-            method: 'POST',
-            body: formData
-        });
-        
-        const datos = await respuesta.json();
+    const url = '/base_login/ventas/guardarAPI';
+    const config = {
+        method: 'POST',
+        body: formData
+    }
 
-        if (datos.codigo == 1) {
+    try {
+        const respuesta = await fetch(url, config);
+        const datos = await respuesta.json();
+        const { codigo, mensaje } = datos
+
+        if (codigo == 1) {
             await Swal.fire({
+                position: "center",
                 icon: "success",
                 title: "Éxito",
-                text: datos.mensaje,
-                showConfirmButton: true
+                text: mensaje,
+                showConfirmButton: true,
             });
 
-            LimpiarTodo();
+            limpiarTodo();
             BuscarVentas();
         } else {
             await Swal.fire({
+                position: "center",
                 icon: "error",
                 title: "Error",
-                text: datos.mensaje
+                text: mensaje,
+                showConfirmButton: true,
             });
         }
+
     } catch (error) {
-        await Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Error de conexión"
+        console.log(error)
+    }
+    BtnGuardar.disabled = false;
+}
+
+const BuscarVentas = async () => {
+    const url = `/base_login/ventas/buscarAPI`;
+    const config = {
+        method: 'GET'
+    }
+
+    try {
+        const respuesta = await fetch(url, config);
+        const datos = await respuesta.json();
+        const { codigo, data } = datos
+
+        if (codigo == 1) {
+            datatable.clear();
+            datatable.rows.add(data).draw();
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const CargarInventario = async () => {
+    if (!SelectCliente.value || !SelectUsuario.value) {
+        Swal.fire({
+            position: "center",
+            icon: "warning",
+            title: "DATOS REQUERIDOS",
+            text: "Debe seleccionar cliente y usuario vendedor primero",
+            showConfirmButton: true,
         });
+        return;
+    }
+
+    const url = `/base_login/ventas/obtenerInventarioAPI`;
+    const config = {
+        method: 'GET'
+    }
+
+    try {
+        const respuesta = await fetch(url, config);
+        const datos = await respuesta.json();
+        const { codigo, data } = datos
+
+        if (codigo == 1) {
+            inventario = data;
+            MostrarInventario();
+            seccionInventario.style.display = 'block';
+        } else {
+            Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Error",
+                text: datos.mensaje,
+                showConfirmButton: true,
+            });
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const MostrarInventario = () => {
+    inventarioDisponible.innerHTML = '';
+    
+    if (!inventario || inventario.length === 0) {
+        inventarioDisponible.innerHTML = '<tr><td colspan="7" class="text-center">No hay productos disponibles</td></tr>';
+        return;
     }
     
-    BtnGuardar.disabled = false;
-};
+    inventario.forEach(producto => {
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+            <td>
+                <input type="checkbox" class="form-check-input producto-check" 
+                       data-id="${producto.id_inventario}">
+            </td>
+            <td>${producto.nombre_marca}</td>
+            <td>${producto.nombre_modelo}</td>
+            <td>${producto.estado_celular}</td>
+            <td>Q. ${parseFloat(producto.precio_venta).toFixed(2)}</td>
+            <td>${producto.imei || 'Sin IMEI'}</td>
+            <td>
+                <button type="button" class="btn btn-sm btn-primary agregar-btn" 
+                        data-id="${producto.id_inventario}" disabled>
+                    Agregar
+                </button>
+            </td>
+        `;
+        inventarioDisponible.appendChild(fila);
+    });
 
-// Buscar ventas
-const BuscarVentas = async () => {
-    try {
-        const respuesta = await fetch('/base_login/ventas/buscarAPI');
-        const datos = await respuesta.json();
+    AgregarEventosInventario();
+}
 
-        if (datos.codigo == 1) {
-            datatable.clear();
-            datatable.rows.add(datos.data);
-            datatable.draw(false);
-        }
-    } catch (error) {
-        console.error('Error:', error);
+const AgregarEventosInventario = () => {
+    document.querySelectorAll('.producto-check').forEach(check => {
+        check.addEventListener('change', function() {
+            const id = this.dataset.id;
+            const agregarBtn = document.querySelector(`[data-id="${id}"].agregar-btn`);
+            
+            if (this.checked) {
+                agregarBtn.disabled = false;
+            } else {
+                agregarBtn.disabled = true;
+            }
+        });
+    });
+
+    document.querySelectorAll('.agregar-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            AgregarAlCarrito(id);
+        });
+    });
+}
+
+const AgregarAlCarrito = (inventarioId) => {
+    const producto = inventario.find(p => p.id_inventario == inventarioId);
+    
+    // Verificar si ya está en el carrito
+    const existe = carrito.findIndex(item => item.id_inventario == inventarioId);
+    
+    if (existe !== -1) {
+        Swal.fire({
+            position: "center",
+            icon: "warning",
+            title: "PRODUCTO YA AGREGADO",
+            text: "Este producto ya está en el carrito",
+            showConfirmButton: true,
+        });
+        return;
     }
-};
 
-// Limpiar todo
-const LimpiarTodo = () => {
+    carrito.push({
+        id_inventario: inventarioId,
+        marca: producto.nombre_marca,
+        modelo: producto.nombre_modelo,
+        estado: producto.estado_celular,
+        precio: producto.precio_venta,
+        cantidad: 1,
+        subtotal: producto.precio_venta,
+        imei: producto.imei || 'Sin IMEI'
+    });
+
+    ActualizarCarrito();
+    
+    // Mostrar botón guardar
+    BtnGuardar.style.display = 'inline-block';
+    
+    // Desmarcar checkbox
+    document.querySelector(`[data-id="${inventarioId}"].producto-check`).checked = false;
+    document.querySelector(`[data-id="${inventarioId}"].agregar-btn`).disabled = true;
+}
+
+const ActualizarCarrito = () => {
+    carritoItems.innerHTML = '';
+    let subtotal = 0;
+
+    carrito.forEach((item, index) => {
+        subtotal += parseFloat(item.subtotal);
+        
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+            <td>${item.marca} ${item.modelo}</td>
+            <td>${item.estado}</td>
+            <td>Q. ${parseFloat(item.precio).toFixed(2)}</td>
+            <td>
+                <input type="number" class="form-control form-control-sm" 
+                       value="${item.cantidad}" min="1" max="1" readonly>
+            </td>
+            <td>Q. ${parseFloat(item.subtotal).toFixed(2)}</td>
+            <td>${item.imei}</td>
+            <td>
+                <button type="button" class="btn btn-sm btn-danger" 
+                        onclick="QuitarDelCarrito(${index})">
+                    Quitar
+                </button>
+            </td>
+        `;
+        carritoItems.appendChild(fila);
+    });
+
+    const descuento = parseFloat(InputDescuento.value) || 0;
+    const total = subtotal - descuento;
+
+    subtotalVenta.textContent = `Q. ${subtotal.toFixed(2)}`;
+    descuentoVenta.textContent = `Q. ${descuento.toFixed(2)}`;
+    totalVenta.textContent = `Q. ${total.toFixed(2)}`;
+
+    if (carrito.length > 0) {
+        seccionCarrito.style.display = 'block';
+    } else {
+        seccionCarrito.style.display = 'none';
+        BtnGuardar.style.display = 'none';
+    }
+}
+
+window.QuitarDelCarrito = (index) => {
+    carrito.splice(index, 1);
+    ActualizarCarrito();
+}
+
+const limpiarTodo = () => {
     FormVentas.reset();
     carrito = [];
-    productos = [];
-    
-    // Destruir DataTables si existen
-    if (datatableProductos) {
-        datatableProductos.destroy();
-        datatableProductos = null;
-    }
-    
-    if (datatableCarrito) {
-        datatableCarrito.destroy();
-        datatableCarrito = null;
-    }
-    
-    seccionProductos.style.display = 'none';
+    inventario = [];
+    seccionInventario.style.display = 'none';
     seccionCarrito.style.display = 'none';
-    seccionObservaciones.style.display = 'none';
     BtnGuardar.style.display = 'none';
-    BtnModificar.style.display = 'none';
-    
-    subtotalVenta.textContent = 'Q. 0.00';
-    descuentoVenta.textContent = 'Q. 0.00';
-    totalVenta.textContent = 'Q. 0.00';
-};
+    BtnModificar.classList.add('d-none');
+    ActualizarCarrito();
+}
 
-// DataTable para ventas
+const CargarClientes = async () => {
+    const url = `/base_login/ventas/obtenerClientesAPI`;
+    const config = {
+        method: 'GET'
+    }
+
+    try {
+        const respuesta = await fetch(url, config);
+        const datos = await respuesta.json();
+        const { codigo, data } = datos
+
+        if (codigo == 1) {
+            SelectCliente.innerHTML = '<option value="">Seleccione un cliente</option>';
+            data.forEach(cliente => {
+                SelectCliente.innerHTML += `<option value="${cliente.id_cliente}">${cliente.primer_nombre} ${cliente.primer_apellido}</option>`;
+            });
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const CargarUsuarios = async () => {
+    const url = `/base_login/ventas/obtenerUsuariosAPI`;
+    const config = {
+        method: 'GET'
+    }
+
+    try {
+        const respuesta = await fetch(url, config);
+        const datos = await respuesta.json();
+        const { codigo, data } = datos
+
+        if (codigo == 1) {
+            SelectUsuario.innerHTML = '<option value="">Seleccione usuario</option>';
+            data.forEach(usuario => {
+                SelectUsuario.innerHTML += `<option value="${usuario.id_usuario}">${usuario.primer_nombre} ${usuario.primer_apellido}</option>`;
+            });
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+// Event listener para actualizar total cuando cambia descuento
+InputDescuento.addEventListener('input', ActualizarCarrito);
+
 const datatable = new DataTable('#TableVentas', {
+    dom: `
+        <"row mt-3 justify-content-between" 
+            <"col" l> 
+            <"col" B> 
+            <"col-3" f>
+        >
+        t
+        <"row mt-3 justify-content-between" 
+            <"col-md-3 d-flex align-items-center" i> 
+            <"col-md-8 d-flex justify-content-end" p>
+        >
+    `,
     language: lenguaje,
     data: [],
     columns: [
@@ -517,95 +385,72 @@ const datatable = new DataTable('#TableVentas', {
             render: (data, type, row, meta) => meta.row + 1
         },
         { 
-            title: 'No. Venta', 
-            data: 'numero_venta',
-            width: '15%'
+            title: 'Cliente', 
+            data: null, 
+            width: '20%',
+            render: (data, type, row) => `${row.cliente_nombre} ${row.cliente_apellido}`
         },
         { 
-            title: 'Cliente', 
-            data: 'nombres',
-            width: '20%',
-            render: (data, type, row) => {
-                return `${row.nombres} ${row.apellidos}`;
-            }
+            title: 'Usuario', 
+            data: null, 
+            width: '15%',
+            render: (data, type, row) => `${row.usuario_nombre} ${row.usuario_apellido}`
         },
         { 
             title: 'Fecha', 
-            data: 'fecha_venta',
-            width: '12%',
-            render: (data, type, row) => {
-                const fecha = new Date(data);
-                return fecha.toLocaleDateString('es-GT');
-            }
-        },
-        { 
-            title: 'Método Pago', 
-            data: 'metodo_pago',
-            width: '12%',
-            render: (data, type, row) => {
-                const badges = {
-                    'efectivo': 'bg-success',
-                    'tarjeta': 'bg-primary', 
-                    'transferencia': 'bg-info'
-                };
-                return `<span class="badge ${badges[data] || 'bg-secondary'}">${data.toUpperCase()}</span>`;
-            }
-        },
-        { 
-            title: 'Estado', 
-            data: 'estado_venta',
-            width: '10%',
-            render: (data, type, row) => {
-                const badges = {
-                    'completada': 'bg-success',
-                    'pendiente': 'bg-warning',
-                    'cancelada': 'bg-danger'
-                };
-                return `<span class="badge ${badges[data] || 'bg-secondary'}">${data.toUpperCase()}</span>`;
-            }
+            data: 'fecha_venta', 
+            width: '12%'
         },
         { 
             title: 'Total', 
-            data: 'total',
+            data: 'total', 
             width: '12%',
-            render: (data, type, row) => {
-                return `Q. ${parseFloat(data).toFixed(2)}`;
-            }
+            render: (data) => `Q. ${parseFloat(data).toFixed(2)}`
+        },
+        { 
+            title: 'Descuento', 
+            data: 'descuento', 
+            width: '10%',
+            render: (data) => `Q. ${parseFloat(data).toFixed(2)}`
+        },
+        { 
+            title: 'Método Pago', 
+            data: 'metodo_pago', 
+            width: '10%'
+        },
+        { 
+            title: 'Estado', 
+            data: 'estado_venta', 
+            width: '10%'
         },
         {
             title: 'Acciones',
             data: 'id_venta',
-            width: '14%',
             searchable: false,
             orderable: false,
+            width: '6%',
             render: (data, type, row, meta) => {
                 return `
-                 <div class='d-flex justify-content-center'>
-                     <button class='btn btn-info btn-sm me-1 ver-detalle' 
-                         data-id="${data}"
-                         title="Ver detalle">
-                         <i class='bi bi-eye'></i>
-                     </button>
-                     <button class='btn btn-warning btn-sm me-1 modificar' 
-                         data-id="${data}"
-                         title="Modificar venta">
-                         <i class='bi bi-pencil-square'></i>
-                     </button>
-                     <button class='btn btn-danger btn-sm eliminar' 
-                         data-id="${data}"
-                         title="Cancelar venta">
-                        <i class="bi bi-x-circle"></i>
-                     </button>
-                 </div>`;
+                    <button class='btn btn-info btn-sm' onclick="VerDetalle(${data})" title="Ver Detalle">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                    <button class='btn btn-danger btn-sm' onclick="EliminarVenta(${data})" title="Eliminar">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                `;
             }
         }
     ]
 });
 
-// Ver detalle de venta
-const VerDetalle = async (ventaId) => {
+window.VerDetalle = async (idVenta) => {
+    const url = `/base_login/ventas/obtenerDetalleAPI?id=${idVenta}`;
+    const config = {
+        method: 'GET'
+    }
+
     try {
-        const respuesta = await fetch(`/base_login/ventas/detalleAPI?id=${ventaId}`);
+        const respuesta = await fetch(url, config);
         const datos = await respuesta.json();
 
         if (datos.codigo == 1) {
@@ -614,27 +459,20 @@ const VerDetalle = async (ventaId) => {
 
             let contenido = `
                 <div class="row mb-3">
-                    <div class="col-md-6">
-                        <strong>No. Venta:</strong> ${venta.numero_venta}
-                    </div>
-                    <div class="col-md-6">
-                        <strong>Fecha:</strong> ${new Date(venta.fecha_venta).toLocaleDateString('es-GT')}
-                    </div>
+                    <div class="col-md-6">Cliente: ${venta.cliente_nombre} ${venta.cliente_apellido}</div>
+                    <div class="col-md-6">Vendedor: ${venta.usuario_nombre} ${venta.usuario_apellido}</div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-md-6">
-                        <strong>Cliente:</strong> ${venta.nombres} ${venta.apellidos}
-                    </div>
-                    <div class="col-md-6">
-                        <strong>Método Pago:</strong> ${venta.metodo_pago.toUpperCase()}
-                    </div>
+                    <div class="col-md-6">Fecha: ${venta.fecha_venta}</div>
+                    <div class="col-md-6">Método: ${venta.metodo_pago}</div>
                 </div>
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th>Producto</th>
-                            <th>Cantidad</th>
+                            <th>Estado</th>
                             <th>Precio</th>
+                            <th>Cantidad</th>
                             <th>Subtotal</th>
                         </tr>
                     </thead>
@@ -644,13 +482,11 @@ const VerDetalle = async (ventaId) => {
             detalles.forEach(detalle => {
                 contenido += `
                     <tr>
-                        <td>
-                            <strong>${detalle.producto_nombre}</strong><br>
-                            <small class="text-muted">${detalle.producto_descripcion || 'Sin descripción'}</small>
-                        </td>
-                        <td>${detalle.cantidad}</td>
+                        <td>${detalle.nombre_marca} ${detalle.nombre_modelo}</td>
+                        <td>${detalle.estado_celular}</td>
                         <td>Q. ${parseFloat(detalle.precio_unitario).toFixed(2)}</td>
-                        <td>Q. ${parseFloat(detalle.subtotal).toFixed(2)}</td>
+                        <td>${detalle.cantidad}</td>
+                        <td>Q. ${parseFloat(detalle.subtotal_detalle).toFixed(2)}</td>
                     </tr>
                 `;
             });
@@ -658,56 +494,77 @@ const VerDetalle = async (ventaId) => {
             contenido += `
                     </tbody>
                     <tfoot>
-                        <tr class="table-secondary">
-                            <td colspan="3"><strong>Subtotal:</strong></td>
-                            <td><strong>Q. ${parseFloat(venta.subtotal).toFixed(2)}</strong></td>
-                        </tr>
-                        <tr class="table-secondary">
-                            <td colspan="3"><strong>Descuento:</strong></td>
-                            <td><strong>Q. ${parseFloat(venta.descuento).toFixed(2)}</strong></td>
-                        </tr>
-                        <tr class="table-info">
-                            <td colspan="3"><strong>TOTAL:</strong></td>
-                            <td><strong>Q. ${parseFloat(venta.total).toFixed(2)}</strong></td>
+                        <tr>
+                            <td colspan="4">TOTAL:</td>
+                            <td>Q. ${parseFloat(venta.total).toFixed(2)}</td>
                         </tr>
                     </tfoot>
                 </table>
             `;
 
-            if (venta.observaciones) {
-                contenido += `
-                    <div class="mt-3">
-                        <strong>Observaciones:</strong><br>
-                        <p class="text-muted">${venta.observaciones}</p>
-                    </div>
-                `;
-            }
-
             document.getElementById('contenidoDetalleVenta').innerHTML = contenido;
             
-            const modal = new Modal(document.getElementById('modalDetalleVenta'));
+            const modal = new bootstrap.Modal(document.getElementById('modalDetalleVenta'));
             modal.show();
         }
     } catch (error) {
-        Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "No se pudo obtener el detalle"
-        });
+        console.log(error);
     }
-};
+}
 
-// Eventos
-BtnCargarProductos.addEventListener('click', CargarProductos);
+window.EliminarVenta = async (idVenta) => {
+    const confirmacion = await Swal.fire({
+        title: '¿Está seguro que desea eliminar esta venta?',
+        icon: 'warning',
+        text: 'Esta acción no se puede deshacer',
+        showConfirmButton: true,
+        confirmButtonText: 'Sí, Eliminar',
+        confirmButtonColor: '#dc3545',
+        cancelButtonText: 'No, Cancelar',
+        showCancelButton: true
+    });
+
+    if (confirmacion.isConfirmed) {
+        const url = `/base_login/ventas/eliminarAPI?id=${idVenta}`;
+        const config = {
+            method: 'GET'
+        }
+
+        try {
+            const respuesta = await fetch(url, config);
+            const datos = await respuesta.json();
+
+            if (datos.codigo == 1) {
+                await Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Éxito",
+                    text: datos.mensaje,
+                    showConfirmButton: true,
+                });
+                BuscarVentas();
+            } else {
+                await Swal.fire({
+                    position: "center",
+                    icon: "error",
+                    title: "Error",
+                    text: datos.mensaje,
+                    showConfirmButton: true,
+                });
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+// Event Listeners
 FormVentas.addEventListener('submit', GuardarVenta);
-BtnLimpiar.addEventListener('click', LimpiarTodo);
-inputDescuento.addEventListener('change', ValidarDescuento);
+BtnCancelar.addEventListener('click', limpiarTodo);
+BtnBuscar.addEventListener('click', BuscarVentas);
+BtnCargarInventario.addEventListener('click', CargarInventario);
 
-datatable.on('click', '.ver-detalle', function() {
-    const ventaId = this.dataset.id;
-    VerDetalle(ventaId);
-});
-
-// Inicializar
+// Inicialización
 CargarClientes();
+CargarUsuarios();
 BuscarVentas();

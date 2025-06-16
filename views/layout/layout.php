@@ -65,11 +65,11 @@
                             <i class="bi bi-key"></i> Permisos
                         </a>
                     </li>
-<li class="nav-item">
-    <a class="nav-link" aria-current="page" href="/base_login/ventas">
-        <i class="bi bi-cart"></i> Ventas
-    </a>
-</li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/base_login/ventas">
+                            <i class="bi bi-cart"></i> Ventas
+                        </a>
+                    </li>
 
 
 
@@ -105,7 +105,7 @@
 
 
 
-                
+
             </div>
         </div>
 

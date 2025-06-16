@@ -102,6 +102,9 @@ $router->get('/ventas/eliminarAPI', [VentasController::class, 'eliminarAPI']);
 $router->get('/ventas/obtenerClientesAPI', [VentasController::class, 'obtenerClientesAPI']);
 $router->get('/ventas/obtenerInventarioAPI', [VentasController::class, 'obtenerInventarioAPI']);
 $router->get('/ventas/obtenerDetalleAPI', [VentasController::class, 'obtenerDetalleAPI']);
+$router->get('/ventas/obtenerUsuariosAPI', [VentasController::class, 'obtenerUsuariosAPI']);
+$router->get('/ventas/obtenerInventarioAPI', [VentasController::class, 'obtenerInventarioAPI']);
+$router->get('/ventas/obtenerDetalleAPI', [VentasController::class, 'obtenerDetalleAPI']);
 
 
 $router->comprobarRutas();

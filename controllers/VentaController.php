@@ -3,24 +3,22 @@
 namespace Controllers;
 
 use Exception;
-use Model\ActiveRecord;
 use Model\Ventas;
-use Model\VentaDetalles;
-use Model\Productos;
-use Model\Clientes;
+use Model\DetalleVentas;
 use MVC\Router;
 
-class VentaController extends ActiveRecord{
-    
-    public static function renderizarPagina(Router $router){
+class VentasController
+{
+    public static function renderizarPagina(Router $router)
+    {
         $router->render('ventas/index', []);
     }
 
-    // Guardar Venta
-    public static function guardarAPI(){
+    public static function guardarAPI()
+    {
         getHeadersApi();
 
-        // Validar cliente
+        // Validaciones básicas
         if (empty($_POST['id_cliente'])) {
             http_response_code(400);
             echo json_encode([
@@ -30,12 +28,15 @@ class VentaController extends ActiveRecord{
             return;
         }
 
-        // Validar usuario (puedes ajustar esto según tu sistema de usuarios)
         if (empty($_POST['id_usuario'])) {
-            $_POST['id_usuario'] = 1; // Usuario por defecto, ajusta según tu lógica
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'Debe especificar el usuario vendedor'
+            ]);
+            return;
         }
 
-        // Validar productos
         if (empty($_POST['productos'])) {
             http_response_code(400);
             echo json_encode([
@@ -45,9 +46,9 @@ class VentaController extends ActiveRecord{
             return;
         }
 
-        $productos = is_string($_POST['productos']) ? json_decode($_POST['productos'], true) : $_POST['productos'];
-        
-        if (!is_array($productos)) {
+        // Decodificar productos del carrito
+        $productos = json_decode($_POST['productos'], true);
+        if (!is_array($productos) || empty($productos)) {
             http_response_code(400);
             echo json_encode([
                 'codigo' => 0,
@@ -56,127 +57,253 @@ class VentaController extends ActiveRecord{
             return;
         }
 
-        // Validar método de pago
-        $metodo_pago = $_POST['metodo_pago'] ?? 'efectivo';
-        if (!in_array($metodo_pago, ['efectivo', 'tarjeta', 'transferencia'])) {
-            $metodo_pago = 'efectivo';
-        }
-
-        $subtotal = 0;
-        $descuento = floatval($_POST['descuento'] ?? 0);
-
-        // Validar stock y calcular subtotal
-        foreach ($productos as $p) {
-            $producto_id = $p['producto_id'];
-            $cantidad_solicitada = $p['cantidad'];
-
-            // Verificar stock disponible
-            $stock_disponible = Productos::ValidarStockProducto($producto_id);
-
-            if ($stock_disponible < $cantidad_solicitada) {
-                http_response_code(400);
-                echo json_encode([
-                    'codigo' => 0,
-                    'mensaje' => "Stock insuficiente para producto ID: {$producto_id}"
-                ]);
-                return;
-            }
-
-            $precio_unitario = $p['precio'];
-            $subtotal_producto = $cantidad_solicitada * $precio_unitario;
-            $subtotal += $subtotal_producto;
-        }
-
-        $total = $subtotal - $descuento;
+        // Sanitizar datos
+        $_POST['id_cliente'] = filter_var($_POST['id_cliente'], FILTER_SANITIZE_NUMBER_INT);
+        $_POST['id_usuario'] = filter_var($_POST['id_usuario'], FILTER_SANITIZE_NUMBER_INT);
+        $_POST['descuento'] = !empty($_POST['descuento']) ? 
+            filter_var($_POST['descuento'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0;
+        $_POST['metodo_pago'] = trim(htmlspecialchars($_POST['metodo_pago'] ?? 'efectivo'));
+        $_POST['observaciones'] = trim(htmlspecialchars($_POST['observaciones'] ?? ''));
 
         try {
-            // Generar número de venta
-            $numero_venta = 'V-' . date('Ymd') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+            // Calcular total
+            $total = 0;
+            foreach ($productos as $producto) {
+                $total += $producto['subtotal'];
+            }
+            
+            $descuento = floatval($_POST['descuento']);
+            $total_final = $total - $descuento;
 
+            // Crear venta
             $venta = new Ventas([
                 'id_cliente' => $_POST['id_cliente'],
                 'id_usuario' => $_POST['id_usuario'],
-                'numero_venta' => $numero_venta,
-                'fecha_venta' => date('Y-m-d'),
-                'subtotal' => $subtotal,
+                'total' => $total_final,
                 'descuento' => $descuento,
-                'total' => $total,
-                'metodo_pago' => $metodo_pago,
+                'metodo_pago' => $_POST['metodo_pago'],
                 'estado_venta' => 'completada',
-                'observaciones' => $_POST['observaciones'] ?? '',
-                'situacion' => 1
+                'observaciones' => $_POST['observaciones']
             ]);
 
             $resultado_venta = $venta->crear();
-            $venta_id = $resultado_venta['id'];
+            $id_venta = $resultado_venta['id'];
 
-            // Guardar detalles
-            foreach ($productos as $p) {
-                $producto_id = $p['producto_id'];
-                $cantidad = $p['cantidad'];
-                $precio_unitario = $p['precio'];
-                $subtotal_detalle = $cantidad * $precio_unitario;
-
-                $detalle = new VentaDetalles([
-                    'venta_id' => $venta_id,
-                    'producto_id' => $producto_id,
-                    'cantidad' => $cantidad,
-                    'precio_unitario' => $precio_unitario,
-                    'subtotal' => $subtotal_detalle
+            // Guardar detalles y actualizar inventario
+            foreach ($productos as $producto) {
+                $detalle = new DetalleVentas([
+                    'id_venta' => $id_venta,
+                    'id_inventario' => $producto['id_inventario'],
+                    'precio_unitario' => $producto['precio'],
+                    'cantidad' => $producto['cantidad'],
+                    'subtotal_detalle' => $producto['subtotal']
                 ]);
 
                 $detalle->crear();
 
-                // Actualizar stock
-                Productos::ActualizarStockProducto($producto_id, $cantidad);
+                // Marcar inventario como vendido
+                DetalleVentas::marcarInventarioVendido($producto['id_inventario']);
             }
 
             http_response_code(200);
             echo json_encode([
                 'codigo' => 1,
                 'mensaje' => 'Venta registrada correctamente',
-                'venta_id' => $venta_id,
-                'numero_venta' => $numero_venta
+                'id_venta' => $id_venta
             ]);
 
         } catch (Exception $e) {
-            http_response_code(400);
+            http_response_code(500);
             echo json_encode([
                 'codigo' => 0,
-                'mensaje' => 'Error al guardar la venta',
-                'detalle' => $e->getMessage(),
+                'mensaje' => 'Error al registrar la venta',
+                'detalle' => $e->getMessage()
             ]);
         }
     }
 
-    // Buscar Ventas
-    public static function buscarAPI(){
+    public static function buscarAPI()
+    {
+        getHeadersApi();
         try {
-            $data = Ventas::ObtenerVentasConClientes();
+            $ventas = Ventas::obtenerVentasActivas();
 
             http_response_code(200);
             echo json_encode([
                 'codigo' => 1,
                 'mensaje' => 'Ventas obtenidas correctamente',
-                'data' => $data
+                'data' => $ventas
             ]);
         } catch (Exception $e) {
             http_response_code(400);
             echo json_encode([
                 'codigo' => 0,
                 'mensaje' => 'Error al obtener las ventas',
-                'detalle' => $e->getMessage(),
+                'detalle' => $e->getMessage()
             ]);
         }
     }
 
-    // Obtener Detalle de Venta
-    public static function obtenerDetalleAPI(){
+    public static function modificarAPI()
+    {
+        getHeadersApi();
+
+        // Validaciones básicas
+        if (empty($_POST['id_cliente'])) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'Debe seleccionar un cliente'
+            ]);
+            return;
+        }
+
+        if (empty($_POST['total'])) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'El total es obligatorio'
+            ]);
+            return;
+        }
+
+        // Sanitizar datos
+        $_POST['id_cliente'] = filter_var($_POST['id_cliente'], FILTER_SANITIZE_NUMBER_INT);
+        $_POST['id_usuario'] = filter_var($_POST['id_usuario'], FILTER_SANITIZE_NUMBER_INT);
+        $_POST['total'] = filter_var($_POST['total'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        $_POST['descuento'] = !empty($_POST['descuento']) ? 
+            filter_var($_POST['descuento'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0;
+        $_POST['metodo_pago'] = trim(htmlspecialchars($_POST['metodo_pago'] ?? 'efectivo'));
+        $_POST['estado_venta'] = trim(htmlspecialchars($_POST['estado_venta'] ?? 'completada'));
+        $_POST['observaciones'] = trim(htmlspecialchars($_POST['observaciones'] ?? ''));
+
         try {
-            $venta_id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
+            $id = $_POST['id_venta'];
+            $venta = Ventas::find($id);
+            $venta->sincronizar([
+                'id_cliente' => $_POST['id_cliente'],
+                'id_usuario' => $_POST['id_usuario'],
+                'total' => $_POST['total'],
+                'descuento' => $_POST['descuento'],
+                'metodo_pago' => $_POST['metodo_pago'],
+                'estado_venta' => $_POST['estado_venta'],
+                'observaciones' => $_POST['observaciones'],
+                'situacion' => 1
+            ]);
+
+            $resultado = $venta->actualizar();
+
+            http_response_code(200);
+            echo json_encode([
+                'codigo' => 1,
+                'mensaje' => 'Venta modificada correctamente'
+            ]);
+        } catch (Exception $e) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'Error al modificar la venta',
+                'detalle' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public static function eliminarAPI()
+    {
+        getHeadersApi();
+        try {
+            $id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
+            Ventas::EliminarVenta($id);
+
+            http_response_code(200);
+            echo json_encode([
+                'codigo' => 1,
+                'mensaje' => 'La venta ha sido eliminada correctamente'
+            ]);
+        } catch (Exception $e) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'Error al eliminar la venta',
+                'detalle' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public static function obtenerClientesAPI()
+    {
+        getHeadersApi();
+        try {
+            $clientes = Ventas::obtenerClientesActivos();
+
+            http_response_code(200);
+            echo json_encode([
+                'codigo' => 1,
+                'mensaje' => 'Clientes obtenidos correctamente',
+                'data' => $clientes
+            ]);
+        } catch (Exception $e) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'Error al obtener los clientes',
+                'detalle' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public static function obtenerUsuariosAPI()
+    {
+        getHeadersApi();
+        try {
+            $usuarios = Ventas::obtenerUsuariosActivos();
+
+            http_response_code(200);
+            echo json_encode([
+                'codigo' => 1,
+                'mensaje' => 'Usuarios obtenidos correctamente',
+                'data' => $usuarios
+            ]);
+        } catch (Exception $e) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'Error al obtener los usuarios',
+                'detalle' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public static function obtenerInventarioAPI()
+    {
+        getHeadersApi();
+        try {
+            $inventario = Ventas::obtenerInventarioDisponible();
+
+            http_response_code(200);
+            echo json_encode([
+                'codigo' => 1,
+                'mensaje' => 'Inventario obtenido correctamente',
+                'data' => $inventario
+            ]);
+        } catch (Exception $e) {
+            http_response_code(400);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'Error al obtener el inventario',
+                'detalle' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public static function obtenerDetalleAPI()
+    {
+        getHeadersApi();
+        try {
+            $id_venta = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
             
-            $venta = Ventas::ObtenerVentaPorId($venta_id);
-            $detalles = VentaDetalles::ObtenerDetallesPorVenta($venta_id);
+            $venta = Ventas::obtenerVentaConDetalle($id_venta);
+            $detalles = DetalleVentas::obtenerDetallesPorVenta($id_venta);
 
             http_response_code(200);
             echo json_encode([
@@ -190,53 +317,9 @@ class VentaController extends ActiveRecord{
             echo json_encode([
                 'codigo' => 0,
                 'mensaje' => 'Error al obtener el detalle',
-                'detalle' => $e->getMessage(),
-            ]);
-        }
-    }
-
-    // Obtener Clientes para el select
-    public static function obtenerClientesAPI(){
-        try {
-            $sql = "SELECT id_cliente, nombres, apellidos, correo 
-                    FROM clientes WHERE situacion = 1 
-                    ORDER BY nombres";
-            $data = self::fetchArray($sql);
-
-            http_response_code(200);
-            echo json_encode([
-                'codigo' => 1,
-                'mensaje' => 'Clientes obtenidos correctamente',
-                'data' => $data
-            ]);
-        } catch (Exception $e) {
-            http_response_code(400);
-            echo json_encode([
-                'codigo' => 0,
-                'mensaje' => 'Error al obtener los clientes',
-                'detalle' => $e->getMessage(),
-            ]);
-        }
-    }
-
-    // Obtener Productos Disponibles
-    public static function obtenerProductosAPI(){
-        try {
-            $data = Productos::ObtenerProductosDisponibles();
-
-            http_response_code(200);
-            echo json_encode([
-                'codigo' => 1,
-                'mensaje' => 'Productos disponibles obtenidos correctamente',
-                'data' => $data
-            ]);
-        } catch (Exception $e) {
-            http_response_code(400);
-            echo json_encode([
-                'codigo' => 0,
-                'mensaje' => 'Error al obtener los productos disponibles',
-                'detalle' => $e->getMessage(),
+                'detalle' => $e->getMessage()
             ]);
         }
     }
 }
+?>
