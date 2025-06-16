@@ -7,11 +7,7 @@
     <title>Gestión de Ventas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        .card-header {
-            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-        }
-    </style>
+   
 </head>
 
 <body>
@@ -21,7 +17,7 @@
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card shadow">
-                    <div class="card-header text-white text-center">
+                    <div class="card-header text-white text-center" style="background: linear-gradient(135deg,rgb(114, 70, 196) 0%,rgb(49, 22, 98) 100%);">
                         <h3 class="mb-0">
                             <i class="bi bi-cart-plus me-2"></i>
                             Sistema de Gestión de Ventas
@@ -37,13 +33,13 @@
                                 <div class="col-md-6">
                                     <label for="id_cliente" class="form-label">Cliente </label>
                                     <select class="form-select" id="id_cliente" name="id_cliente" required>
-                                        <option value="">-- Seleccione un cliente --</option>
+                                        <option value=""> Seleccione un cliente </option>
                                     </select>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="id_usuario" class="form-label">Vendedor </label>
                                     <select class="form-select" id="id_usuario" name="id_usuario" required>
-                                        <option value="">-- Seleccione un vendedor --</option>
+                                        <option value=""> Seleccione un vendedor </option>
                                     </select>
                                 </div>
                             </div>
@@ -130,7 +126,7 @@
                                 <div class="col-md-6">
                                     <label for="id_inventario" class="form-label">Producto </label>
                                     <select class="form-select" id="id_inventario" name="id_inventario" required>
-                                        <option value="">-- Seleccione un producto --</option>
+                                        <option value=""> Seleccione un producto </option>
                                     </select>
                                 </div>
                                 <div class="col-md-3">
@@ -158,7 +154,7 @@
         <div class="row mt-4" id="seccionTablaVentas" style="display: none;">
             <div class="col-12">
                 <div class="card shadow">
-                    <div class="card-header bg-info text-white text-center">
+                    <div class="card-header bg-info text-white text-center" style="background: linear-gradient(135deg,rgb(114, 70, 196) 0%,rgb(49, 22, 98) 100%);">
                         <h4 class="mb-0">
                             <i class="bi bi-list-ul me-2"></i>
                             Ventas Registradas

@@ -4,7 +4,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card">
-                <div class="card-header text-white text-center" style="background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);">
+                <div class="card-header text-white text-center" style="background: linear-gradient(135deg,rgb(114, 70, 196) 0%,rgb(49, 22, 98) 100%);">
                     <h3 class="mb-0">
                         <i class="bi bi-shield-check me-2"></i>
                         Gestión de Roles
@@ -59,7 +59,7 @@
     <div class="row" id="seccionTabla" style="display: none;">
         <div class="col-12">
             <div class="card">
-                <div class="card-header bg-info text-white text-center">
+                <div class="card-header bg-info text-white text-center" style="background: linear-gradient(135deg,rgb(114, 70, 196) 0%,rgb(49, 22, 98) 100%);">
                     <h4 class="mb-0">
                         <i class="bi bi-list-ul me-2"></i>
                         Roles del Sistema
@@ -68,7 +68,7 @@
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-striped table-hover" id="TableRoles">
-                            <thead class="table-dark">
+                            <thead  style="background: linear-gradient(135deg,rgb(114, 70, 196) 0%,rgb(49, 22, 98) 100%);">
                                 <tr>
                                     <th>No.</th>
                                     <th>Nombre del Rol</th>
@@ -90,3 +90,9 @@
 </div>
 
 <script src="<?= asset('build/js/roles/index.js') ?>"></script>
+
+
+<style>
+    
+
+</style>

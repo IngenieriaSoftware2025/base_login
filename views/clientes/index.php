@@ -2,7 +2,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card">
-                <div class="card-header bg-primary text-white text-center">
+                <div class="card-header bg-primary text-white text-center" style="background: linear-gradient(135deg,rgb(114, 70, 196) 0%,rgb(49, 22, 98) 100%);">
                     <h5 class="mb-1">¡Sistema de Gestión de Clientes!</h5>
                     <h4 class="mb-0">ADMINISTRACIÓN DE CLIENTES</h4>
                 </div>
@@ -85,7 +85,7 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header bg-info text-white">
+                <div class="card-header bg-info text-white" style="background: linear-gradient(135deg,rgb(114, 70, 196) 0%,rgb(49, 22, 98) 100%);">
                     <h4 class="text-center mb-0">Clientes registrados en el sistema</h4>
                 </div>
                 <div class="card-body">

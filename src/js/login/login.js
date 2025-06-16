@@ -79,4 +79,69 @@ const login = async (e) => {
     BtnIniciar.disabled = false;
 }
 
+
+
+
+
+
+
+// const logout = async () => {
+//     try {
+//         const response = await fetch('/base_login/logout', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'X-Requested-With': 'XMLHttpRequest'
+//             }
+//         });
+
+//         const result = await response.json();
+
+//         if (result.codigo === 1) {
+//             // Mostrar mensaje de éxito
+//             Swal.fire({
+//                 title: '¡Sesión cerrada!',
+//                 text: result.mensaje,
+//                 icon: 'success',
+//                 timer: 1500,
+//                 showConfirmButton: false
+//             }).then(() => {
+//                 // Redirigir al login
+//                 window.location.href = '/base_login/login';
+//             });
+//         } else {
+//             Swal.fire({
+//                 title: 'Error',
+//                 text: result.mensaje,
+//                 icon: 'error'
+//             });
+//         }
+//     } catch (error) {
+//         console.error('Error al cerrar sesión:', error);
+//         Swal.fire({
+//             title: 'Error',
+//             text: 'Error de conexión al cerrar sesión',
+//             icon: 'error'
+//         });
+//     }
+// };
+
+// // Función para confirmar antes de cerrar sesión
+// const confirmarLogout = () => {
+//     Swal.fire({
+//         title: '¿Cerrar sesión?',
+//         text: '¿Estás seguro de que quieres cerrar tu sesión?',
+//         icon: 'question',
+//         showCancelButton: true,
+//         confirmButtonColor: '#3085d6',
+//         cancelButtonColor: '#d33',
+//         confirmButtonText: 'Sí, cerrar sesión',
+//         cancelButtonText: 'Cancelar'
+//     }).then((result) => {
+//         if (result.isConfirmed) {
+//             logout();
+//         }
+//     });
+// };
+
 FormLogin.addEventListener('submit', login);

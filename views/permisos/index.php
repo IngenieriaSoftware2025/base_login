@@ -7,11 +7,7 @@
     <title>Gestión de Permisos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        .card-header {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        }
-    </style>
+   
 </head>
 
 <body>
@@ -21,7 +17,7 @@
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header text-white text-center">
+                    <div class="card-header text-white text-center" style="background: linear-gradient(135deg,rgb(114, 70, 196) 0%,rgb(49, 22, 98) 100%);">
                         <h3 class="mb-0">
                             <i class="bi bi-key me-2"></i>
                             Gestión de Permisos
@@ -70,7 +66,7 @@
         <div class="row" id="seccionTabla" style="display: none;">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header bg-info text-white text-center">
+                    <div class="card-header bg-info text-white text-center" style="background: linear-gradient(135deg,rgb(114, 70, 196) 0%,rgb(49, 22, 98) 100%);">
                         <h4 class="mb-0">
                             <i class="bi bi-list-ul me-2"></i>
                             Permisos del Sistema
@@ -79,7 +75,7 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-striped table-hover" id="TablePermisos">
-                                <thead class="table-dark">
+                                <thead  style="background: linear-gradient(135deg,rgb(114, 70, 196) 0%,rgb(49, 22, 98) 100%);">
                                     <tr>
                                         <th>No.</th>
                                         <th>Nombre del Permiso</th>

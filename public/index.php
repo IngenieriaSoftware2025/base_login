@@ -29,6 +29,7 @@ $router->post('/logout', [LoginController::class, 'logout']); //CERRAR SESION ?
 // Ruta de prueba
 $router->post('/test', [AppController::class, 'testLogin']);
 
+
 // REGISTRO/USUARIOS
 $router->get('/registro', [RegistroController::class, 'renderizarPagina']);
 $router->post('/registro/guardarAPI', [RegistroController::class, 'guardarAPI']);

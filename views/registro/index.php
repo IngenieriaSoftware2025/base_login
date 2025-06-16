@@ -90,7 +90,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- NUEVA FILA ROL Y FOTOGRAFÍA -->
+                 
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="mb-4">
@@ -148,8 +148,8 @@
                 <div class="row mt-4" id="seccionTabla" style="display: none;">
                     <div class="col-12">
                         <div class="card" style="border-radius: 15px;">
-                            <div class="card-body">
-                                <h4 class="text-center mb-4">Usuarios Registrados</h4>
+                            <div class="card-body" >
+                                <h4 class="text-center mb-4" >Usuarios Registrados</h4>
                                 <div class="table-responsive">
                                     <table class="table table-striped table-hover" id="TableUsuarios">
                                     </table>

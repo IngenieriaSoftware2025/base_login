@@ -2,7 +2,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card">
-                <div class="card-header bg-primary text-white text-center">
+                <div class="card-header bg-primary text-white text-center" style="background: linear-gradient(135deg,rgb(114, 70, 196) 0%,rgb(49, 22, 98) 100%);">
                     <h5 class="mb-1">¡Sistema de Gestión de Reparaciones!</h5>
                     <h4 class="mb-0">ADMINISTRACIÓN DE REPARACIONES DE CELULARES</h4>
                 </div>
@@ -108,7 +108,7 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header bg-secondary text-white">
+                <div class="card-header bg-secondary text-white" style="background: linear-gradient(135deg,rgb(114, 70, 196) 0%,rgb(49, 22, 98) 100%);">
                     <h5 class="mb-0">
                         <i class="bi bi-table me-2"></i>Listado de Reparaciones
                     </h5>
