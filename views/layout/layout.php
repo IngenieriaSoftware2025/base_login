@@ -27,23 +27,29 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="margin: 0;">
 
 
-                <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/base_login/inicio"><i class="bi bi-door-open"></i></i>Inicio</a>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/base_login/inicio">
+                            <i class="bi bi-house"></i> Inicio
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/base_login/login"><i class="bi bi-door-open"></i></i>Login</a>
+                        <a class="nav-link" aria-current="page" href="/base_login/login">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/base_login/registro"><i class="bi bi-person"></i></i>Registro</a>
+                        <a class="nav-link" aria-current="page" href="/base_login/registro">
+                            <i class="bi bi-person-plus"></i> Registro
+                        </a>
                     </li>
-
-
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/base_login/marcas"><i class="bi bi-people"></i> Marcas</a>
+                        <a class="nav-link" aria-current="page" href="/base_login/marcas">
+                            <i class="bi bi-tags"></i> Marcas
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/base_login/modelos">
-                            <i class="bi bi-phone"></i> Modelos
+                            <i class="bi bi-phone-flip"></i> Modelos
                         </a>
                     </li>
                     <li class="nav-item">
@@ -53,7 +59,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/base_login/inventario">
-                            <i class="bi bi-box-seam"></i> Inventario
+                            <i class="bi bi-boxes"></i> Inventario
                         </a>
                     </li>
                     <li class="nav-item">
@@ -62,7 +68,9 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/base_login/roles"><i class="bi bi-shield-check"></i> Roles</a>
+                        <a class="nav-link" aria-current="page" href="/base_login/roles">
+                            <i class="bi bi-shield-check"></i> Roles
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/base_login/permisos">
@@ -71,11 +79,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/base_login/ventas">
-                            <i class="bi bi-cart"></i> Ventas
+                            <i class="bi bi-cart-check"></i> Ventas
                         </a>
                     </li>
-
-
 
 
 
