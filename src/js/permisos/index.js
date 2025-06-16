@@ -1,7 +1,7 @@
 import Swal from "sweetalert2";
 //import { Dropdown } from "bootstrap";
 
-// 1. OBTENER LOS ELEMENTOS DEL HTML
+
 const FormPermisos = document.getElementById('FormPermisos');
 const BtnGuardar = document.getElementById('BtnGuardar');
 const BtnModificar = document.getElementById('BtnModificar');
@@ -10,7 +10,7 @@ const BtnBuscar = document.getElementById('BtnBuscar');
 const seccionTabla = document.getElementById('seccionTabla');
 const bodyPermisos = document.getElementById('bodyPermisos');
 
-// 2. FUNCIÓN PARA GUARDAR PERMISO
+
 const GuardarPermiso = async (event) => {
     event.preventDefault(); // Evita que se recargue la página
 
@@ -54,7 +54,7 @@ const GuardarPermiso = async (event) => {
     }
 }
 
-// 3. FUNCIÓN PARA BUSCAR PERMISOS
+//FUNCIÓN PARA BUSCAR PERMISOS
 const BuscarPermisos = async () => {
     try {
         const respuesta = await fetch('/base_login/permisos/buscarAPI');
@@ -97,7 +97,7 @@ const BuscarPermisos = async () => {
     }
 }
 
-// 4. FUNCIÓN PARA MOSTRAR/OCULTAR TABLA
+// FUNCIÓN PARA MOSTRAR/OCULTAR TABLA
 const MostrarTabla = () => {
     if (seccionTabla.style.display === 'none') {
         seccionTabla.style.display = 'block';
@@ -107,14 +107,14 @@ const MostrarTabla = () => {
     }
 }
 
-// 5. FUNCIÓN PARA LIMPIAR FORMULARIO
+//FUNCIÓN PARA LIMPIAR FORMULARIO
 const LimpiarFormulario = () => {
     FormPermisos.reset();
     BtnGuardar.classList.remove('d-none');
     BtnModificar.classList.add('d-none');
 }
 
-// 6. FUNCIÓN PARA EDITAR PERMISO (GLOBAL)
+//FUNCIÓN PARA EDITAR PERMISO
 window.EditarPermiso = (id, nombre, descripcion) => {
     // Llenar el formulario con los datos
     document.getElementById('id_permiso').value = id;
@@ -129,7 +129,7 @@ window.EditarPermiso = (id, nombre, descripcion) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// 7. FUNCIÓN PARA MODIFICAR PERMISO
+//FUNCIÓN PARA MODIFICAR PERMISO
 const ModificarPermiso = async () => {
     const formData = new FormData(FormPermisos);
     
@@ -162,7 +162,7 @@ const ModificarPermiso = async () => {
     }
 }
 
-// 8. FUNCIÓN PARA ELIMINAR PERMISO (GLOBAL)
+// FUNCIÓN PARA ELIMINAR PERMISO
 window.EliminarPermiso = async (id, nombre) => {
     const confirmacion = await Swal.fire({
         title: `¿Eliminar "${nombre}"?`,
@@ -193,7 +193,7 @@ window.EliminarPermiso = async (id, nombre) => {
     }
 }
 
-// 9. CONECTAR LAS FUNCIONES CON LOS BOTONES
+//FUNCIONES CON LOS BOTONES
 FormPermisos.addEventListener('submit', GuardarPermiso);
 BtnLimpiar.addEventListener('click', LimpiarFormulario);
 BtnModificar.addEventListener('click', ModificarPermiso);

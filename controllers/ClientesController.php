@@ -58,7 +58,7 @@ class ClientesController extends ActiveRecord
             return;
         }
 
-        // Validación formato DPI (13 números)
+        // Validación formato DPI 13 números
         $_POST['dpi'] = trim(htmlspecialchars($_POST['dpi']));
         if (strlen($_POST['dpi']) != 13) {
             http_response_code(400);
@@ -223,7 +223,7 @@ class ClientesController extends ActiveRecord
             return;
         }
 
-        // Validación formato DPI (13 números)
+        // Validación  DPI 13 números
         $_POST['dpi'] = trim(htmlspecialchars($_POST['dpi']));
         if (strlen($_POST['dpi']) != 13) {
             http_response_code(400);

@@ -75,14 +75,8 @@ const login = async (e) => {
             icon: 'error'
         });
     }
-    //HABILITAR BOTON
+
     BtnIniciar.disabled = false;
 }
 
-// Event listeners
-if (FormLogin) {
-    FormLogin.addEventListener('submit', login);
-    console.log('Login script cargado correctamente');
-} else {
-    console.log('ERROR: Formulario FormLogin no encontrado');
-}
+FormLogin.addEventListener('submit', login);

@@ -12,13 +12,13 @@
                         
                         <div class="row mb-3">
                             <div class="col-md-4">
-                                <label for="id_cliente" class="form-label">Cliente *</label>
+                                <label for="id_cliente" class="form-label">Cliente </label>
                                 <select class="form-select" id="id_cliente" name="id_cliente" required>
                                     <option value="">Seleccione un cliente</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label for="id_usuario_recibe" class="form-label">Usuario que Recibe *</label>
+                                <label for="id_usuario_recibe" class="form-label">Usuario que Recibe </label>
                                 <select class="form-select" id="id_usuario_recibe" name="id_usuario_recibe" required>
                                     <option value="">Seleccione usuario</option>
                                 </select>
@@ -56,7 +56,7 @@
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="motivo_ingreso" class="form-label">Motivo de Ingreso *</label>
+                                <label for="motivo_ingreso" class="form-label">Motivo de Ingreso </label>
                                 <textarea class="form-control" id="motivo_ingreso" name="motivo_ingreso" rows="3" 
                                           placeholder="Describa el problema reportado por el cliente" required></textarea>
                             </div>

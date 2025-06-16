@@ -94,17 +94,17 @@ $router->get('/permisos/eliminarAPI', [PermisosController::class, 'eliminarAPI']
 
 
 
+// VENTAS 
 $router->get('/ventas', [VentasController::class, 'renderizarPagina']);
 $router->post('/ventas/guardarAPI', [VentasController::class, 'guardarAPI']);
 $router->get('/ventas/buscarAPI', [VentasController::class, 'buscarAPI']);
+$router->get('/ventas/obtenerClientesAPI', [VentasController::class, 'obtenerClientesAPI']);
+$router->get('/ventas/obtenerUsuariosAPI', [VentasController::class, 'obtenerUsuariosAPI']);
+$router->get('/ventas/obtenerProductosAPI', [VentasController::class, 'obtenerProductosAPI']);
+$router->post('/ventas/guardarDetalleAPI', [VentasController::class, 'guardarDetalleAPI']);
+$router->get('/ventas/obtenerDetallesAPI', [VentasController::class, 'obtenerDetallesAPI']);
 $router->post('/ventas/modificarAPI', [VentasController::class, 'modificarAPI']);
 $router->get('/ventas/eliminarAPI', [VentasController::class, 'eliminarAPI']);
-$router->get('/ventas/obtenerClientesAPI', [VentasController::class, 'obtenerClientesAPI']);
-$router->get('/ventas/obtenerInventarioAPI', [VentasController::class, 'obtenerInventarioAPI']);
-$router->get('/ventas/obtenerDetalleAPI', [VentasController::class, 'obtenerDetalleAPI']);
-$router->get('/ventas/obtenerUsuariosAPI', [VentasController::class, 'obtenerUsuariosAPI']);
-$router->get('/ventas/obtenerInventarioAPI', [VentasController::class, 'obtenerInventarioAPI']);
-$router->get('/ventas/obtenerDetalleAPI', [VentasController::class, 'obtenerDetalleAPI']);
 
 
 $router->comprobarRutas();

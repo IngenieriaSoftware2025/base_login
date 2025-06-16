@@ -222,11 +222,7 @@ class RegistroController extends ActiveRecord
             $dpiCompleto = $_POST['dpi']; // Usar el DPI completo de 13 dígitos
             $ruta = "storage/fotosusuarios/$dpiCompleto.$fileExtension";
 
-            // Crear directorio si no existe
-            $directorioFotos = __DIR__ . "/../../storage/fotosusuarios/";
-            if (!file_exists($directorioFotos)) {
-                mkdir($directorioFotos, 0755, true);
-            }
+            
 
             $subido = move_uploaded_file($file['tmp_name'], __DIR__ . "/../../" . $ruta);
 
@@ -466,7 +462,6 @@ class RegistroController extends ActiveRecord
         }
     }
 
-    // para obtener roles en el dropdown
     public static function obtenerRolesAPI()
     {
         getHeadersApi();

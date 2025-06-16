@@ -33,22 +33,30 @@ class DetalleVentas extends ActiveRecord {
         $this->situacion = $detalle['situacion'] ?? 1;
     }
     
-    // Método para obtener detalles de una venta
+
     public static function obtenerDetallesPorVenta($id_venta){
-        $sql = "SELECT d.*, 
-                       m.nombre_modelo, ma.nombre_marca, i.estado_celular
-                FROM detalle_ventas d 
-                INNER JOIN inventario i ON d.id_inventario = i.id_inventario
+        $sql = "SELECT dv.id_detalle, dv.id_venta, dv.id_inventario, 
+                       dv.precio_unitario, dv.cantidad, dv.subtotal_detalle,
+                       i.estado_celular,
+                       m.nombre_modelo, m.color,
+                       ma.nombre_marca,
+                       ma.nombre_marca || ' ' || m.nombre_modelo || 
+                       CASE WHEN m.color IS NOT NULL AND m.color != '' 
+                            THEN ' - ' || m.color 
+                            ELSE '' 
+                       END as producto_completo
+                FROM detalle_ventas dv 
+                INNER JOIN inventario i ON dv.id_inventario = i.id_inventario 
                 INNER JOIN modelos m ON i.id_modelo = m.id_modelo 
                 INNER JOIN marcas ma ON m.id_marca = ma.id_marca 
-                WHERE d.id_venta = $id_venta AND d.situacion = 1
-                ORDER BY d.id_detalle";
+                WHERE dv.id_venta = $id_venta AND dv.situacion = 1
+                ORDER BY dv.id_detalle";
         return self::fetchArray($sql);
     }
     
-    // Método para marcar inventario como vendido
-    public static function marcarInventarioVendido($id_inventario){
-        $sql = "UPDATE inventario SET estado_inventario = 'vendido' WHERE id_inventario = $id_inventario";
+
+    public static function EliminarDetalle($id){
+        $sql = "UPDATE detalle_ventas SET situacion = 0 WHERE id_detalle = $id";
         return self::SQL($sql);
     }
 }

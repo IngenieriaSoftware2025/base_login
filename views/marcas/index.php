@@ -19,7 +19,7 @@
                             <div class="col-md-6">
                                 <label for="descripcion" class="form-label">Descripción</label>
                                 <textarea class="form-control" id="descripcion" name="descripcion" rows="3" 
-                                          placeholder="Descripción opcional de la marca"></textarea>
+                                          placeholder="Descripción de la marca"></textarea>
                             </div>
                         </div>
                         

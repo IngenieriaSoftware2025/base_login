@@ -50,16 +50,17 @@ class ModelosController extends ActiveRecord
             $resultado = $modelo->crear();
 
             if ($resultado['resultado'] == 1) {
-                http_response_code(200);
                 echo json_encode([
                     'codigo' => 1,
                     'mensaje' => 'Modelo registrado correctamente'
                 ]);
             } else {
-                throw new Exception('Error al crear el modelo');
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'Error al crear el modelo'
+                ]);
             }
         } catch (Exception $e) {
-            http_response_code(500);
             echo json_encode([
                 'codigo' => 0,
                 'mensaje' => 'Error al registrar el modelo',

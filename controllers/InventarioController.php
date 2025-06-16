@@ -70,22 +70,18 @@ class InventarioController extends ActiveRecord
             $inventario = new Inventario($_POST);
             $resultado = $inventario->crear();
 
-            // Verificar diferentes tipos de respuesta del método crear()
-            $success = false;
-            if (is_array($resultado)) {
-                $success = ($resultado['resultado'] == 1) || ($resultado['codigo'] == 1);
-            } else {
-                $success = (bool)$resultado;
-            }
-
-            if ($success) {
+            if ($resultado['resultado'] == 1) {
                 http_response_code(200);
                 echo json_encode([
                     'codigo' => 1,
                     'mensaje' => 'Inventario registrado correctamente'
                 ]);
             } else {
-                throw new Exception('Error al crear el inventario en la base de datos');
+                http_response_code(500);
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'Error al crear el inventario'
+                ]);
             }
         } catch (Exception $e) {
             http_response_code(500);

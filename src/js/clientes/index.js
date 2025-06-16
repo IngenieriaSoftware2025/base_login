@@ -313,10 +313,10 @@ const EliminarCliente = async (e) => {
     }
 }
 
-// Cargar clientes al iniciar
+
 BuscarClientes();
 
-// Event listeners
+
 datatable.on('click', '.eliminar', EliminarCliente);
 datatable.on('click', '.modificar', llenarFormulario);
 FormClientes.addEventListener('submit', GuardarCliente);

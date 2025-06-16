@@ -392,7 +392,7 @@ const datatable = new DataTable('#TableReparaciones', {
     ]
 });
 
-// Event Listeners
+
 FormReparaciones.addEventListener('submit', GuardarReparacion);
 BtnCancelar.addEventListener('click', limpiarTodo);
 BtnModificar.addEventListener('click', ModificarReparacion);
@@ -401,7 +401,7 @@ BtnBuscar.addEventListener('click', BuscarReparaciones);
 datatable.on('click', '.eliminar', EliminarReparacion);
 datatable.on('click', '.modificar', llenarFormulario);
 
-// Inicialización
+
 CargarClientes();
 CargarUsuarios();
 BuscarReparaciones();

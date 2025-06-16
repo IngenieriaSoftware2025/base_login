@@ -1,190 +1,185 @@
-<div class="container mt-4">
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header bg-primary text-white text-center">
-                    <h5 class="mb-1">¡Sistema de Gestión de Ventas!</h5>
-                    <h4 class="mb-0">ADMINISTRACIÓN DE VENTAS DE CELULARES</h4>
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Ventas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .card-header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-4">
+        
+        
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header text-white text-center">
+                        <h3 class="mb-0">
+                            <i class="bi bi-cart-plus me-2"></i>
+                            Sistema de Gestión de Ventas
+                        </h3>
+                        <p class="mb-0 mt-2">Registra y administra las ventas de celulares</p>
+                    </div>
+                    <div class="card-body">
+                        <form id="FormVentas">
+                            <input type="hidden" id="id_venta" name="id_venta">
+
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="id_cliente" class="form-label">Cliente </label>
+                                    <select class="form-select" id="id_cliente" name="id_cliente" required>
+                                        <option value="">-- Seleccione un cliente --</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="id_usuario" class="form-label">Vendedor </label>
+                                    <select class="form-select" id="id_usuario" name="id_usuario" required>
+                                        <option value="">-- Seleccione un vendedor --</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                           
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="metodo_pago" class="form-label">Método de Pago</label>
+                                    <select class="form-select" id="metodo_pago" name="metodo_pago">
+                                        <option value="efectivo">Efectivo</option>
+                                        <option value="tarjeta">Tarjeta</option>
+                                        <option value="transferencia">Transferencia</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="fecha_venta" class="form-label">Fecha de Venta</label>
+                                    <input type="date" class="form-control" id="fecha_venta" name="fecha_venta">
+                                </div>
+                            </div>
+
+                 
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="subtotal" class="form-label">Subtotal</label>
+                                    <input type="number" step="0.01" class="form-control" id="subtotal" name="subtotal" value="0">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="descuento" class="form-label">Descuento</label>
+                                    <input type="number" step="0.01" class="form-control" id="descuento" name="descuento" value="0">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="total" class="form-label">Total </label>
+                                    <input type="number" step="0.01" class="form-control" id="total" name="total" required>
+                                </div>
+                            </div>
+
+                
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label for="observaciones" class="form-label">Observaciones</label>
+                                    <textarea class="form-control" id="observaciones" name="observaciones" rows="2" 
+                                              placeholder="Comentarios adicionales sobre la venta"></textarea>
+                                </div>
+                            </div>
+
+                    
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <button class="btn btn-success me-2" type="submit" id="BtnGuardar">
+                                        <i class="bi bi-floppy me-1"></i>Guardar Venta
+                                    </button>
+                                    <button class="btn btn-warning me-2 d-none" type="button" id="BtnModificar">
+                                        <i class="bi bi-pencil-square me-1"></i>Modificar
+                                    </button>
+                                    <button class="btn btn-secondary me-2" type="reset" id="BtnLimpiar">
+                                        <i class="bi bi-arrow-clockwise me-1"></i>Limpiar
+                                    </button>
+                                    <button class="btn btn-primary" type="button" id="BtnBuscarVentas">
+                                        <i class="bi bi-search me-1"></i>Ver Ventas
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <form id="FormVentas">
-                        <input type="hidden" id="id_venta" name="id_venta">
-                        
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <label for="id_cliente" class="form-label">Cliente *</label>
-                                <select class="form-select" id="id_cliente" name="id_cliente" required>
-                                    <option value="">Seleccione un cliente</option>
-                                </select>
+            </div>
+        </div>
+
+    
+        <div class="row mb-4" id="seccionProductos" style="display: none;">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header bg-success text-white text-center">
+                        <h4 class="mb-0">
+                            <i class="bi bi-plus-circle me-2"></i>
+                            Agregar Productos a la Venta
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form id="FormDetalle">
+                            <input type="hidden" id="id_venta_detalle" name="id_venta">
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="id_inventario" class="form-label">Producto </label>
+                                    <select class="form-select" id="id_inventario" name="id_inventario" required>
+                                        <option value="">-- Seleccione un producto --</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="precio_unitario" class="form-label">Precio </label>
+                                    <input type="number" step="0.01" class="form-control" id="precio_unitario" name="precio_unitario" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="cantidad" class="form-label">Cantidad</label>
+                                    <input type="number" class="form-control" id="cantidad" name="cantidad" value="1" min="1">
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <label for="id_usuario" class="form-label">Usuario Vendedor *</label>
-                                <select class="form-select" id="id_usuario" name="id_usuario" required>
-                                    <option value="">Seleccione usuario</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4 d-flex align-items-end">
-                                <button type="button" class="btn btn-info w-100" id="BtnCargarInventario">
-                                    <i class="bi bi-cart-plus me-1"></i>Cargar Inventario
+                            
+                            <div class="text-center">
+                                <button class="btn btn-primary" type="submit" id="BtnAgregarProducto">
+                                    <i class="bi bi-plus-lg me-1"></i>Agregar Producto
                                 </button>
                             </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <label for="metodo_pago" class="form-label">Método de Pago</label>
-                                <select class="form-select" id="metodo_pago" name="metodo_pago">
-                                    <option value="efectivo">Efectivo</option>
-                                    <option value="tarjeta">Tarjeta</option>
-                                    <option value="transferencia">Transferencia</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="descuento" class="form-label">Descuento</label>
-                                <input type="number" class="form-control" id="descuento" name="descuento" 
-                                       placeholder="0.00" step="0.01" min="0" value="0">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="observaciones" class="form-label">Observaciones</label>
-                                <input type="text" class="form-control" id="observaciones" name="observaciones" 
-                                       placeholder="Observaciones de la venta">
-                            </div>
-                        </div>
-                        
-                        <div class="text-center">
-                            <button class="btn btn-success me-2" type="submit" id="BtnGuardar" style="display: none;">
-                                <i class="bi bi-floppy me-1"></i>Guardar
-                            </button>
-                            <button class="btn btn-warning me-2 d-none" type="button" id="BtnModificar">
-                                <i class="bi bi-pencil-square me-1"></i>Modificar
-                            </button>
-                            <button class="btn btn-info me-2" type="button" id="BtnBuscar">
-                                <i class="bi bi-search me-1"></i>Buscar
-                            </button>
-                            <button class="btn btn-secondary" type="button" id="BtnCancelar">
-                                <i class="bi bi-x-circle me-1"></i>Cancelar
-                            </button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Inventario Disponible -->
-    <div id="seccionInventario" style="display: none;">
-        <div class="row mb-4">
+
+        <div class="row mt-4" id="seccionTablaVentas" style="display: none;">
             <div class="col-12">
-                <div class="card">
-                    <div class="card-header bg-success text-white">
-                        <h5 class="mb-0">Inventario Disponible</h5>
+                <div class="card shadow">
+                    <div class="card-header bg-info text-white text-center">
+                        <h4 class="mb-0">
+                            <i class="bi bi-list-ul me-2"></i>
+                            Ventas Registradas
+                        </h4>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover">
-                                <thead>
-                                    <tr>
-                                        <th width="5%">Seleccionar</th>
-                                        <th width="20%">Marca</th>
-                                        <th width="20%">Modelo</th>
-                                        <th width="15%">Estado</th>
-                                        <th width="15%">Precio</th>
-                                        <th width="15%">IMEI</th>
-                                        <th width="10%">Acción</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="inventarioDisponible">
-                                </tbody>
+                            <table class="table table-striped table-hover" id="TableVentas">
+           
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 
-    <!-- Carrito de Compras -->
-    <div id="seccionCarrito" style="display: none;">
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header bg-warning text-dark">
-                        <h5 class="mb-0">Carrito de Compras</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Producto</th>
-                                        <th>Estado</th>
-                                        <th>Precio</th>
-                                        <th>Cantidad</th>
-                                        <th>Subtotal</th>
-                                        <th>IMEI</th>
-                                        <th>Acción</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="carritoItems">
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colspan="4" class="text-end">Subtotal:</td>
-                                        <td><span id="subtotalVenta">Q. 0.00</span></td>
-                                        <td colspan="2"></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="4" class="text-end">Descuento:</td>
-                                        <td><span id="descuentoVenta">Q. 0.00</span></td>
-                                        <td colspan="2"></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="4" class="text-end">TOTAL FINAL:</td>
-                                        <td><span id="totalVenta">Q. 0.00</span></td>
-                                        <td colspan="2"></td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Ventas Registradas -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header bg-info text-white">
-                    <h4 class="text-center mb-0">Ventas registradas en el sistema</h4>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover" id="TableVentas">
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= asset('build/js/ventas/index.js') ?>"></script>
+</body>
 
-<!-- Modal para Ver Detalle -->
-<div class="modal fade" id="modalDetalleVenta" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Detalle de Venta</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body" id="contenidoDetalleVenta">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="<?= asset('build/js/ventas/index.js') ?>"></script>
+</html>

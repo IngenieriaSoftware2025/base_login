@@ -137,7 +137,7 @@ const CargarModelos = async (id_marca) => {
     }
 }
 
-// Event listener para cambio de marca
+
 SelectMarca.addEventListener('change', (event) => {
     const id_marca = event.target.value;
     
@@ -375,16 +375,13 @@ const EliminarInventario = async (e) => {
     }
 }
 
-// Event Listeners principales
 FormInventario.addEventListener('submit', GuardarInventario);
 BtnModificar.addEventListener('click', ModificarInventario);
 BtnBuscar.addEventListener('click', BuscarInventario);
 BtnLimpiar.addEventListener('click', limpiarTodo);
-
-// Event listeners para botones de la tabla (estilo del profesor)
 datatable.on('click', '.modificar', llenarFormulario);
 datatable.on('click', '.eliminar', EliminarInventario);
 
-// Inicialización cuando carga la página
+
 CargarMarcas();
 BuscarInventario();

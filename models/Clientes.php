@@ -44,13 +44,12 @@ class Clientes extends ActiveRecord {
         $this->situacion = $cliente['situacion'] ?? 1;
     }
     
-    // Método para eliminar cliente (cambiar situacion = 0)
+
     public static function EliminarCliente($id){
         $sql = "UPDATE clientes SET situacion = 0 WHERE id_cliente = $id";
         return self::SQL($sql);
     }
-    
-    // Método para buscar clientes activos
+
     public static function obtenerClientesActivos(){
         $sql = "SELECT * FROM clientes WHERE situacion = 1 ORDER BY primer_apellido, primer_nombre";
         return self::fetchArray($sql);

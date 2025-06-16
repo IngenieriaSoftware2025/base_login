@@ -1,6 +1,6 @@
 <div class="container mt-4">
     
-    <!-- FORMULARIO DE ROLES -->
+
     <div class="row mb-4">
         <div class="col-12">
             <div class="card">
@@ -16,13 +16,13 @@
 
                         <div class="row">
                             <div class="col-md-4">
-                                <label for="nombre_rol" class="form-label">Nombre del Rol *</label>
+                                <label for="nombre_rol" class="form-label">Nombre del Rol </label>
                                 <input type="text" id="nombre_rol" name="nombre_rol" 
                                        class="form-control" 
                                        placeholder="Ej: Administrador" >
                             </div>
                             <div class="col-md-4">
-                                <label for="nombre_corto" class="form-label">Código *</label>
+                                <label for="nombre_corto" class="form-label">Código </label>
                                 <input type="text" id="nombre_corto" name="nombre_corto" 
                                        class="form-control" 
                                        placeholder="Ej: ADMIN"  maxlength="25">
@@ -55,7 +55,7 @@
         </div>
     </div>
 
-    <!-- TABLA DE ROLES -->
+
     <div class="row" id="seccionTabla" style="display: none;">
         <div class="col-12">
             <div class="card">
@@ -79,7 +79,7 @@
                                 </tr>
                             </thead>
                             <tbody id="bodyRoles">
-                                <!-- Aquí se llenan los datos dinámicamente -->
+                              
                             </tbody>
                         </table>
                     </div>

@@ -29,7 +29,7 @@ class Modelos extends ActiveRecord {
         $this->situacion = $modelo['situacion'] ?? 1;
     }
     
-    // Método para eliminar modelo (cambiar situacion = 0)
+    // Método para eliminar modelo
     public static function EliminarModelo($id){
         $sql = "UPDATE modelos SET situacion = 0 WHERE id_modelo = $id";
         return self::SQL($sql);

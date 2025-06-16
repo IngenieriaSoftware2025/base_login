@@ -20,7 +20,7 @@ const GuardarModelo = async (event) => {
             position: "center",
             icon: "info",
             title: "FORMULARIO INCOMPLETO",
-            text: "Debe completar los campos obligatorios",
+            text: "Debe completar los campos obligatorios (Marca y Nombre del Modelo)",
             showConfirmButton: true,
         });
         BtnGuardar.disabled = false;
@@ -223,7 +223,7 @@ const ModificarModelo = async (event) => {
             position: "center",
             icon: "info",
             title: "FORMULARIO INCOMPLETO",
-            text: "Debe completar los campos obligatorios",
+            text: "Debe completar los campos obligatorios (Marca y Nombre del Modelo)",
             showConfirmButton: true,
         });
         BtnModificar.disabled = false;
@@ -324,7 +324,6 @@ const EliminarModelo = async (e) => {
 
 CargarMarcas();
 BuscarModelos();
-
 
 datatable.on('click', '.eliminar', EliminarModelo);
 datatable.on('click', '.modificar', llenarFormulario);

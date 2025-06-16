@@ -141,7 +141,7 @@ CREATE TABLE ventas(
     fecha_venta DATE DEFAULT TODAY,
     subtotal DECIMAL(10,2) DEFAULT 0,
     descuento DECIMAL(10,2) DEFAULT 0,
-    total DECIMAL(10,3) DEFAULT 0,
+    total DECIMAL(10,2) DEFAULT 0,
     metodo_pago VARCHAR(50) DEFAULT 'efectivo',
     estado_venta VARCHAR(20) DEFAULT 'completada',
     observaciones LVARCHAR(500),
@@ -174,9 +174,6 @@ select * from permisos
 select * from inventario
 select * from modelos
 select * from marcas
-
-
-
 
 
 

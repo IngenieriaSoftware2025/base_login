@@ -228,7 +228,7 @@ const llenarFormulario = (event) => {
     document.getElementById('correo').value = datos.correo;
     document.getElementById('id_rol').value = datos.id_rol;
 
-    // Ocultar campos de contraseña en modificación
+   
     document.getElementById('contrasena').style.display = 'none';
     document.getElementById('contrasena2').style.display = 'none';
     document.querySelector('label[for="contrasena"]').style.display = 'none';
@@ -245,7 +245,7 @@ const llenarFormulario = (event) => {
 const limpiarTodo = () => {
     FormUsuarios.reset();
     
-    // Mostrar campos de contraseña
+   
     document.getElementById('contrasena').style.display = 'block';
     document.getElementById('contrasena2').style.display = 'block';
     document.querySelector('label[for="contrasena"]').style.display = 'block';

@@ -43,7 +43,7 @@
 
               <!-- Submit button -->
               <button type="submit" id="BtnIniciar" class="btn btn-primary btn-lg px-5 mb-4">
-                Login
+                Iniciar Sesion
               </button>
 
   

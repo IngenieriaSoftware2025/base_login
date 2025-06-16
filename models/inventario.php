@@ -35,13 +35,13 @@ class Inventario extends ActiveRecord {
         $this->situacion = $inventario['situacion'] ?? 1;
     }
     
-    // Método para eliminar inventario (cambiar situacion = 0)
+
     public static function EliminarInventario($id){
         $sql = "UPDATE inventario SET situacion = 0 WHERE id_inventario = $id";
         return self::SQL($sql);
     }
     
-    // Método para buscar inventario activo con información de marca y modelo
+ 
     public static function obtenerInventarioActivo(){
         $sql = "SELECT i.id_inventario, i.id_modelo, i.estado_celular, 
                        i.precio_compra, i.precio_venta, i.fecha_ingreso, 
@@ -55,13 +55,13 @@ class Inventario extends ActiveRecord {
         return self::fetchArray($sql);
     }
     
-    // Método para obtener marcas activas para el dropdown
+   
     public static function obtenerMarcasActivas(){
         $sql = "SELECT id_marca, nombre_marca FROM marcas WHERE situacion = 1 ORDER BY nombre_marca";
         return self::fetchArray($sql);
     }
     
-    // Método para obtener modelos por marca
+    
     public static function obtenerModelosPorMarca($id_marca){
         $sql = "SELECT id_modelo, nombre_modelo FROM modelos WHERE id_marca = $id_marca AND situacion = 1 ORDER BY nombre_modelo";
         return self::fetchArray($sql);
