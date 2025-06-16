@@ -20,11 +20,12 @@ $router->setBaseURL('/' . $_ENV['APP_NAME']);
 //  LOGIN RUTA PRINCIPAL AL ABRIR DESDE DOCKER
 $router->get('/', [LoginController::class, 'renderizarPagina']);
 
-// Rutas del sistema de login
+// Rutas del de login
+$router->get('/', [LoginController::class, 'renderizarPagina']);
 $router->get('/login', [LoginController::class, 'renderizarPagina']); //MOSTRAR FORMULARIO DE LOGIN
 $router->post('/login', [LoginController::class, 'login']); //PROCESAR DATOS LOGIN 
-$router->get('/inicio', [LoginController::class, 'renderInicio']); //PAGINA PRINCIPAL PROTEGIDA ?
-$router->post('/logout', [LoginController::class, 'logout']); //CERRAR SESION ?
+$router->get('/inicio', [LoginController::class, 'renderInicio']); //PAGINA PRINCIPAL
+$router->get('/logout', [LoginController::class, 'logout']); //CERRAR SESION 
 
 // Ruta de prueba
 $router->post('/test', [AppController::class, 'testLogin']);

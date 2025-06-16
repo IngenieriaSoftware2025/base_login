@@ -29,19 +29,19 @@
               <h2 class="fw-bold mb-2 text-uppercase">INICIO DE SESION</h2>
               <p class="text-muted mb-5">INGRESA USUARIO Y CONTRASEÑA</p>
 
-              <!-- DPI input -->
+        
               <div data-mdb-input-init class="form-outline mb-4">
                 <input type="text" name="usu_codigo" id="usu_codigo" class="form-control form-control-lg" />
                 <label class="form-label" for="usu_codigo">DPI</label>
               </div>
 
-              <!-- Password input -->
+       
               <div data-mdb-input-init class="form-outline mb-4">
                 <input type="password" name="usu_password" id="usu_password" class="form-control form-control-lg" />
                 <label class="form-label" for="usu_password">Password</label>
               </div>
 
-              <!-- Submit button -->
+       
               <button type="submit" id="BtnIniciar" class="btn btn-primary btn-lg px-5 mb-4">
                 Iniciar Sesion
               </button>

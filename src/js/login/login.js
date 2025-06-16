@@ -1,6 +1,5 @@
 import Swal from 'sweetalert2';
 import { validarFormulario } from '../funciones';
-//import { Dropdown } from "bootstrap";
 
 const FormLogin = document.getElementById('FormLogin');
 const BtnIniciar = document.getElementById('BtnIniciar');
@@ -20,22 +19,20 @@ const login = async (e) => {
     }
 
     try {
-        //PREPARAR DATOS
         const body = new FormData(FormLogin);
-        const url = '/base_login/login';  
+        const url = '/base_login/login'; 
         const config = {
             method: 'POST',
             body
         };
-        //ENVIAR PETICION AJAX
+
         const respuesta = await fetch(url, config);
         const data = await respuesta.json();
-        const { codigo, mensaje } = data;
+        const { codigo, mensaje, detalle } = data;
 
-        //MANEJAR LA RESPUESTA
         if (codigo == 1) {
             await Swal.fire({
-                title: 'Éxito',
+                title: 'Exito',
                 text: mensaje,
                 icon: 'success',
                 showConfirmButton: true,
@@ -50,7 +47,6 @@ const login = async (e) => {
 
             FormLogin.reset();
             location.href = '/base_login/inicio';
-            //ERROR DE LOGIN
         } else {
             Swal.fire({
                 title: '¡Error!',
@@ -66,82 +62,52 @@ const login = async (e) => {
                 }
             });
         }
-        //ERROR DE CONEXION
+
     } catch (error) {
         console.log(error);
-        Swal.fire({
-            title: 'Error de conexión',
-            text: 'No se pudo conectar con el servidor',
-            icon: 'error'
-        });
     }
 
     BtnIniciar.disabled = false;
 }
 
+const logout = async () => {
+    try {
+        const confirmacion = await Swal.fire({
+            title: '¿Cerrar sesión?',
+            text: "¿Estás seguro que deseas cerrar la sesión?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, cerrar',
+            cancelButtonText: 'Cancelar',
+            background: '#e0f7fa',
+            customClass: {
+                title: 'custom-title-class',
+                text: 'custom-text-class'
+            }
+        });
 
+        if (confirmacion.isConfirmed) {
+            await Swal.fire({
+                title: 'Cerrando sesión',
+                text: 'Redirigiendo al login...',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1000,
+                timerProgressBar: true,
+                background: '#e0f7fa',
+                customClass: {
+                    title: 'custom-title-class',
+                    text: 'custom-text-class'
+                }
+            });
 
+            location.href = '/base_login/logout';
+        }
 
-
-
-
-// const logout = async () => {
-//     try {
-//         const response = await fetch('/base_login/logout', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'X-Requested-With': 'XMLHttpRequest'
-//             }
-//         });
-
-//         const result = await response.json();
-
-//         if (result.codigo === 1) {
-//             // Mostrar mensaje de éxito
-//             Swal.fire({
-//                 title: '¡Sesión cerrada!',
-//                 text: result.mensaje,
-//                 icon: 'success',
-//                 timer: 1500,
-//                 showConfirmButton: false
-//             }).then(() => {
-//                 // Redirigir al login
-//                 window.location.href = '/base_login/login';
-//             });
-//         } else {
-//             Swal.fire({
-//                 title: 'Error',
-//                 text: result.mensaje,
-//                 icon: 'error'
-//             });
-//         }
-//     } catch (error) {
-//         console.error('Error al cerrar sesión:', error);
-//         Swal.fire({
-//             title: 'Error',
-//             text: 'Error de conexión al cerrar sesión',
-//             icon: 'error'
-//         });
-//     }
-// };
-
-// // Función para confirmar antes de cerrar sesión
-// const confirmarLogout = () => {
-//     Swal.fire({
-//         title: '¿Cerrar sesión?',
-//         text: '¿Estás seguro de que quieres cerrar tu sesión?',
-//         icon: 'question',
-//         showCancelButton: true,
-//         confirmButtonColor: '#3085d6',
-//         cancelButtonColor: '#d33',
-//         confirmButtonText: 'Sí, cerrar sesión',
-//         cancelButtonText: 'Cancelar'
-//     }).then((result) => {
-//         if (result.isConfirmed) {
-//             logout();
-//         }
-//     });
-// };
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 FormLogin.addEventListener('submit', login);
+window.logout = logout;
