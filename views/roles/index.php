@@ -22,7 +22,7 @@
                                        placeholder="Ej: Administrador" >
                             </div>
                             <div class="col-md-4">
-                                <label for="nombre_corto" class="form-label">Código </label>
+                                <label for="nombre_corto" class="form-label">Nombre Corto </label>
                                 <input type="text" id="nombre_corto" name="nombre_corto" 
                                        class="form-control" 
                                        placeholder="Ej: ADMIN"  maxlength="25">
