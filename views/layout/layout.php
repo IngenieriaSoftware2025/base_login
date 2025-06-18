@@ -82,14 +82,19 @@
                         </select>
                     </li>
 
-                
+
                     <li class="nav-item">
                         <select class="nav-select" onchange="if(this.value) window.location.href=this.value">
                             <option value="">Administración</option>
                             <option value="/base_login/roles"><i class="bi bi-shield-check"></i> Roles</option>
                             <option value="/base_login/permisos"><i class="bi bi-key"></i> Permisos</option>
+                            <option value="/base_login/rolesPermisos"><i class="bi bi-shield-lock"> </i>Asignacion Permisos</option>
                         </select>
                     </li>
+
+
+
+
 
                     <div class="nav-item dropdown ">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">

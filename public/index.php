@@ -14,6 +14,7 @@ use Controllers\RolesController;
 use Controllers\PermisosController;
 use Controllers\VentasController;
 use Controllers\EstadisticaController;
+use Controllers\RolesPermisosController;
 
 $router = new Router();
 $router->setBaseURL('/' . $_ENV['APP_NAME']);
@@ -108,6 +109,22 @@ $router->post('/ventas/guardarDetalleAPI', [VentasController::class, 'guardarDet
 $router->get('/ventas/obtenerDetallesAPI', [VentasController::class, 'obtenerDetallesAPI']);
 $router->post('/ventas/modificarAPI', [VentasController::class, 'modificarAPI']);
 $router->get('/ventas/eliminarAPI', [VentasController::class, 'eliminarAPI']);
+
+
+
+
+
+// ROLES-PERMISOS
+$router->get('/rolesPermisos', [RolesPermisosController::class, 'renderizarPagina']);
+$router->post('/rolesPermisos/guardarAPI', [RolesPermisosController::class, 'guardarAPI']);
+$router->get('/rolesPermisos/buscarAPI', [RolesPermisosController::class, 'buscarAPI']);
+$router->post('/rolesPermisos/modificarAPI', [RolesPermisosController::class, 'modificarAPI']);
+$router->get('/rolesPermisos/eliminarAPI', [RolesPermisosController::class, 'eliminarAPI']);
+$router->get('/rolesPermisos/obtenerRolesAPI', [RolesPermisosController::class, 'obtenerRolesAPI']);
+$router->get('/rolesPermisos/obtenerPermisosAPI', [RolesPermisosController::class, 'obtenerPermisosAPI']);
+$router->get('/rolesPermisos/obtenerUsuariosAPI', [RolesPermisosController::class, 'obtenerUsuariosAPI']);
+$router->get('/rolesPermisos/obtenerPermisosPorRolAPI', [RolesPermisosController::class, 'obtenerPermisosPorRolAPI']);
+$router->get('/rolesPermisos/estadisticasAPI', [RolesPermisosController::class, 'estadisticasAPI']);
 
 
 // ESTADÍSTICAS

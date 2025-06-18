@@ -300,7 +300,7 @@ class VentasController extends ActiveRecord
         }
     }
 
-    // 10. OBTENER DETALLES DE UNA VENTA
+    // OBTENER DETALLES DE UNA VENTA
     public static function obtenerDetallesAPI()
     {
         getHeadersApi();

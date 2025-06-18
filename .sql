@@ -61,27 +61,13 @@ CREATE TABLE usuarios(
     situacion SMALLINT DEFAULT 1,
     FOREIGN KEY (id_rol) REFERENCES roles(id_rol)
 );
+INSERT INTO usuarios (primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, telefono, direccion, dpi, correo, contrasena, id_rol)
+VALUES ('Juan', 'Carlos', 'Pérez', 'García', '5551-1234', 'Zona 1, Ciudad de Guatemala', '1234567890101', 'admin@celulares.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1);
+
+--Email/Usuario: 1234567890101
+--Contraseña: password
 
 
-
-CREATE TABLE marcas(
-    id_marca SERIAL PRIMARY KEY,
-    nombre_marca VARCHAR(100) NOT NULL UNIQUE,
-    descripcion VARCHAR(250),
-    fecha_creacion DATE DEFAULT TODAY,
-    situacion SMALLINT DEFAULT 1
-);
-
-
-CREATE TABLE modelos(
-    id_modelo SERIAL PRIMARY KEY,
-    id_marca INTEGER NOT NULL,
-    nombre_modelo VARCHAR(100) NOT NULL,
-    color VARCHAR(50),
-    fecha_creacion DATE DEFAULT TODAY,
-    situacion SMALLINT DEFAULT 1,
-    FOREIGN KEY (id_marca) REFERENCES marcas(id_marca)
-);
 
 CREATE TABLE clientes(
     id_cliente SERIAL PRIMARY KEY,
@@ -96,6 +82,51 @@ CREATE TABLE clientes(
     fecha_registro DATE DEFAULT TODAY,
     situacion SMALLINT DEFAULT 1
 );
+INSERT INTO clientes (primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, telefono, dpi, correo, direccion)
+VALUES ('Mario', 'Andrés', 'Castro', 'López', '5559-7788', '2345678901234', 'mario.castro@gmail.com', 'Zona 11, Guatemala');
+INSERT INTO clientes (primer_nombre, primer_apellido, telefono, dpi, correo, direccion)
+VALUES ('Carmen', 'Flores', '5550-9988', '2345678901235', 'carmen.flores@hotmail.com', 'Villa Nueva, Guatemala');
+
+
+
+
+
+CREATE TABLE marcas(
+    id_marca SERIAL PRIMARY KEY,
+    nombre_marca VARCHAR(100) NOT NULL UNIQUE,
+    descripcion VARCHAR(250),
+    fecha_creacion DATE DEFAULT TODAY,
+    situacion SMALLINT DEFAULT 1
+);
+INSERT INTO marcas (nombre_marca, descripcion)
+VALUES ('Samsung', 'Marca líder en tecnología móvil');
+INSERT INTO marcas (nombre_marca, descripcion)
+VALUES ('Apple', 'Innovación y diseño en dispositivos móviles');
+
+
+
+
+
+CREATE TABLE modelos(
+    id_modelo SERIAL PRIMARY KEY,
+    id_marca INTEGER NOT NULL,
+    nombre_modelo VARCHAR(100) NOT NULL,
+    color VARCHAR(50),
+    fecha_creacion DATE DEFAULT TODAY,
+    situacion SMALLINT DEFAULT 1,
+    FOREIGN KEY (id_marca) REFERENCES marcas(id_marca)
+);
+INSERT INTO modelos (id_marca, nombre_modelo, color)
+VALUES (1, 'Galaxy S23', 'Negro');
+INSERT INTO modelos (id_marca, nombre_modelo, color)
+VALUES (2, 'iPhone 15', 'Azul');
+
+
+
+
+
+
+
 
 create TABLE inventario(
     id_inventario SERIAL PRIMARY KEY,
@@ -108,6 +139,16 @@ create TABLE inventario(
     situacion SMALLINT DEFAULT 1,
     FOREIGN KEY (id_modelo) REFERENCES modelos(id_modelo)
 );
+INSERT INTO inventario (id_modelo, estado_celular, precio_compra, precio_venta, estado_inventario)
+VALUES (1, 'nuevo', 2500.00, 3200.00, 'disponible');
+INSERT INTO inventario (id_modelo, estado_celular, precio_compra, precio_venta, estado_inventario)
+VALUES (2, 'nuevo', 4000.00, 5200.00, 'disponible');
+
+
+
+
+
+
 
 
 CREATE TABLE reparaciones(
@@ -131,6 +172,11 @@ CREATE TABLE reparaciones(
     FOREIGN KEY (id_usuario_recibe) REFERENCES usuarios(id_usuario),
     FOREIGN KEY (id_usuario_asignado) REFERENCES usuarios(id_usuario)
 );
+INSERT INTO reparaciones (id_cliente, id_usuario_recibe, tipo_celular, marca_celular, motivo_ingreso, estado_reparacion)
+VALUES (1, 1, 'Smartphone', 'Samsung', 'Pantalla rota', 'recibido');
+
+
+
 
 
 
@@ -152,6 +198,14 @@ CREATE TABLE ventas(
     CHECK (estado_venta IN ('completada', 'cancelada', 'pendiente'))
 );
 
+INSERT INTO ventas (id_cliente, id_usuario, subtotal, descuento, total, metodo_pago, estado_venta, observaciones)
+VALUES (2, 1, 5200.00, 200.00, 5000.00, 'tarjeta', 'completada', 'Descuento por cliente frecuente');
+
+
+
+
+
+
 CREATE TABLE detalle_ventas(
     id_detalle SERIAL PRIMARY KEY,
     id_venta INTEGER NOT NULL,
@@ -163,29 +217,31 @@ CREATE TABLE detalle_ventas(
     FOREIGN KEY (id_venta) REFERENCES ventas(id_venta),
     FOREIGN KEY (id_inventario) REFERENCES inventario(id_inventario)
 );
+INSERT INTO detalle_ventas (id_venta, id_inventario, precio_unitario, cantidad, subtotal_detalle)
+VALUES (1, 1, 3200.00, 1, 3200.00);
 
 
 
-CREATE TABLE rol_permisos(
+
+
+CREATE TABLE roles_permisos(
     id_rol_permiso SERIAL PRIMARY KEY,
     id_rol INTEGER NOT NULL,
     id_permiso INTEGER NOT NULL,
+    usuario_asigna INTEGER NOT NULL,
+    motivo_asignacion VARCHAR(250) NOT NULL, 
     fecha_asignacion DATE DEFAULT TODAY,
-    situacion SMALLINT DEFAULT 1,
+    situacion SMALLINT DEFAULT 1, 
     FOREIGN KEY (id_rol) REFERENCES roles(id_rol),
     FOREIGN KEY (id_permiso) REFERENCES permisos(id_permiso),
+    FOREIGN KEY (usuario_asigna) REFERENCES usuarios(id_usuario),
     UNIQUE(id_rol, id_permiso) 
 );
+INSERT INTO roles_permisos (id_rol, id_permiso, usuario_asigna, motivo_asignacion)
+VALUES (2, 2, 1, 'Técnico requiere consultar inventario para reparaciones');
 
 
-select * from usuarios
-select * from roles
-select * from reparaciones
-select * from clientes
-select * from permisos
-select * from inventario
-select * from modelos
-select * from marcas
+
 
 
 
