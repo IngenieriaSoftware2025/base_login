@@ -13,6 +13,7 @@ use Controllers\ReparacionesController;
 use Controllers\RolesController;
 use Controllers\PermisosController;
 use Controllers\VentasController;
+use Controllers\EstadisticaController;
 
 $router = new Router();
 $router->setBaseURL('/' . $_ENV['APP_NAME']);
@@ -108,5 +109,9 @@ $router->get('/ventas/obtenerDetallesAPI', [VentasController::class, 'obtenerDet
 $router->post('/ventas/modificarAPI', [VentasController::class, 'modificarAPI']);
 $router->get('/ventas/eliminarAPI', [VentasController::class, 'eliminarAPI']);
 
+
+// ESTADÍSTICAS
+$router->get('/estadisticas', [EstadisticaController::class, 'renderizarPagina']);
+$router->get('/estadisticas/buscarAPI', [EstadisticaController::class, 'buscarAPI']);
 
 $router->comprobarRutas();

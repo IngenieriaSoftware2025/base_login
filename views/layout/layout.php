@@ -78,10 +78,11 @@
                             <option value="/base_login/inventario"><i class="bi bi-box-seam"></i> Inventario</option>
                             <option value="/base_login/reparaciones"><i class="bi bi-tools"></i> Reparaciones</option>
                             <option value="/base_login/ventas"><i class="bi bi-tools"></i> Ventas</option>
+                            <option value="/base_login/estadisticas"><i class="bi bi-tools"></i> Estadisticas</option>
                         </select>
                     </li>
 
-
+                
                     <li class="nav-item">
                         <select class="nav-select" onchange="if(this.value) window.location.href=this.value">
                             <option value="">Administración</option>
@@ -102,7 +103,7 @@
                     </div>
 
                 </ul>
-              
+
                 <?php
                 session_start();
                 if (isset($_SESSION['user'])):
