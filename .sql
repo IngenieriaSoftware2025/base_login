@@ -246,17 +246,18 @@ VALUES (2, 2, 1, 'Técnico requiere consultar inventario para reparaciones');
 
 
 
-CREATE TABLE rutas_actividades(
-    ruta_id SERIAL PRIMARY KEY,
-    ruta_usuario_id INTEGER NOT NULL,
-    ruta_usuario_nombre VARCHAR(200) NOT NULL,
-    ruta_modulo VARCHAR(50) NOT NULL,
-    ruta_accion VARCHAR(50) NOT NULL,
-    ruta_descripcion LVARCHAR(500) NOT NULL,
-    ruta_ip VARCHAR(50),
-    ruta_ruta VARCHAR(200),
-    ruta_fecha_creacion DATETIME YEAR TO SECOND DEFAULT CURRENT YEAR TO SECOND,
-    ruta_situacion SMALLINT DEFAULT 1
+CREATE TABLE registro_actividad(
+    id_actividad SERIAL PRIMARY KEY,
+    id_usuario INTEGER NOT NULL,
+    nombre_usuario VARCHAR(200) NOT NULL,
+    modulo VARCHAR(50) NOT NULL,
+    accion VARCHAR(50) NOT NULL,
+    descripcion LVARCHAR(500) NOT NULL,
+    ip_usuario VARCHAR(50),
+    ruta VARCHAR(200),
+    fecha_actividad DATETIME YEAR TO SECOND DEFAULT CURRENT YEAR TO SECOND,
+    situacion SMALLINT DEFAULT 1,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
 );
 
 

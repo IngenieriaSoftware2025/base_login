@@ -17,6 +17,7 @@ module.exports = {
      "js/ventas/index": "./src/js/ventas/index.js",
      "js/estadisticas/index": "./src/js/estadisticas/index.js",
      "js/rolesPermisos/index": "./src/js/rolesPermisos/index.js",
+
      
   },
   output: {
