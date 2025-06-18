@@ -45,22 +45,13 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand" href="/ejemplo/">
-                <img src="<?= asset('./images/cit.png') ?>" width="35px'" alt="cit">
-                Aplicaciones
+            <a class="navbar-brand" href="/base_login/inicio">
+                <img src="<?= asset('./images/celular.png') ?>" width="35px'" alt="cit">
+                Inicio
             </a>
             <div class="collapse navbar-collapse" id="navbarToggler">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="margin: 0;">
 
-
-
-                <li class="nav-item">
-                        <select class="nav-select" onchange="if(this.value) window.location.href=this.value">
-                            <option value="">Inicio</option>
-                            <option value="/base_login/inicio"><i class="bi bi-door-open"></i> inicio</option>
-                            
-                        </select>
-                    </li>
 
                     <li class="nav-item">
                         <select class="nav-select" onchange="if(this.value) window.location.href=this.value">
