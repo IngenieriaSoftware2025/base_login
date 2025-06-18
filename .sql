@@ -166,6 +166,18 @@ CREATE TABLE detalle_ventas(
 
 
 
+CREATE TABLE rol_permisos(
+    id_rol_permiso SERIAL PRIMARY KEY,
+    id_rol INTEGER NOT NULL,
+    id_permiso INTEGER NOT NULL,
+    fecha_asignacion DATE DEFAULT TODAY,
+    situacion SMALLINT DEFAULT 1,
+    FOREIGN KEY (id_rol) REFERENCES roles(id_rol),
+    FOREIGN KEY (id_permiso) REFERENCES permisos(id_permiso),
+    UNIQUE(id_rol, id_permiso) 
+);
+
+
 select * from usuarios
 select * from roles
 select * from reparaciones
