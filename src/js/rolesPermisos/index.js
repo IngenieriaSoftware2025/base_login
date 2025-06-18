@@ -157,8 +157,12 @@ const CargarUsuarios = async () => {
         if (codigo == 1) {
             SelectUsuario.innerHTML = '<option value="">Seleccione quien asigna</option>';
             data.forEach(usuario => {
-                const nombreCompleto = `${usuario.primer_nombre} ${usuario.segundo_nombre || ''} ${usuario.primer_apellido} ${usuario.segundo_apellido || ''}`.trim();
-                SelectUsuario.innerHTML += `<option value="${usuario.id_usuario}">${nombreCompleto}</option>`;
+                const nombreCompleto = `${usuario.primer_nombre} 
+                ${usuario.segundo_nombre || ''} 
+                ${usuario.primer_apellido} 
+                ${usuario.segundo_apellido || ''}`.trim();
+                SelectUsuario.innerHTML +=
+                 `<option value="${usuario.id_usuario}">${nombreCompleto}</option>`;
             });
         }
 

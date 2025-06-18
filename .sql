@@ -246,5 +246,18 @@ VALUES (2, 2, 1, 'Técnico requiere consultar inventario para reparaciones');
 
 
 
+CREATE TABLE rutas_actividades(
+    ruta_id SERIAL PRIMARY KEY,
+    ruta_usuario_id INTEGER NOT NULL,
+    ruta_usuario_nombre VARCHAR(200) NOT NULL,
+    ruta_modulo VARCHAR(50) NOT NULL,
+    ruta_accion VARCHAR(50) NOT NULL,
+    ruta_descripcion LVARCHAR(500) NOT NULL,
+    ruta_ip VARCHAR(50),
+    ruta_ruta VARCHAR(200),
+    ruta_fecha_creacion DATETIME YEAR TO SECOND DEFAULT CURRENT YEAR TO SECOND,
+    ruta_situacion SMALLINT DEFAULT 1
+);
+
 
 
