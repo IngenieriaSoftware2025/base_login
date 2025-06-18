@@ -129,7 +129,7 @@
                     </div>
                     <div class="col-lg-2 d-grid mb-lg-0 mb-2">
                         <div class="d-flex gap-2">
-                            <a href="/base_login/logout" class="btn btn-danger">
+                            <a href="/base_login/login" class="btn btn-danger">
                                 <i class="bi bi-box-arrow-right"></i>Cerrar Sesion
                             </a>
                         </div>

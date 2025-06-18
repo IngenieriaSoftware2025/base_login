@@ -13,7 +13,7 @@ const BtnLimpiarFiltros = document.getElementById('BtnLimpiarFiltros');
 const seccionTabla = document.getElementById('seccionTabla');
 
 const cargarUsuarios = async () => {
-    const url = `/base_login/actividades/buscarUsuariosAPI`;
+    const url = `/base_login/actividades/buscarUsuariosAPI`; 
     const config = {
         method: 'GET'
     }
@@ -28,8 +28,8 @@ const cargarUsuarios = async () => {
             
             data.forEach(usuario => {
                 const option = document.createElement('option');
-                option.value = usuario.id_usuario;
-                option.textContent = usuario.nombre_usuario;
+                option.value = usuario.ruta_usuario_id;
+                option.textContent = usuario.ruta_usuario_nombre;
                 SelectUsuario.appendChild(option);
             });
         } else {
@@ -48,7 +48,8 @@ const cargarUsuarios = async () => {
 }
 
 const organizarDatosPorModulo = (data) => {
-    const modulos = ['LOGIN', 'USUARIOS', 'CLIENTES', 'MARCAS', 'MODELOS', 'INVENTARIO', 'REPARACIONES', 'VENTAS'];
+    // MÓDULOS ACTUALIZADOS PARA TU PROYECTO
+    const modulos = ['LOGIN', 'USUARIOS', 'CLIENTES', 'MARCAS', 'MODELOS', 'INVENTARIO', 'REPARACIONES', 'VENTAS', 'ROLES', 'PERMISOS', 'ACTIVIDADES'];
     const iconos = {
         'LOGIN': '🔐',
         'USUARIOS': '👤',
@@ -57,14 +58,17 @@ const organizarDatosPorModulo = (data) => {
         'MODELOS': '📱',
         'INVENTARIO': '📦',
         'REPARACIONES': '🔧',
-        'VENTAS': '💰'
+        'VENTAS': '💰',
+        'ROLES': '🛡️',
+        'PERMISOS': '🔑',
+        'ACTIVIDADES': '📊'
     };
     
     let datosOrganizados = [];
     let contador = 1;
     
     modulos.forEach(modulo => {
-        const actividadesModulo = data.filter(actividad => actividad.modulo === modulo);
+        const actividadesModulo = data.filter(actividad => actividad.ruta_modulo === modulo);
         
         if (actividadesModulo.length > 0) {
             datosOrganizados.push({
@@ -99,7 +103,7 @@ const BuscarActividades = async () => {
     }
     
     if (SelectUsuario.value) {
-        params.append('id_usuario', SelectUsuario.value);
+        params.append('usuario_id', SelectUsuario.value);
     }
     
     if (SelectModulo.value) {
@@ -110,7 +114,7 @@ const BuscarActividades = async () => {
         params.append('accion', SelectAccion.value);
     }
 
-    const url = `/base_login/actividades/buscarAPI${params.toString() ? '?' + params.toString() : ''}`;
+    const url = `/base_login/actividades/buscarAPI${params.toString() ? '?' + params.toString() : ''}`; 
     const config = {
         method: 'GET'
     }
@@ -165,7 +169,7 @@ const limpiarFiltros = () => {
     }
 }
 
-const datatable = new DataTable('#TableActividades', {
+const datatable = new DataTable('#TableActividades', { 
     dom: `
         <"row mt-3 justify-content-between" 
             <"col" l> 
@@ -195,7 +199,7 @@ const datatable = new DataTable('#TableActividades', {
         },
         { 
             title: 'Usuario', 
-            data: 'nombre_usuario',
+            data: 'ruta_usuario_nombre',
             width: '15%',
             render: (data, type, row, meta) => {
                 if (row.esSeparador) {
@@ -206,7 +210,7 @@ const datatable = new DataTable('#TableActividades', {
         },
         { 
             title: 'Módulo', 
-            data: 'modulo',
+            data: 'ruta_modulo',
             width: '10%',
             render: (data, type, row, meta) => {
                 if (row.esSeparador) return '';
@@ -215,26 +219,37 @@ const datatable = new DataTable('#TableActividades', {
         },
         { 
             title: 'Acción', 
-            data: 'accion',
+            data: 'ruta_accion',
             width: '10%',
             render: (data, type, row, meta) => {
                 if (row.esSeparador) return '';
+                // ACCIONES EXTENDIDAS PARA TU PROYECTO
                 const acciones = {
                     'CREAR': '<span class="badge bg-success">CREAR</span>',
                     'ACTUALIZAR': '<span class="badge bg-warning text-dark">ACTUALIZAR</span>',
                     'ELIMINAR': '<span class="badge bg-danger">ELIMINAR</span>',
-                    'INICIAR_SESION': '<span class="badge bg-info">INICIAR SESIÓN</span>',
+                    'ACCEDER': '<span class="badge bg-primary">ACCEDER</span>',
+                    'CONSULTAR': '<span class="badge bg-info">CONSULTAR</span>',
+                    'INICIAR_SESION': '<span class="badge bg-success">INICIAR SESIÓN</span>',
                     'CERRAR_SESION': '<span class="badge bg-secondary">CERRAR SESIÓN</span>',
+                    'INTENTO_FALLIDO': '<span class="badge bg-danger">INTENTO FALLIDO</span>',
+                    'USUARIO_INEXISTENTE': '<span class="badge bg-dark">USUARIO INEXISTENTE</span>',
+                    'INTENTO_DUPLICAR': '<span class="badge bg-warning">INTENTO DUPLICAR</span>',
+                    'ERROR_CREAR': '<span class="badge bg-danger">ERROR CREAR</span>',
+                    'ERROR_ACTUALIZAR': '<span class="badge bg-danger">ERROR ACTUALIZAR</span>',
+                    'ERROR_ELIMINAR': '<span class="badge bg-danger">ERROR ELIMINAR</span>',
+                    'ERROR_CONSULTAR': '<span class="badge bg-danger">ERROR CONSULTAR</span>',
+                    'EXCEPCION': '<span class="badge bg-dark">EXCEPCIÓN</span>',
                     'INICIAR': '<span class="badge bg-primary">INICIAR</span>',
                     'FINALIZAR': '<span class="badge bg-success">FINALIZAR</span>',
                     'ENTREGAR': '<span class="badge bg-warning">ENTREGAR</span>'
                 };
-                return acciones[data] || data;
+                return acciones[data] || `<span class="badge bg-light text-dark">${data}</span>`;
             }
         },
         { 
             title: 'Descripción', 
-            data: 'descripcion',
+            data: 'ruta_descripcion',
             width: '25%',
             render: (data, type, row, meta) => {
                 if (row.esSeparador) return '';
@@ -243,7 +258,7 @@ const datatable = new DataTable('#TableActividades', {
         },
         { 
             title: 'Ruta', 
-            data: 'ruta',
+            data: 'ruta_ruta',
             width: '12%',
             render: (data, type, row, meta) => {
                 if (row.esSeparador) return '';
@@ -252,7 +267,7 @@ const datatable = new DataTable('#TableActividades', {
         },
         { 
             title: 'IP', 
-            data: 'ip_usuario',
+            data: 'ruta_ip',
             width: '10%',
             render: (data, type, row, meta) => {
                 if (row.esSeparador) return '';
@@ -261,7 +276,7 @@ const datatable = new DataTable('#TableActividades', {
         },
         { 
             title: 'Fecha', 
-            data: 'fecha_actividad',
+            data: 'ruta_fecha_creacion',
             width: '8%',
             render: (data, type, row, meta) => {
                 if (row.esSeparador) return '';
@@ -270,7 +285,7 @@ const datatable = new DataTable('#TableActividades', {
         },
         {
             title: 'Situación',
-            data: 'situacion',
+            data: 'ruta_situacion',
             width: '5%',
             render: (data, type, row, meta) => {
                 if (row.esSeparador) return '';
