@@ -6,6 +6,7 @@ use Exception;
 use MVC\Router;
 use Model\ActiveRecord;
 use Model\Clientes;
+use Controllers\RutasActividadesController;
 
 class ClientesController extends ActiveRecord
 {

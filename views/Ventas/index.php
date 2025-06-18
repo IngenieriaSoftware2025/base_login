@@ -162,7 +162,7 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover" id="TableVentas">
+                            <table class="table table-striped table-hover w-100" id="TableVentas">
            
                             </table>
                         </div>

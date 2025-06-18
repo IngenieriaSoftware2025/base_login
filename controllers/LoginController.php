@@ -41,6 +41,7 @@ class LoginController extends ActiveRecord
                     $_SESSION['user'] = $nombreUser;
                     $_SESSION['dpi'] = $dpi;
                     $_SESSION['usuario_id'] = $usuarioId;
+                    
 
 
 

@@ -78,6 +78,14 @@
                             <option value="/base_login/inventario"><i class="bi bi-box-seam"></i> Inventario</option>
                             <option value="/base_login/reparaciones"><i class="bi bi-tools"></i> Reparaciones</option>
                             <option value="/base_login/ventas"><i class="bi bi-tools"></i> Ventas</option>
+                            
+                        </select>
+                    </li>
+
+                    <li class="nav-item">
+                        <select class="nav-select" onchange="if(this.value) window.location.href=this.value">
+                           <option value="">movimientos</option>
+                            <option value="/base_login/actividades"><i class="bi bi-tools"></i> Rutas y Actividades</option>
                             <option value="/base_login/estadisticas"><i class="bi bi-tools"></i> Estadisticas</option>
                         </select>
                     </li>

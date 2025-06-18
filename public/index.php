@@ -12,9 +12,7 @@ use Controllers\InventarioController;
 use Controllers\ReparacionesController;
 use Controllers\RolesController;
 use Controllers\PermisosController;
-use Controllers\VentasController;
-use Controllers\EstadisticaController;
-use Controllers\RolesPermisosController;
+use Controllers\RegistroActividadController; // AGREGAR ESTA LINEA
 
 $router = new Router();
 $router->setBaseURL('/' . $_ENV['APP_NAME']);
@@ -22,16 +20,14 @@ $router->setBaseURL('/' . $_ENV['APP_NAME']);
 //  LOGIN RUTA PRINCIPAL AL ABRIR DESDE DOCKER
 $router->get('/', [LoginController::class, 'renderizarPagina']);
 
-// Rutas del de login
-$router->get('/', [LoginController::class, 'renderizarPagina']);
+// Rutas del sistema de login
 $router->get('/login', [LoginController::class, 'renderizarPagina']); //MOSTRAR FORMULARIO DE LOGIN
 $router->post('/login', [LoginController::class, 'login']); //PROCESAR DATOS LOGIN 
-$router->get('/inicio', [LoginController::class, 'renderInicio']); //PAGINA PRINCIPAL
-$router->get('/logout', [LoginController::class, 'logout']); //CERRAR SESION 
+$router->get('/inicio', [LoginController::class, 'renderInicio']); //PAGINA PRINCIPAL PROTEGIDA ?
+$router->post('/logout', [LoginController::class, 'logout']); //CERRAR SESION ?
 
 // Ruta de prueba
 $router->post('/test', [AppController::class, 'testLogin']);
-
 
 // REGISTRO/USUARIOS
 $router->get('/registro', [RegistroController::class, 'renderizarPagina']);
@@ -96,39 +92,5 @@ $router->get('/permisos/buscarAPI', [PermisosController::class, 'buscarAPI']);
 $router->post('/permisos/modificarAPI', [PermisosController::class, 'modificarAPI']);
 $router->get('/permisos/eliminarAPI', [PermisosController::class, 'eliminarAPI']);
 
-
-
-// VENTAS 
-$router->get('/ventas', [VentasController::class, 'renderizarPagina']);
-$router->post('/ventas/guardarAPI', [VentasController::class, 'guardarAPI']);
-$router->get('/ventas/buscarAPI', [VentasController::class, 'buscarAPI']);
-$router->get('/ventas/obtenerClientesAPI', [VentasController::class, 'obtenerClientesAPI']);
-$router->get('/ventas/obtenerUsuariosAPI', [VentasController::class, 'obtenerUsuariosAPI']);
-$router->get('/ventas/obtenerProductosAPI', [VentasController::class, 'obtenerProductosAPI']);
-$router->post('/ventas/guardarDetalleAPI', [VentasController::class, 'guardarDetalleAPI']);
-$router->get('/ventas/obtenerDetallesAPI', [VentasController::class, 'obtenerDetallesAPI']);
-$router->post('/ventas/modificarAPI', [VentasController::class, 'modificarAPI']);
-$router->get('/ventas/eliminarAPI', [VentasController::class, 'eliminarAPI']);
-
-
-
-
-
-// ROLES-PERMISOS
-$router->get('/rolesPermisos', [RolesPermisosController::class, 'renderizarPagina']);
-$router->post('/rolesPermisos/guardarAPI', [RolesPermisosController::class, 'guardarAPI']);
-$router->get('/rolesPermisos/buscarAPI', [RolesPermisosController::class, 'buscarAPI']);
-$router->post('/rolesPermisos/modificarAPI', [RolesPermisosController::class, 'modificarAPI']);
-$router->get('/rolesPermisos/eliminarAPI', [RolesPermisosController::class, 'eliminarAPI']);
-$router->get('/rolesPermisos/obtenerRolesAPI', [RolesPermisosController::class, 'obtenerRolesAPI']);
-$router->get('/rolesPermisos/obtenerPermisosAPI', [RolesPermisosController::class, 'obtenerPermisosAPI']);
-$router->get('/rolesPermisos/obtenerUsuariosAPI', [RolesPermisosController::class, 'obtenerUsuariosAPI']);
-$router->get('/rolesPermisos/obtenerPermisosPorRolAPI', [RolesPermisosController::class, 'obtenerPermisosPorRolAPI']);
-$router->get('/rolesPermisos/estadisticasAPI', [RolesPermisosController::class, 'estadisticasAPI']);
-
-
-// ESTADÍSTICAS
-$router->get('/estadisticas', [EstadisticaController::class, 'renderizarPagina']);
-$router->get('/estadisticas/buscarAPI', [EstadisticaController::class, 'buscarAPI']);
 
 $router->comprobarRutas();
